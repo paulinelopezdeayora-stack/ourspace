@@ -7,7 +7,9 @@ const { pool }   = require('./db');
 
 const app = express();
 
-app.use(express.json({ limit: '5mb' }));        // avatar base64 peut peser ~500kb
+app.set('trust proxy', 1); // Railway passe par un proxy HTTPS
+
+app.use(express.json({ limit: '20mb' }));       // avatar + audio base64
 app.use(express.urlencoded({ extended: true }));
 
 // Sessions stockées en PostgreSQL
@@ -57,10 +59,14 @@ async function initDB() {
       song_title VARCHAR(200) DEFAULT 'Welcome to the Black Parade',
       song_artist VARCHAR(200) DEFAULT 'My Chemical Romance',
       avatar_data TEXT,
-      skin VARCHAR(50) DEFAULT 'dark',
-      created_at TIMESTAMP DEFAULT NOW(),
-      last_seen TIMESTAMP DEFAULT NOW()
+      audio_data  TEXT,
+      audio_name  VARCHAR(255) DEFAULT '',
+      skin        VARCHAR(50)  DEFAULT 'dark',
+      created_at  TIMESTAMP    DEFAULT NOW(),
+      last_seen   TIMESTAMP    DEFAULT NOW()
     );
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS audio_data TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS audio_name VARCHAR(255) DEFAULT '';
     CREATE TABLE IF NOT EXISTS friends (
       id SERIAL PRIMARY KEY,
       user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
