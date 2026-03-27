@@ -1,6 +1,7 @@
 const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
+const { awardBadge } = require('../lib/badges');
 
 // GET /api/posts?page=0
 router.get('/', requireAuth, async (req, res) => {
@@ -36,6 +37,7 @@ router.post('/', requireAuth, async (req, res) => {
        VALUES ($1, $2, $3, $4, $5) RETURNING id`,
       [req.session.userId, title || '', body || '', photo_data || null, !!comments_disabled]
     );
+    awardBadge(req.session.userId, 'first_post');
     res.json({ id: r.rows[0].id });
   } catch (e) {
     console.error(e);

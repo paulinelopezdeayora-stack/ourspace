@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     let r;
     if (q?.trim()) {
       r = await pool.query(
-        `SELECT id, username, display_name, bio, avatar_data, mood, last_seen
+        `SELECT id, username, display_name, bio, avatar_data, avatar_url, mood, last_seen
          FROM users
          WHERE username ILIKE $1 OR display_name ILIKE $1
          ORDER BY last_seen DESC
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
       );
     } else {
       r = await pool.query(
-        `SELECT id, username, display_name, bio, avatar_data, mood, last_seen
+        `SELECT id, username, display_name, bio, avatar_data, avatar_url, mood, last_seen
          FROM users
          ORDER BY last_seen DESC
          LIMIT $1 OFFSET $2`,

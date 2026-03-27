@@ -2,9 +2,10 @@ const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
 const r2          = require('../lib/r2');
+const { awardBadge } = require('../lib/badges');
 
 const PUBLIC_FIELDS = `id, username, display_name, bio, location, mood,
-  song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, created_at, last_seen`;
+  song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, earned_badges, marquee_text, created_at, last_seen`;
 
 // Convertit un base64 data-URI en buffer + contentType
 function parseDataUri(dataUri) {
@@ -30,7 +31,7 @@ router.get('/:username', async (req, res) => {
 
 // PUT /api/profiles/me
 router.put('/me', requireAuth, async (req, res) => {
-  const { display_name, bio, location, mood, song_title, song_artist, skin, avatar_data, audio_data, audio_name, interests } = req.body;
+  const { display_name, bio, location, mood, song_title, song_artist, skin, avatar_data, audio_data, audio_name, interests, marquee_text } = req.body;
   const uid = req.session.userId;
 
   try {
@@ -69,14 +70,25 @@ router.put('/me', requireAuth, async (req, res) => {
          audio_data   = CASE WHEN $10 IS NOT NULL AND $11 IS NULL THEN $10 ELSE audio_data END,
          audio_url    = COALESCE($11,            audio_url),
          audio_name   = COALESCE($12,            audio_name),
-         interests    = COALESCE($13,            interests)
+         interests    = COALESCE($13,            interests),
+         marquee_text = COALESCE($15,            marquee_text)
        WHERE id = $14
        RETURNING ${PUBLIC_FIELDS}`,
       [display_name, bio, location, mood, song_title, song_artist, skin,
        avatar_data || null, avatar_url || null,
        audio_data || null, audio_url || null,
-       audio_name, interests, uid]
+       audio_name, interests, uid,
+       marquee_text !== undefined ? marquee_text : null]
     );
+
+    // Award badges
+    if ((avatar_data && avatar_data !== null) || (avatar_url && avatar_url !== null)) {
+      awardBadge(uid, 'customized');
+    }
+    if ((audio_data && audio_data !== null) || (audio_url && audio_url !== null)) {
+      awardBadge(uid, 'music_lover');
+    }
+
     res.json(r.rows[0]);
   } catch (e) {
     console.error(e);

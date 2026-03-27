@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="emo-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OURSPACE — Musique</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    :root{--bg:#000814;--bg2:#0d0020;--bg3:#140030;--accent:#cc55bb;--accent2:#7744aa;--border:#3a1166;--border2:#1a0044;--text:#e0e0ff;--text-muted:#9977cc;--text-dim:#444466;--card:rgba(13,0,32,0.85);--marquee:#bb7744;--online:#44bb88}
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--marquee:#dd8833;--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--marquee:#00aa33;--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--marquee:#4477cc;--online:#66aaff}
+
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
+    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);min-height:100vh;overflow-x:hidden}
+    #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
+    .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
+    @keyframes sparkAnim{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+    .star{position:fixed;background:var(--text);opacity:.3;border-radius:50%;animation:twinkle ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.5}50%{opacity:.1}}
+
+    /* NAV */
+    #topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:8px 16px;display:flex;align-items:center;gap:12px;position:relative;z-index:10}
+    #topnav a{color:var(--text-muted);text-decoration:none;font-size:12px;font-family:Arial,sans-serif;padding:4px 10px;border:1px solid var(--border2);border-radius:2px;transition:all .2s}
+    #topnav a:hover{color:var(--text);border-color:var(--accent2)}
+    #topnav .brand{color:var(--accent);font-family:Impact,sans-serif;font-size:1.3em;letter-spacing:4px;text-shadow:0 0 6px var(--accent2);margin-right:4px;text-decoration:none;border:none}
+    #topnav .brand:hover{border:none}
+    #nav-user{margin-left:auto;font-size:11px;color:var(--text-dim)}
+    #topnav a[data-soon]{opacity:0.55}
+    #topnav a[data-soon]::after{content:' 🔜';font-size:9px;vertical-align:super}
+
+    @media(max-width:680px){
+      #topnav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      #topnav::-webkit-scrollbar{display:none}
+      #topnav a{white-space:nowrap;flex-shrink:0}
+      #main{padding:8px}
+    }
+
+    /* HEADER */
+    #music-header{text-align:center;padding:22px 16px 16px;position:relative;z-index:1}
+    #music-header h1{font-family:Impact,sans-serif;font-size:2em;color:var(--accent);text-shadow:0 0 8px var(--accent2);letter-spacing:4px}
+    #music-header p{color:var(--text-muted);font-size:12px;margin-top:5px}
+
+    /* MAIN */
+    #main{max-width:720px;margin:0 auto;padding:0 14px 40px;position:relative;z-index:1}
+
+    /* SECTIONS */
+    .section{background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:20px;overflow:hidden;backdrop-filter:blur(4px)}
+    .section-hd{background:linear-gradient(180deg,var(--bg3),var(--bg2));padding:9px 14px;font-family:'Arial Black',sans-serif;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border2)}
+    .section-bd{padding:14px}
+
+    /* MY MUSIC */
+    .my-music-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .music-icon{font-size:28px}
+    .music-info{flex:1}
+    .music-title{color:var(--accent);font-size:15px;font-weight:bold}
+    .music-artist{color:var(--text-muted);font-size:12px;margin-top:2px}
+    .btn-edit{background:var(--bg3);border:1px solid var(--border);color:var(--text-muted);font-size:11px;padding:5px 12px;border-radius:3px;cursor:pointer;font-family:'Comic Sans MS',cursive;transition:all .2s}
+    .btn-edit:hover{border-color:var(--accent);color:var(--accent)}
+
+    .edit-form{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border2)}
+    .edit-form.open{display:block}
+    .edit-form input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 10px;font-family:'Comic Sans MS',cursive;font-size:13px;border-radius:3px;margin-bottom:8px;outline:none}
+    .edit-form input:focus{border-color:var(--accent)}
+    .edit-form input::placeholder{color:var(--text-dim)}
+    .btn-save{background:linear-gradient(180deg,var(--accent2),color-mix(in srgb,var(--accent2) 60%,var(--bg2)));color:var(--text);border:1px solid var(--accent);padding:6px 16px;font-family:'Comic Sans MS',cursive;font-size:12px;border-radius:3px;cursor:pointer;transition:all .2s}
+    .btn-save:hover{background:var(--accent);box-shadow:0 0 8px var(--accent)44}
+
+    /* FRIENDS MUSIC */
+    .friends-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+    .friend-card{background:var(--bg2);border:1px solid var(--border2);border-radius:4px;padding:10px;transition:border-color .2s}
+    .friend-card:hover{border-color:var(--border)}
+    .friend-card-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .friend-av{width:32px;height:32px;border-radius:4px;background:linear-gradient(135deg,var(--bg3),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;border:1px solid var(--border);flex-shrink:0}
+    .friend-av img{width:100%;height:100%;object-fit:cover}
+    .friend-name{color:var(--accent);font-size:12px;font-weight:bold}
+    .friend-song-title{color:var(--text);font-size:12px;font-weight:bold}
+    .friend-song-artist{color:var(--text-muted);font-size:11px;margin-top:2px}
+    .no-music{color:var(--text-dim);font-size:11px;font-style:italic}
+
+    /* COMING SOON BANNER */
+    .coming-soon-banner{text-align:center;padding:18px;color:var(--text-muted);font-size:13px;background:linear-gradient(180deg,var(--bg3),var(--bg2));border-radius:3px}
+    .coming-soon-banner .big{font-size:32px;margin-bottom:8px}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:30px 20px;color:var(--text-dim);font-size:12px}
+
+    /* SKINZ */
+    #skinz-panel{position:fixed;bottom:20px;right:16px;z-index:9000}
+    #skinz-toggle{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 13px;font-size:12px;color:var(--text-muted);cursor:pointer;backdrop-filter:blur(6px)}
+    #skinz-toggle:hover{border-color:var(--accent);color:var(--accent)}
+    #skinz-options{display:none;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px;backdrop-filter:blur(8px)}
+    #skinz-panel.open #skinz-options{display:block}
+    .skin-btn{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-muted);font-family:'Comic Sans MS',cursive;font-size:12px;padding:5px 8px;cursor:pointer;border-radius:3px;margin-bottom:2px;transition:all .2s}
+    .skin-btn:hover{background:var(--bg3);color:var(--text)}
+    .skin-btn.skin-active{color:var(--accent);font-weight:bold}
+  </style>
+</head>
+<body>
+<div id="cursor">🐻</div>
+<div id="stars"></div>
+
+<!-- NAV -->
+<div id="topnav">
+  <a href="/" class="brand">OURSPACE</a>
+  <a href="/">🏠 Accueil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Messages')">💌 Messages</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
+  <span id="nav-user" style="margin-left:auto"></span>
+</div>
+
+<!-- HEADER -->
+<div id="music-header">
+  <h1>🎵 MA MUSIQUE</h1>
+  <p>ce que tu écoutes · ce qu'écoutent tes amis · old web style</p>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- CE QUE J'ÉCOUTE -->
+  <div class="section">
+    <div class="section-hd">🎵 Ce que j'écoute</div>
+    <div class="section-bd">
+      <div class="my-music-row">
+        <div class="music-icon">🎵</div>
+        <div class="music-info">
+          <div class="music-title" id="my-song-title">—</div>
+          <div class="music-artist" id="my-song-artist">—</div>
+        </div>
+        <button class="btn-edit" onclick="toggleEditForm()">✏️ Modifier</button>
+      </div>
+      <div class="edit-form" id="edit-form">
+        <input type="text" id="inp-song-title" placeholder="Titre du morceau…" maxlength="200">
+        <input type="text" id="inp-song-artist" placeholder="Artiste…" maxlength="200">
+        <button class="btn-save" onclick="saveMusic()">💾 Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MES AMIS ÉCOUTENT -->
+  <div class="section">
+    <div class="section-hd">🎵 Mes amis écoutent</div>
+    <div class="section-bd">
+      <div class="friends-grid" id="friends-music-grid"></div>
+      <div id="friends-music-empty" class="empty-state" style="display:none">
+        Aucun ami pour l'instant — <a href="/discover.html" style="color:var(--accent)">Découvrir des membres</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAYLISTS -->
+  <div class="section">
+    <div class="section-hd">🎶 Playlists</div>
+    <div class="section-bd">
+      <div class="coming-soon-banner">
+        <div class="big">🚧</div>
+        Bientôt disponible
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- FOOTER -->
+<div id="page-footer" style="text-align:center;padding:20px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border2);margin-top:8px;position:relative;z-index:1;font-family:'Comic Sans MS',cursive">
+  <div style="color:var(--border);font-size:16px;letter-spacing:8px;margin-bottom:7px">🐻 ✦ 🐻</div>
+  OURSPACE 2026 — <span style="color:var(--accent)">fait avec ♥ et Comic Sans</span><br>
+  <div style="margin-top:5px"><a href="/" style="color:var(--border)">Accueil</a> · <a href="/discover.html" style="color:var(--border)">Découvrir</a> · <a href="/blog.html" style="color:var(--border)">Blog</a></div>
+  <div style="margin-top:8px;color:var(--text-dim);font-size:10px">Best viewed in Netscape Navigator 7 · Les ours ne font pas la guerre.</div>
+</div>
+
+<!-- SKINZ -->
+<div id="skinz-panel">
+  <div id="skinz-options">
+    <button class="skin-btn" data-theme="emo-dark">🖤 Emo Dark</button>
+    <button class="skin-btn" data-theme="bubblegum">🌸 Bubblegum</button>
+    <button class="skin-btn" data-theme="matrix">💾 Matrix</button>
+    <button class="skin-btn" data-theme="midnight">🌙 Midnight</button>
+  </div>
+  <div id="skinz-toggle">🎨 Skinz</div>
+</div>
+
+<script src="js/shared.js"></script>
+<script src="js/api.js"></script>
+<script>
+let ME = null;
+
+// ---- COMING SOON ----
+function comingSoon(e, name) { e.preventDefault(); toast('🚧 ' + name + ' — bientôt disponible !', 'info'); }
+
+// ---- INIT ----
+(async function init() {
+  ME = await requireLogin();
+  if (!ME) return;
+  document.getElementById('nav-user').textContent = '👤 ' + ME.display_name;
+
+  // Affiche la musique de l'utilisateur
+  document.getElementById('my-song-title').textContent  = ME.song_title  || '—';
+  document.getElementById('my-song-artist').textContent = ME.song_artist || '—';
+  document.getElementById('inp-song-title').value  = ME.song_title  || '';
+  document.getElementById('inp-song-artist').value = ME.song_artist || '';
+
+  await loadFriendsMusic();
+})();
+
+// ---- EDIT FORM ----
+function toggleEditForm() {
+  document.getElementById('edit-form').classList.toggle('open');
+}
+
+async function saveMusic() {
+  const song_title  = document.getElementById('inp-song-title').value.trim();
+  const song_artist = document.getElementById('inp-song-artist').value.trim();
+  const { data, error } = await api.updateProfile({ song_title, song_artist });
+  if (error) { toast(error, 'error'); return; }
+  ME = data;
+  document.getElementById('my-song-title').textContent  = ME.song_title  || '—';
+  document.getElementById('my-song-artist').textContent = ME.song_artist || '—';
+  document.getElementById('edit-form').classList.remove('open');
+  toast('🎵 Musique mise à jour !', 'success');
+}
+
+// ---- FRIENDS MUSIC ----
+async function loadFriendsMusic() {
+  const { data, error } = await api.getMyFriends();
+  const grid  = document.getElementById('friends-music-grid');
+  const empty = document.getElementById('friends-music-empty');
+  if (error || !data || !data.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  // Pour chaque ami, charger son profil complet pour avoir song_title / song_artist
+  const profiles = await Promise.all(data.map(f => api.getProfile(f.username)));
+
+  const cards = profiles.map(({ data: p }) => {
+    if (!p) return '';
+    const avEmoji = getAvEmoji(p.username);
+    const avHtml = p.avatar_url
+      ? `<img src="${p.avatar_url}">`
+      : (p.avatar_data ? `<img src="${p.avatar_data}">` : avEmoji);
+    const hasMusic = p.song_title || p.song_artist;
+    return `
+      <div class="friend-card">
+        <div class="friend-card-top">
+          <div class="friend-av">${avHtml}</div>
+          <div class="friend-name">${esc(p.display_name || p.username)}</div>
+        </div>
+        ${hasMusic
+          ? `<div class="friend-song-title">🎵 ${esc(p.song_title || '—')}</div>
+             <div class="friend-song-artist">${esc(p.song_artist || '—')}</div>`
+          : `<div class="no-music">Aucune musique renseignée</div>`
+        }
+      </div>`;
+  }).join('');
+
+  grid.innerHTML = cards || '<div class="empty-state">Aucune info musique disponible</div>';
+}
+
+// ---- UTILS ----
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function getAvEmoji(name) {
+  const emojis = ['🦊','🤖','🌙','🐻','🦋','⚡','🔥','🌊','⭐','🐺','🌸','🎸'];
+  let h = 0; for (const c of String(name)) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return emojis[h % emojis.length];
+}
+</script>
+</body>
+</html>

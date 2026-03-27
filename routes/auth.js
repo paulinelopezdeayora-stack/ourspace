@@ -1,6 +1,7 @@
 const router      = require('express').Router();
 const bcrypt      = require('bcryptjs');
 const { pool }    = require('../db');
+const { awardBadge } = require('../lib/badges');
 async function sendWelcomeEmail(to, displayName, username) {
   const key = process.env.RESEND_KEY;
   if (!key) return;
@@ -113,6 +114,9 @@ router.post('/register', async (req, res) => {
       }
     } catch (_) { /* non-bloquant */ }
 
+    // Badge de bienvenue (non-bloquant)
+    awardBadge(r.rows[0].id, 'joined');
+
     // Email de bienvenue (non-bloquant)
     sendWelcomeEmail(email.toLowerCase().trim(), r.rows[0].display_name, r.rows[0].username);
 
@@ -166,7 +170,7 @@ router.get('/me', async (req, res) => {
   try {
     const r = await pool.query(
       `SELECT id, username, display_name, bio, location, mood,
-              song_title, song_artist, avatar_data, audio_data, audio_name, skin, created_at, last_seen
+              song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, marquee_text, earned_badges, created_at, last_seen
        FROM users WHERE id = $1`,
       [req.session.userId]
     );

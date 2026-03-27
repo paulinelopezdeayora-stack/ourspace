@@ -43,6 +43,7 @@
 
     /* ===== MARQUEE ===== */
     .mq-wrap{background:var(--bg2);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:4px 0;overflow:hidden;position:relative;z-index:10}
+    .mq-wrap:hover #mq-edit-btn{opacity:1!important}
     .mq-inner{display:inline-block;white-space:nowrap;animation:mqScroll 50s linear infinite;font-size:12px;font-weight:bold;color:var(--marquee)}
     @keyframes mqScroll{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
 
@@ -50,6 +51,8 @@
     #navbar{background:var(--bg2);display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border2);position:relative;z-index:10}
     #navbar a{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border2);font-size:11px;font-family:Arial,sans-serif;border-radius:2px;transition:all .2s}
     #navbar a:hover{background:var(--accent2);color:var(--text);border-color:var(--accent2)}
+    #navbar a[data-soon]{opacity:0.55}
+    #navbar a[data-soon]::after{content:' 🔜';font-size:9px;vertical-align:super}
 
     /* ===== MAIN ===== */
     #main{max-width:1020px;margin:14px auto;padding:0 12px;position:relative;z-index:1}
@@ -224,6 +227,11 @@
     .blog-meta{color:var(--text-dim);font-size:10px;margin:4px 0 7px}
     .blog-body{color:var(--text-muted);font-size:12px;line-height:1.7}
 
+    /* ===== BADGES ===== */
+    .badges-row{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
+    .badge{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:3px 10px;font-size:11px;color:var(--text-muted);cursor:default;transition:all .2s}
+    .badge:hover{border-color:var(--accent);color:var(--accent)}
+
     /* ===== FOOTER ===== */
     #footer{text-align:center;padding:20px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border2);margin-top:8px;position:relative;z-index:1}
     #footer a{color:var(--border)}
@@ -234,6 +242,13 @@
       .friends-grid{grid-template-columns:repeat(4,1fr)}
       #site-title{font-size:2em;letter-spacing:4px}
       #user-badge{position:static;margin-top:8px;justify-content:center}
+    }
+    @media(max-width:680px){
+      #navbar{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      #navbar::-webkit-scrollbar{display:none}
+      #navbar a{white-space:nowrap;flex-shrink:0}
+      #main{padding:8px}
+      .two-col{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -270,8 +285,9 @@
 </div>
 
 <!-- MARQUEE -->
-<div class="mq-wrap">
-  <span class="mq-inner">🐻 BIENVENUE SUR OURSPACE 🐻 ✦ la guerre c'est nul ✦ make love not war ✦ MCR saved my life ✦ PEACE &amp; LOVE ✦ anti-war ✦ la musique guérit tout ✦ listening to: welcome to the black parade ✦ mood: sad but aesthetic ✦ HTML comme thérapie ✦ 2026 is chaotic ✦ besoin de paix ✦ les ours ne font pas la guerre 🐻 ✦</span>
+<div class="mq-wrap" id="mq-wrap" style="position:relative">
+  <span class="mq-inner" id="mq-text">🐻 BIENVENUE SUR OURSPACE 🐻 ✦ la guerre c'est nul ✦ make love not war ✦ MCR saved my life ✦ PEACE &amp; LOVE ✦ anti-war ✦ la musique guérit tout ✦ listening to: welcome to the black parade ✦ mood: sad but aesthetic ✦ HTML comme thérapie ✦ 2026 is chaotic ✦ besoin de paix ✦ les ours ne font pas la guerre 🐻 ✦</span>
+  <button id="mq-edit-btn" onclick="editMarquee()" title="Modifier le texte du marquee" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);font-size:12px;cursor:pointer;opacity:0;transition:opacity .2s;padding:2px 4px">✏️</button>
 </div>
 
 <!-- NAVBAR -->
@@ -279,10 +295,10 @@
   <a href="/">🏠 Accueil</a>
   <a href="/discover.html">🔍 Découvrir</a>
   <a href="/blog.html">📝 Blog</a>
-  <a href="#" onclick="comingSoon(event,'Musique')">🎵 Musique</a>
-  <a href="#" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
-  <a href="#" onclick="comingSoon(event,'Messages')">💌 Messages</a>
-  <a href="#" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Messages')">💌 Messages</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
 </div>
 
 <!-- MAIN -->
@@ -311,6 +327,8 @@
         <tr><td>Membre depuis :</td><td id="stat-since">—</td></tr>
         <tr><td>Amis :</td>       <td><span id="friend-count">…</span> · <a href="discover.html">Ajouter</a></td></tr>
       </table>
+
+      <div id="badges-row" class="badges-row"></div>
 
       <!-- REAL AUDIO PLAYER -->
       <div id="audio-player" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)" onclick="document.getElementById('file-input').click()">
@@ -485,6 +503,10 @@ let ME = null;
   if (ME.avatar_url || ME.avatar_data) showAvatar(ME.avatar_url || ME.avatar_data);
   if (ME.bio) aboutEl.innerHTML = ME.bio;
   if (ME.audio_url || ME.audio_data) restoreAudio(ME.audio_url || ME.audio_data, ME.audio_name || '');
+  if (ME.marquee_text) {
+    const mqEl = document.getElementById('mq-text');
+    if (mqEl) mqEl.textContent = ME.marquee_text;
+  }
 
   // Blog author name + date
   const blogName = document.getElementById('blog-author-name');
@@ -497,9 +519,30 @@ let ME = null;
 
   populateStats();
   renderInterests();
+  renderBadges();
   loadFriends();
   loadComments();
 })();
+
+// ===== BADGES =====
+function renderBadges() {
+  const BADGE_DEFS = {
+    joined:       { icon: '🐻', label: 'Pionnier·e',    desc: 'A rejoint Ourspace' },
+    first_post:   { icon: '✍️', label: 'Auteur·e',      desc: 'A publié son premier post' },
+    first_friend: { icon: '🤝', label: 'Social·e',      desc: 'A ajouté son premier ami' },
+    customized:   { icon: '🎨', label: 'Artiste',       desc: 'A personnalisé son profil' },
+    music_lover:  { icon: '🎵', label: 'Mélomane',      desc: 'A ajouté une musique' },
+  };
+  const row = document.getElementById('badges-row');
+  if (!row || !ME.earned_badges) return;
+  let badges = [];
+  try { badges = JSON.parse(ME.earned_badges); } catch(e) {}
+  row.innerHTML = badges.map(k => {
+    const b = BADGE_DEFS[k];
+    if (!b) return '';
+    return `<span class="badge" title="${b.desc}">${b.icon} ${b.label}</span>`;
+  }).join('');
+}
 
 // ===== COUNTER =====
 (function(){
@@ -538,6 +581,19 @@ function toggleEditAbout() {
     aboutEl.focus();
     document.getElementById('edit-about-btn').textContent = '💾 Sauvegarder';
   }
+}
+
+// ===== MARQUEE (éditable) =====
+async function editMarquee() {
+  const mqEl = document.getElementById('mq-text');
+  const current = mqEl ? mqEl.textContent : '';
+  const val = prompt('Texte du marquee :', current);
+  if (val === null) return;
+  const { data, error } = await api.updateProfile({ marquee_text: val });
+  if (error) { toast(error, 'error'); return; }
+  if (mqEl) mqEl.textContent = val || '🐻 BIENVENUE SUR OURSPACE 🐻';
+  ME = data;
+  toast('✓ Marquee mis à jour !', 'success');
 }
 
 // ===== STATUS (editable + API) =====

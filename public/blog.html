@@ -24,6 +24,8 @@
     #topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:8px 16px;display:flex;align-items:center;gap:12px;position:relative;z-index:10}
     #topnav a{color:var(--text-muted);text-decoration:none;font-size:12px;font-family:Arial,sans-serif;padding:4px 10px;border:1px solid var(--border2);border-radius:2px;transition:all .2s}
     #topnav a:hover{color:var(--text);border-color:var(--accent2)}
+    #topnav a[data-soon]{opacity:0.55}
+    #topnav a[data-soon]::after{content:' 🔜';font-size:9px;vertical-align:super}
     #topnav .brand{color:var(--accent);font-family:Impact,sans-serif;font-size:1.3em;letter-spacing:4px;text-shadow:0 0 6px var(--accent2);margin-right:4px;text-decoration:none;border:none}
     #topnav .brand:hover{border:none}
     #nav-user{margin-left:auto;font-size:11px;color:var(--text-dim)}
@@ -122,6 +124,13 @@
     .skin-btn{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-muted);font-family:'Comic Sans MS',cursive;font-size:12px;padding:5px 8px;cursor:pointer;border-radius:3px;margin-bottom:2px;transition:all .2s}
     .skin-btn:hover{background:var(--bg3);color:var(--text)}
     .skin-btn.skin-active{color:var(--accent);font-weight:bold}
+
+    @media(max-width:680px){
+      #topnav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      #topnav::-webkit-scrollbar{display:none}
+      #topnav a{white-space:nowrap;flex-shrink:0}
+      #main{padding:8px}
+    }
   </style>
 </head>
 <body>
@@ -134,9 +143,9 @@
   <a href="/">🏠 Accueil</a>
   <a href="/discover.html">🔍 Découvrir</a>
   <a href="/blog.html">📝 Blog</a>
-  <a href="#" onclick="comingSoon(event,'Musique')">🎵 Musique</a>
-  <a href="#" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
-  <a href="#" onclick="comingSoon(event,'Messages')">💌 Messages</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Messages')">💌 Messages</a>
   <span id="nav-user" style="margin-left:auto"></span>
 </div>
 
