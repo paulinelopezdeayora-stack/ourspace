@@ -1,6 +1,69 @@
-const router   = require('express').Router();
-const bcrypt   = require('bcryptjs');
-const { pool } = require('../db');
+const router      = require('express').Router();
+const bcrypt      = require('bcryptjs');
+const { pool }    = require('../db');
+const { Resend }  = require('resend');
+const resend      = new Resend(process.env.RESEND_API_KEY);
+
+async function sendWelcomeEmail(to, displayName, username) {
+  if (!process.env.RESEND_API_KEY) return;
+  try {
+    await resend.emails.send({
+      from: 'OURSPACE <onboarding@resend.dev>',
+      to,
+      subject: '🐻 Bienvenue sur OURSPACE !',
+      html: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+  body{background:#000814;margin:0;padding:0;font-family:'Comic Sans MS',cursive}
+  .wrap{max-width:520px;margin:30px auto;background:#0d0020;border:2px solid #3a1166;border-radius:6px;overflow:hidden}
+  .hd{background:linear-gradient(180deg,#140030,#0d0020);padding:28px 24px;text-align:center;border-bottom:1px solid #3a1166}
+  .title{font-family:Impact,sans-serif;font-size:2.4em;letter-spacing:6px;color:#cc55bb;text-shadow:0 0 8px #7744aa;margin:0}
+  .tagline{color:#9977cc;font-size:11px;letter-spacing:2px;margin-top:6px}
+  .body{padding:28px 28px 20px;color:#e0e0ff;font-size:14px;line-height:1.8}
+  .name{color:#cc55bb;font-size:1.2em;font-weight:bold}
+  .bear{font-size:2em;display:block;text-align:center;margin:14px 0}
+  .btn{display:block;width:fit-content;margin:20px auto;background:linear-gradient(180deg,#3a1166,#1a0044);color:#cc55bb;text-decoration:none;padding:10px 28px;border:1px solid #cc55bb;border-radius:3px;font-family:'Comic Sans MS',cursive;font-size:13px;text-align:center}
+  .footer{text-align:center;padding:14px;color:#444466;font-size:11px;border-top:1px solid #1a0044}
+  .blink{animation:blink 1.4s step-end infinite}
+  @keyframes blink{50%{opacity:0.3}}
+  .stars{color:#9977cc;letter-spacing:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <div class="title">✦ OURSPACE ✦</div>
+    <div class="tagline">notre espace. notre paix. ♥ old web revival 2026</div>
+  </div>
+  <div class="body">
+    <span class="bear">🐻</span>
+    <p>Salut <span class="name">${displayName}</span> !</p>
+    <p>Bienvenue sur <strong style="color:#cc55bb">OURSPACE</strong> — le seul réseau social où les ours ne font pas la guerre. 🕊️</p>
+    <p>Ton compte <strong style="color:#9977cc">@${username}</strong> est prêt. Tu peux maintenant :</p>
+    <ul style="color:#9977cc;padding-left:18px">
+      <li>🎵 Mettre ta musique de profil</li>
+      <li>📸 Uploader ta photo</li>
+      <li>💬 Laisser des commentaires sur les profils</li>
+      <li>👥 Découvrir d'autres membres</li>
+      <li>🎨 Choisir ton skin (Emo Dark, Bubblegum, Matrix…)</li>
+    </ul>
+    <a class="btn" href="https://ourspace-production-3dbb.up.railway.app">→ Accéder à mon profil</a>
+    <p style="color:#444466;font-size:11px;text-align:center">Les années 2000 c'était pas parfait mais on avait le Top 8.<br>Maintenant on a Ourspace. <span class="stars">★ ★ ★</span></p>
+  </div>
+  <div class="footer">
+    OURSPACE 2026 — fait avec ♥ et Comic Sans<br>
+    Les ours ne font pas la guerre.
+  </div>
+</div>
+</body>
+</html>`,
+    });
+  } catch (e) {
+    console.warn('Email de bienvenue non envoyé :', e.message);
+  }
+}
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
@@ -42,6 +105,9 @@ router.post('/register', async (req, res) => {
         );
       }
     } catch (_) { /* non-bloquant */ }
+
+    // Email de bienvenue (non-bloquant)
+    sendWelcomeEmail(email.toLowerCase().trim(), r.rows[0].display_name, r.rows[0].username);
 
     res.json({ ok: true, user: r.rows[0] });
   } catch (e) {
