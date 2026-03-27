@@ -1,9 +1,17 @@
 const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
+const r2          = require('../lib/r2');
 
 const PUBLIC_FIELDS = `id, username, display_name, bio, location, mood,
-  song_title, song_artist, avatar_data, audio_data, audio_name, skin, interests, created_at, last_seen`;
+  song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, created_at, last_seen`;
+
+// Convertit un base64 data-URI en buffer + contentType
+function parseDataUri(dataUri) {
+  const m = dataUri.match(/^data:([^;]+);base64,(.+)$/);
+  if (!m) return null;
+  return { contentType: m[1], buffer: Buffer.from(m[2], 'base64') };
+}
 
 // GET /api/profiles/:username
 router.get('/:username', async (req, res) => {
@@ -23,8 +31,30 @@ router.get('/:username', async (req, res) => {
 // PUT /api/profiles/me
 router.put('/me', requireAuth, async (req, res) => {
   const { display_name, bio, location, mood, song_title, song_artist, skin, avatar_data, audio_data, audio_name, interests } = req.body;
+  const uid = req.session.userId;
 
   try {
+    let avatar_url = undefined;
+    let audio_url  = undefined;
+
+    // Upload avatar vers R2 si base64 fourni et R2 configuré
+    if (avatar_data && avatar_data.startsWith('data:') && process.env.R2_ENDPOINT) {
+      const parsed = parseDataUri(avatar_data);
+      if (parsed) {
+        const ext = parsed.contentType.split('/')[1] || 'jpg';
+        avatar_url = await r2.upload(`avatar_${uid}.${ext}`, parsed.buffer, parsed.contentType);
+      }
+    }
+
+    // Upload audio vers R2 si base64 fourni et R2 configuré
+    if (audio_data && audio_data.startsWith('data:') && process.env.R2_ENDPOINT) {
+      const parsed = parseDataUri(audio_data);
+      if (parsed) {
+        const ext = parsed.contentType.split('/')[1] || 'mp3';
+        audio_url = await r2.upload(`audio_${uid}.${ext}`, parsed.buffer, parsed.contentType);
+      }
+    }
+
     const r = await pool.query(
       `UPDATE users SET
          display_name = COALESCE(NULLIF($1,''),  display_name),
@@ -34,13 +64,18 @@ router.put('/me', requireAuth, async (req, res) => {
          song_title   = COALESCE(NULLIF($5,''),  song_title),
          song_artist  = COALESCE(NULLIF($6,''),  song_artist),
          skin         = COALESCE(NULLIF($7,''),  skin),
-         avatar_data  = COALESCE($8,             avatar_data),
-         audio_data   = COALESCE($9,             audio_data),
-         audio_name   = COALESCE($10,            audio_name),
-         interests    = COALESCE($11,            interests)
-       WHERE id = $12
+         avatar_data  = CASE WHEN $8 IS NOT NULL AND $9 IS NULL THEN $8 ELSE avatar_data END,
+         avatar_url   = COALESCE($9,             avatar_url),
+         audio_data   = CASE WHEN $10 IS NOT NULL AND $11 IS NULL THEN $10 ELSE audio_data END,
+         audio_url    = COALESCE($11,            audio_url),
+         audio_name   = COALESCE($12,            audio_name),
+         interests    = COALESCE($13,            interests)
+       WHERE id = $14
        RETURNING ${PUBLIC_FIELDS}`,
-      [display_name, bio, location, mood, song_title, song_artist, skin, avatar_data, audio_data, audio_name, interests, req.session.userId]
+      [display_name, bio, location, mood, song_title, song_artist, skin,
+       avatar_data || null, avatar_url || null,
+       audio_data || null, audio_url || null,
+       audio_name, interests, uid]
     );
     res.json(r.rows[0]);
   } catch (e) {
@@ -52,7 +87,13 @@ router.put('/me', requireAuth, async (req, res) => {
 // DELETE /api/profiles/me/audio
 router.delete('/me/audio', requireAuth, async (req, res) => {
   try {
-    await pool.query(`UPDATE users SET audio_data = NULL, audio_name = '' WHERE id = $1`, [req.session.userId]);
+    const uid = req.session.userId;
+    if (process.env.R2_ENDPOINT) {
+      const u = await pool.query('SELECT audio_url FROM users WHERE id = $1', [uid]);
+      const url = u.rows[0]?.audio_url;
+      if (url) await r2.remove(url.replace('/api/media/', ''));
+    }
+    await pool.query(`UPDATE users SET audio_data = NULL, audio_url = NULL, audio_name = '' WHERE id = $1`, [uid]);
     res.json({ ok: true });
   } catch (e) {
     console.error(e);

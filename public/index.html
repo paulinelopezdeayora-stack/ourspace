@@ -483,9 +483,9 @@ let ME = null;
   if (ME.mood) statusEl.textContent = ME.mood;
 
   if (ME.skin) { document.documentElement.dataset.theme = ME.skin; updateSkinButtons(ME.skin); }
-  if (ME.avatar_data) showAvatar(ME.avatar_data);
+  if (ME.avatar_url || ME.avatar_data) showAvatar(ME.avatar_url || ME.avatar_data);
   if (ME.bio) aboutEl.innerHTML = ME.bio;
-  if (ME.audio_data) restoreAudio(ME.audio_data, ME.audio_name || '');
+  if (ME.audio_url || ME.audio_data) restoreAudio(ME.audio_url || ME.audio_data, ME.audio_name || '');
 
   // Blog author name + date
   const blogName = document.getElementById('blog-author-name');
@@ -786,7 +786,7 @@ async function loadFriends() {
   const top = data.filter(f=>f.position).sort((a,b)=>a.position-b.position).concat(data.filter(f=>!f.position)).slice(0,8);
   grid.innerHTML = '';
   top.forEach((f,i) => {
-    const av = f.avatar_data ? `<img src="${f.avatar_data}" style="width:100%;height:100%;object-fit:cover;border-radius:3px">` : '👤';
+    const av = (f.avatar_url || f.avatar_data) ? `<img src="${f.avatar_url || f.avatar_data}" style="width:100%;height:100%;object-fit:cover;border-radius:3px">` : '👤';
     const div = document.createElement('div'); div.className='friend';
     div.innerHTML = `<a class="friend-av" href="/profile.html?u=${f.username}" style="background:${GRADS[i%GRADS.length]};overflow:hidden">${av}</a><a class="friend-name" href="/profile.html?u=${f.username}">${f.display_name}</a>`;
     grid.appendChild(div);

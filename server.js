@@ -39,6 +39,7 @@ app.use('/api/comments', require('./routes/comments'));
 app.use('/api/friends',  require('./routes/friends'));
 app.use('/api/discover', require('./routes/discover'));
 app.use('/api/posts',    require('./routes/posts'));
+app.use('/api/media',    require('./routes/media'));
 
 // Toutes les autres routes → frontend (SPA-style)
 app.get('*', (req, res) => {
@@ -68,7 +69,9 @@ async function initDB() {
     );
     ALTER TABLE users ADD COLUMN IF NOT EXISTS audio_data TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS audio_name VARCHAR(255) DEFAULT '';
-    ALTER TABLE users ADD COLUMN IF NOT EXISTS interests TEXT DEFAULT NULL;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS interests  TEXT DEFAULT NULL;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500) DEFAULT NULL;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS audio_url  VARCHAR(500) DEFAULT NULL;
     CREATE TABLE IF NOT EXISTS friends (
       id SERIAL PRIMARY KEY,
       user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
