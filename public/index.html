@@ -130,7 +130,10 @@
     .int-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .int-item{background:color-mix(in srgb,var(--accent2) 10%,transparent);border:1px solid var(--border);border-radius:3px;padding:7px}
     .int-item h4{color:var(--accent);font-size:11px;text-transform:uppercase;margin-bottom:3px}
-    .int-item p{color:var(--text-muted);font-size:12px}
+    .int-item p{color:var(--text-muted);font-size:12px;min-height:16px}
+    .int-item [contenteditable]:hover{outline:1px dashed var(--accent);border-radius:2px;cursor:text}
+    .int-item [contenteditable]:focus{outline:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);border-radius:2px;padding:1px 3px}
+    .int-item p:empty:before{content:attr(data-ph);color:var(--text-muted);opacity:0.4;font-style:italic;pointer-events:none}
 
     /* ===== COUNTER ===== */
     #counter-wrap{text-align:center;padding:8px}
@@ -365,24 +368,17 @@
       <div class="box">
         <div class="box-hd">🐻 Centres d'Intérêt</div>
         <div class="box-bd">
-          <div class="int-grid">
-            <div class="int-item"><h4>🎵 Musique</h4><p>MCR, Evanescence, Linkin Park, Daft Punk</p></div>
-            <div class="int-item"><h4>🎮 Jeux</h4><p>Flash games RIP 😢, retro FPS, abandonware</p></div>
-            <div class="int-item"><h4>💻 Tech</h4><p>HTML/CSS/JS pur, old web revival, sites inutiles mais beaux</p></div>
-            <div class="int-item"><h4>📚 Lectures</h4><p>Orwell, Camus, mangas, fanfictions (honteuses)</p></div>
-            <div class="int-item"><h4>🎬 Films</h4><p>Matrix, The Crow, Hackers 1995, grain 35mm</p></div>
-            <div class="int-item"><h4>☮️ Opinions</h4><p>Contre la guerre. Pro-paix. Pro-CSS.</p></div>
-          </div>
+          <div class="int-grid" id="int-grid"></div>
         </div>
       </div>
 
       <!-- Blog -->
       <div class="box">
-        <div class="box-hd">🐻 Dernier Billet <a href="#">Voir tout »</a></div>
+        <div class="box-hd">🐻 Dernier Billet de <span id="blog-author-name"></span></div>
         <div class="box-bd">
-          <div class="blog-title">"pourquoi j'ai recréé MySpace en 2026"</div>
-          <div class="blog-meta">14 mars 2026 · 03h47 · 42 commentaires</div>
-          <div class="blog-body">Je dormais pas. L'actu était trop lourde. J'ai ouvert mon éditeur et j'ai juste… commencé. Y'a un truc magique dans le fait de construire quelque chose avec du HTML brut en pleine nuit.<br><br>Et puis "OUR" + "OURS" — notre espace, l'espace des ours. <span class="blink" style="color:var(--marquee)">Les ours ne font pas la guerre.</span> <a href="#" style="color:var(--accent)">Lire la suite…</a></div>
+          <div class="blog-title">"pourquoi j'ai rejoint OURSPACE"</div>
+          <div class="blog-meta" id="blog-meta-date"></div>
+          <div class="blog-body">Premier post. Je sais pas trop quoi écrire. <span class="blink" style="color:var(--marquee)">Les ours ne font pas la guerre.</span> <a href="#" style="color:var(--accent)">Lire la suite…</a></div>
         </div>
       </div>
     </div><!-- /left -->
@@ -491,7 +487,17 @@ let ME = null;
   if (ME.bio) aboutEl.innerHTML = ME.bio;
   if (ME.audio_data) restoreAudio(ME.audio_data, ME.audio_name || '');
 
+  // Blog author name + date
+  const blogName = document.getElementById('blog-author-name');
+  if (blogName) blogName.textContent = ME.display_name || ME.username;
+  const blogDate = document.getElementById('blog-meta-date');
+  if (blogDate && ME.created_at) {
+    const d = new Date(ME.created_at);
+    blogDate.textContent = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · 0 commentaires';
+  }
+
   populateStats();
+  renderInterests();
   loadFriends();
   loadComments();
 })();
@@ -844,6 +850,56 @@ function makeStatEditable(td) {
   };
   input.addEventListener('blur', save);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
+}
+
+// ===== INTERESTS =====
+const DEFAULT_INTERESTS = [
+  { title: '🎵 Musique',   text: '' },
+  { title: '🎮 Jeux',      text: '' },
+  { title: '💻 Tech',      text: '' },
+  { title: '📚 Lectures',  text: '' },
+  { title: '🎬 Films',     text: '' },
+  { title: '☮️ Opinions',  text: '' },
+];
+
+function renderInterests() {
+  const grid = document.getElementById('int-grid');
+  if (!grid) return;
+  let items = DEFAULT_INTERESTS.map(d => ({ ...d }));
+  if (ME.interests) { try { items = JSON.parse(ME.interests); } catch(e) {} }
+  grid.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'int-item';
+    const h4 = document.createElement('h4');
+    h4.contentEditable = 'true';
+    h4.textContent = item.title;
+    const p = document.createElement('p');
+    p.contentEditable = 'true';
+    p.dataset.ph = 'Clique pour remplir…';
+    p.textContent = item.text;
+    div.appendChild(h4);
+    div.appendChild(p);
+    grid.appendChild(div);
+    const onBlur = () => saveInterests();
+    const onKey  = e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } };
+    h4.addEventListener('blur', onBlur);
+    h4.addEventListener('keydown', onKey);
+    p.addEventListener('blur', onBlur);
+    p.addEventListener('keydown', onKey);
+  });
+}
+
+function saveInterests() {
+  const grid = document.getElementById('int-grid');
+  if (!grid) return;
+  const items = [...grid.querySelectorAll('.int-item')].map(div => ({
+    title: div.querySelector('h4').textContent.trim(),
+    text:  div.querySelector('p').textContent.trim(),
+  }));
+  const json = JSON.stringify(items);
+  ME.interests = json;
+  api.updateProfile({ interests: json }).then(({ error }) => { if (error) toast(error, 'error'); });
 }
 
 // ===== SKINZ =====

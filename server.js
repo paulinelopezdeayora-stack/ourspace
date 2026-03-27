@@ -67,6 +67,7 @@ async function initDB() {
     );
     ALTER TABLE users ADD COLUMN IF NOT EXISTS audio_data TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS audio_name VARCHAR(255) DEFAULT '';
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS interests TEXT DEFAULT NULL;
     CREATE TABLE IF NOT EXISTS friends (
       id SERIAL PRIMARY KEY,
       user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

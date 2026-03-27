@@ -27,8 +27,9 @@ const api = (() => {
     me:         ()     => req('GET',  '/api/auth/me'),
 
     // Profils
-    getProfile:    (username) => req('GET',  `/api/profiles/${username}`),
-    updateProfile: (body)     => req('PUT',  '/api/profiles/me', body),
+    getProfile:    (username) => req('GET',    `/api/profiles/${username}`),
+    updateProfile: (body)     => req('PUT',    '/api/profiles/me', body),
+    deleteAudio:   ()         => req('DELETE', '/api/profiles/me/audio'),
 
     // Commentaires
     getComments:   (username) => req('GET',    `/api/comments/${username}`),

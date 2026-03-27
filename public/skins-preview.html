@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Skins Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #000; font-family: 'Comic Sans MS', cursive; padding: 20px; }
+  h1 { text-align: center; color: #888; font-size: 13px; letter-spacing: 3px; margin-bottom: 20px; font-family: Arial, sans-serif; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 900px; margin: 0 auto; }
+
+  /* ===== SKIN CARD ===== */
+  .card { border-radius: 6px; overflow: hidden; border: 2px solid; }
+  .card-hd { padding: 12px 16px; text-align: center; border-bottom: 1px solid; }
+  .card-title { font-family: Impact, sans-serif; font-size: 1.6em; letter-spacing: 5px; }
+  .card-tag { font-size: 10px; letter-spacing: 2px; margin-top: 3px; }
+  .card-body { padding: 14px 16px; font-size: 12px; line-height: 1.9; }
+  .card-row { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+  .avatar { width: 48px; height: 48px; border-radius: 5px; border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .info { flex: 1; }
+  .uname { font-size: 14px; font-weight: bold; }
+  .status { font-size: 11px; font-style: italic; }
+  .bar { height: 8px; border-radius: 4px; margin: 10px 0 6px; }
+  .tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .tag { padding: 2px 8px; border-radius: 2px; font-size: 10px; border: 1px solid; font-weight: bold; text-transform: uppercase; }
+  .btn { display: inline-block; margin-top: 10px; padding: 5px 14px; border: 1px solid; border-radius: 3px; font-family: 'Comic Sans MS', cursive; font-size: 11px; text-decoration: none; }
+  .skin-label { font-size: 11px; text-align: center; padding: 6px; border-top: 1px solid; font-family: Arial, sans-serif; letter-spacing: 1px; }
+
+  /* ===== EMO DARK ===== */
+  .emo { border-color: #3a1166; background: #0d0020; }
+  .emo .card-hd { background: linear-gradient(180deg,#140030,#0d0020); border-color: #3a1166; }
+  .emo .card-title { color: #cc55bb; text-shadow: 0 0 8px #7744aa; }
+  .emo .card-tag { color: #9977cc; }
+  .emo .card-body { color: #e0e0ff; }
+  .emo .avatar { border-color: #3a1166; background: linear-gradient(135deg,#140030,#7744aa); }
+  .emo .uname { color: #cc55bb; }
+  .emo .status { color: #9977cc; }
+  .emo .bar { background: linear-gradient(90deg,#cc55bb,#7744aa); }
+  .emo .tag { border-color: #3a1166; color: #cc55bb; background: #160026; }
+  .emo .btn { border-color: #cc55bb; color: #cc55bb; background: #140030; }
+  .emo .skin-label { color: #9977cc; border-color: #1a0044; background: #0d0020; }
+
+  /* ===== BUBBLEGUM ===== */
+  .bubble { border-color: #661133; background: #200012; }
+  .bubble .card-hd { background: linear-gradient(180deg,#300020,#200012); border-color: #661133; }
+  .bubble .card-title { color: #ff77bb; text-shadow: 0 0 8px #cc4488; }
+  .bubble .card-tag { color: #cc8899; }
+  .bubble .card-body { color: #ffe8f5; }
+  .bubble .avatar { border-color: #661133; background: linear-gradient(135deg,#300020,#cc4488); }
+  .bubble .uname { color: #ff77bb; }
+  .bubble .status { color: #cc8899; }
+  .bubble .bar { background: linear-gradient(90deg,#ff77bb,#cc4488); }
+  .bubble .tag { border-color: #661133; color: #ff77bb; background: #160008; }
+  .bubble .btn { border-color: #ff77bb; color: #ff77bb; background: #300020; }
+  .bubble .skin-label { color: #cc8899; border-color: #330018; background: #200012; }
+
+  /* ===== MATRIX ===== */
+  .matrix { border-color: #003311; background: #000c00; }
+  .matrix .card-hd { background: linear-gradient(180deg,#001200,#000c00); border-color: #003311; }
+  .matrix .card-title { color: #00cc44; text-shadow: 0 0 8px #008833; }
+  .matrix .card-tag { color: #55aa66; }
+  .matrix .card-body { color: #ccffdd; }
+  .matrix .avatar { border-color: #003311; background: linear-gradient(135deg,#001200,#008833); }
+  .matrix .uname { color: #00cc44; }
+  .matrix .status { color: #55aa66; }
+  .matrix .bar { background: linear-gradient(90deg,#00cc44,#008833); }
+  .matrix .tag { border-color: #003311; color: #00cc44; background: #001000; }
+  .matrix .btn { border-color: #00cc44; color: #00cc44; background: #001200; }
+  .matrix .skin-label { color: #55aa66; border-color: #001a08; background: #000c00; }
+
+  /* ===== MIDNIGHT ===== */
+  .midnight { border-color: #112255; background: #000d22; }
+  .midnight .card-hd { background: linear-gradient(180deg,#001030,#000d22); border-color: #112255; }
+  .midnight .card-title { color: #5599ff; text-shadow: 0 0 8px #3366cc; }
+  .midnight .card-tag { color: #7799cc; }
+  .midnight .card-body { color: #cce0ff; }
+  .midnight .avatar { border-color: #112255; background: linear-gradient(135deg,#001030,#3366cc); }
+  .midnight .uname { color: #5599ff; }
+  .midnight .status { color: #7799cc; }
+  .midnight .bar { background: linear-gradient(90deg,#5599ff,#3366cc); }
+  .midnight .tag { border-color: #112255; color: #5599ff; background: #000818; }
+  .midnight .btn { border-color: #5599ff; color: #5599ff; background: #001030; }
+  .midnight .skin-label { color: #7799cc; border-color: #08102a; background: #000d22; }
+</style>
+</head>
+<body>
+<h1>✦ OURSPACE — LES 4 SKINS ✦</h1>
+<div class="grid">
+
+  <!-- EMO DARK -->
+  <div class="card emo">
+    <div class="card-hd">
+      <div class="card-title">✦ OURSPACE ✦</div>
+      <div class="card-tag">notre espace. notre paix. ♥</div>
+    </div>
+    <div class="card-body">
+      <div class="card-row">
+        <div class="avatar">🦋</div>
+        <div class="info">
+          <div class="uname">✦ poppy fusee ✦</div>
+          <div class="status">🐻 "les guerres passent, le HTML reste"</div>
+        </div>
+      </div>
+      <div class="bar"></div>
+      <div class="tags">
+        <span class="tag">☮ peace</span>
+        <span class="tag">♥ mcr fan</span>
+        <span class="tag">🐻 ourspace</span>
+        <span class="tag">💻 coder</span>
+      </div>
+      <a class="btn" href="#">→ Voir le profil</a>
+    </div>
+    <div class="skin-label">🖤 EMO DARK</div>
+  </div>
+
+  <!-- BUBBLEGUM -->
+  <div class="card bubble">
+    <div class="card-hd">
+      <div class="card-title">✦ OURSPACE ✦</div>
+      <div class="card-tag">notre espace. notre paix. ♥</div>
+    </div>
+    <div class="card-body">
+      <div class="card-row">
+        <div class="avatar">🦋</div>
+        <div class="info">
+          <div class="uname">✦ poppy fusee ✦</div>
+          <div class="status">🐻 "les guerres passent, le HTML reste"</div>
+        </div>
+      </div>
+      <div class="bar"></div>
+      <div class="tags">
+        <span class="tag">☮ peace</span>
+        <span class="tag">♥ mcr fan</span>
+        <span class="tag">🐻 ourspace</span>
+        <span class="tag">💻 coder</span>
+      </div>
+      <a class="btn" href="#">→ Voir le profil</a>
+    </div>
+    <div class="skin-label">🌸 BUBBLEGUM</div>
+  </div>
+
+  <!-- MATRIX -->
+  <div class="card matrix">
+    <div class="card-hd">
+      <div class="card-title">✦ OURSPACE ✦</div>
+      <div class="card-tag">notre espace. notre paix. ♥</div>
+    </div>
+    <div class="card-body">
+      <div class="card-row">
+        <div class="avatar">🦋</div>
+        <div class="info">
+          <div class="uname">✦ poppy fusee ✦</div>
+          <div class="status">🐻 "les guerres passent, le HTML reste"</div>
+        </div>
+      </div>
+      <div class="bar"></div>
+      <div class="tags">
+        <span class="tag">☮ peace</span>
+        <span class="tag">♥ mcr fan</span>
+        <span class="tag">🐻 ourspace</span>
+        <span class="tag">💻 coder</span>
+      </div>
+      <a class="btn" href="#">→ Voir le profil</a>
+    </div>
+    <div class="skin-label">💾 MATRIX</div>
+  </div>
+
+  <!-- MIDNIGHT -->
+  <div class="card midnight">
+    <div class="card-hd">
+      <div class="card-title">✦ OURSPACE ✦</div>
+      <div class="card-tag">notre espace. notre paix. ♥</div>
+    </div>
+    <div class="card-body">
+      <div class="card-row">
+        <div class="avatar">🦋</div>
+        <div class="info">
+          <div class="uname">✦ poppy fusee ✦</div>
+          <div class="status">🐻 "les guerres passent, le HTML reste"</div>
+        </div>
+      </div>
+      <div class="bar"></div>
+      <div class="tags">
+        <span class="tag">☮ peace</span>
+        <span class="tag">♥ mcr fan</span>
+        <span class="tag">🐻 ourspace</span>
+        <span class="tag">💻 coder</span>
+      </div>
+      <a class="btn" href="#">→ Voir le profil</a>
+    </div>
+    <div class="skin-label">🌙 MIDNIGHT</div>
+  </div>
+
+</div>
+</body>
+</html>
