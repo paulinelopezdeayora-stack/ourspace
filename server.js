@@ -30,7 +30,17 @@ app.use(session({
 }));
 
 // Fichiers statiques (frontend)
-app.use(express.static(path.join(__dirname, 'public')));
+// Les .html ne sont jamais mis en cache (updates visibles immédiatement)
+// Les .js/.css/.svg/.png peuvent être cachés 1h
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    } else {
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+    }
+  }
+}));
 
 // Routes API
 app.use('/api/auth',     require('./routes/auth'));
