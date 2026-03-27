@@ -712,9 +712,12 @@ async function loadFile(file) {
   // Sauvegarder en base de données
   try {
     const base64 = await fileToBase64(file);
-    const { error } = await api.updateProfile({ audio_data: base64, audio_name: cleanName });
-    if (error) toast('Erreur sauvegarde audio', 'error');
-    else toast('🎵 ' + cleanName + ' sauvegardé !', 'success');
+    const { data, error } = await api.updateProfile({ audio_data: base64, audio_name: cleanName });
+    if (error) toast('Erreur sauvegarde audio : ' + error, 'error');
+    else {
+      toast('🎵 ' + cleanName + ' sauvegardé !', 'success');
+      if (data) ME = data; // Mettre à jour ME (avec audio_url si R2 a réussi)
+    }
   } catch(e) { toast('Erreur sauvegarde audio', 'error'); }
 }
 
@@ -731,9 +734,20 @@ async function restoreAudio(data, name) {
     analyser.fftSize = 128;
     analyser.connect(audioCtx.destination);
 
-    const resp = await fetch(data);
-    const buf = await resp.arrayBuffer();
-    audioBuffer = await audioCtx.decodeAudioData(buf);
+    let arrayBuffer;
+    if (data.startsWith('data:')) {
+      // base64 data URI → decode directement (fetch() plante sur certains navigateurs)
+      const base64 = data.split(',')[1];
+      const binary = atob(base64);
+      const bytes  = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      arrayBuffer = bytes.buffer;
+    } else {
+      // URL R2 ou autre → fetch normal
+      const resp = await fetch(data);
+      arrayBuffer = await resp.arrayBuffer();
+    }
+    audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
     // Démarrer en pause (autoplay bloqué par les navigateurs)
     audioCtx.suspend();
     isPaused = true;

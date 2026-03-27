@@ -35,24 +35,46 @@ router.put('/me', requireAuth, async (req, res) => {
   try {
     let avatar_url = undefined;
     let audio_url  = undefined;
+    // Ces flags indiquent si on a réussi à uploader vers R2 (et donc qu'on ne veut PAS sauver le base64 en DB)
+    let avatarWentToR2 = false;
+    let audioWentToR2  = false;
 
     // Upload avatar vers R2 si base64 fourni et R2 configuré
     if (avatar_data && avatar_data.startsWith('data:') && process.env.R2_ENDPOINT) {
-      const parsed = parseDataUri(avatar_data);
-      if (parsed) {
-        const ext = parsed.contentType.split('/')[1] || 'jpg';
-        avatar_url = await r2.upload(`avatar_${uid}.${ext}`, parsed.buffer, parsed.contentType);
+      try {
+        const parsed = parseDataUri(avatar_data);
+        if (parsed) {
+          const ext = parsed.contentType.split('/')[1] || 'jpg';
+          avatar_url = await r2.upload(`avatar_${uid}.${ext}`, parsed.buffer, parsed.contentType);
+          avatarWentToR2 = true;
+        }
+      } catch (r2err) {
+        console.warn('R2 avatar upload failed, fallback base64:', r2err.message);
       }
     }
 
     // Upload audio vers R2 si base64 fourni et R2 configuré
     if (audio_data && audio_data.startsWith('data:') && process.env.R2_ENDPOINT) {
-      const parsed = parseDataUri(audio_data);
-      if (parsed) {
-        const ext = parsed.contentType.split('/')[1] || 'mp3';
-        audio_url = await r2.upload(`audio_${uid}.${ext}`, parsed.buffer, parsed.contentType);
+      try {
+        const parsed = parseDataUri(audio_data);
+        if (parsed) {
+          const ext = parsed.contentType.split('/')[1] || 'mp3';
+          audio_url = await r2.upload(`audio_${uid}.${ext}`, parsed.buffer, parsed.contentType);
+          audioWentToR2 = true;
+        }
+      } catch (r2err) {
+        console.warn('R2 audio upload failed, fallback base64:', r2err.message);
       }
     }
+
+    // Valeurs à écrire en DB :
+    // - Si R2 a réussi  → on stocke l'URL et on efface le base64 (évite de dupliquer)
+    // - Si R2 a raté    → on stocke le base64 directement, audio_url reste inchangé
+    // - Si rien envoyé  → on ne touche à rien
+    const newAvatarData = avatar_data ? (avatarWentToR2 ? null : avatar_data) : undefined;
+    const newAvatarUrl  = avatar_url  || undefined;
+    const newAudioData  = audio_data  ? (audioWentToR2  ? null : audio_data)  : undefined;
+    const newAudioUrl   = audio_url   || undefined;
 
     const r = await pool.query(
       `UPDATE users SET
@@ -63,19 +85,23 @@ router.put('/me', requireAuth, async (req, res) => {
          song_title   = COALESCE(NULLIF($5,''),  song_title),
          song_artist  = COALESCE(NULLIF($6,''),  song_artist),
          skin         = COALESCE(NULLIF($7,''),  skin),
-         avatar_data  = CASE WHEN $8 IS NOT NULL AND $9 IS NULL THEN $8 ELSE avatar_data END,
-         avatar_url   = COALESCE($9,             avatar_url),
-         audio_data   = CASE WHEN $10 IS NOT NULL AND $11 IS NULL THEN $10 ELSE audio_data END,
-         audio_url    = COALESCE($11,            audio_url),
+         avatar_data  = CASE WHEN $8  IS NOT NULL THEN $8  ELSE avatar_data END,
+         avatar_url   = CASE WHEN $9  IS NOT NULL THEN $9  ELSE avatar_url  END,
+         audio_data   = CASE WHEN $10 IS NOT NULL THEN $10 ELSE audio_data  END,
+         audio_url    = CASE WHEN $11 IS NOT NULL THEN $11 ELSE audio_url   END,
          audio_name   = COALESCE($12,            audio_name),
          interests    = COALESCE($13,            interests),
          marquee_text = COALESCE($15,            marquee_text)
        WHERE id = $14
        RETURNING ${PUBLIC_FIELDS}`,
       [display_name, bio, location, mood, song_title, song_artist, skin,
-       avatar_data || null, avatar_url || null,
-       audio_data || null, audio_url || null,
-       audio_name, interests, uid,
+       newAvatarData !== undefined ? newAvatarData : null,
+       newAvatarUrl  !== undefined ? newAvatarUrl  : null,
+       newAudioData  !== undefined ? newAudioData  : null,
+       newAudioUrl   !== undefined ? newAudioUrl   : null,
+       audio_name !== undefined ? audio_name : null,
+       interests   !== undefined ? interests   : null,
+       uid,
        marquee_text !== undefined ? marquee_text : null]
     );
 
