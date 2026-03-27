@@ -24,6 +24,25 @@ router.post('/register', async (req, res) => {
       [username, email.toLowerCase().trim(), hash, (display_name || username).trim()]
     );
     req.session.userId = r.rows[0].id;
+
+    // Auto-amitié avec le premier membre du réseau (Tom de Ourspace)
+    try {
+      const first = await pool.query(
+        'SELECT id FROM users WHERE id != $1 ORDER BY id ASC LIMIT 1',
+        [r.rows[0].id]
+      );
+      if (first.rows[0]) {
+        const tomId = first.rows[0].id;
+        const newId = r.rows[0].id;
+        await pool.query(
+          `INSERT INTO friends (user_id, friend_id, status)
+           VALUES ($1,$2,'accepted'),($2,$1,'accepted')
+           ON CONFLICT (user_id, friend_id) DO NOTHING`,
+          [tomId, newId]
+        );
+      }
+    } catch (_) { /* non-bloquant */ }
+
     res.json({ ok: true, user: r.rows[0] });
   } catch (e) {
     if (e.code === '23505') {
@@ -71,7 +90,7 @@ router.get('/me', async (req, res) => {
   try {
     const r = await pool.query(
       `SELECT id, username, display_name, bio, location, mood,
-              song_title, song_artist, avatar_data, skin, created_at, last_seen
+              song_title, song_artist, avatar_data, audio_data, audio_name, skin, created_at, last_seen
        FROM users WHERE id = $1`,
       [req.session.userId]
     );

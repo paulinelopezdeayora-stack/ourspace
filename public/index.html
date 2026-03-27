@@ -83,14 +83,22 @@
     #drop-msg{display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:12px}
     #drop-msg .big{font-size:24px}
     #drop-msg small{font-size:10px;display:block;color:var(--text-dim)}
-    #now-playing{display:none;align-items:center;gap:10px}
-    #np-info{flex:1}
+    #now-playing{display:none;align-items:center;gap:10px;flex-wrap:wrap}
+    #np-info{flex:1;min-width:0}
     #np-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
-    #np-title{font-size:13px;font-weight:bold;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+    #np-title{font-size:13px;font-weight:bold;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;cursor:pointer}
+    #np-title:hover{text-decoration:underline}
     #play-pause-btn{background:var(--bg2);border:1px solid var(--border);color:var(--accent);width:30px;height:30px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
     #play-pause-btn:hover{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+    #btn-delete-audio{background:none;border:none;color:var(--text-dim);font-size:14px;cursor:pointer;padding:0 2px;flex-shrink:0;transition:color .2s}
+    #btn-delete-audio:hover{color:#ff4444}
     #vis-canvas{border-radius:3px;opacity:.85;background:transparent}
     #file-input{display:none}
+    /* stats éditables */
+    .stats-tbl td.editable{cursor:pointer}
+    .stats-tbl td.editable:hover{color:var(--accent)}
+    .stats-tbl td.editable input{background:var(--bg2);border:1px solid var(--accent);color:var(--text);padding:2px 6px;font-family:'Comic Sans MS',cursive;font-size:12px;border-radius:2px;width:100%}
+    .stats-tbl td.editable input:focus{outline:none}
 
     /* ===== TWO COLUMNS ===== */
     #content{display:grid;grid-template-columns:1fr 290px;gap:13px}
@@ -295,13 +303,11 @@
       <div class="status-line" id="profile-status" contenteditable="false" title="Double-clic pour modifier">
         🐻 "les guerres passent, le HTML reste" · humeur : existentielle mais ça compile
       </div>
-      <table class="stats-tbl">
-        <tr><td>Humeur :</td>     <td>😔 mélancolique mais ✨ ça va aller</td></tr>
-        <tr><td>Âge :</td>        <td>22 ans (nés en 2004, lol)</td></tr>
-        <tr><td>Lieu :</td>       <td>🌍 Quelque part sur Terre (pas en guerre)</td></tr>
-        <tr><td>Philosophie :</td><td>Pacifiste convaincu(e)</td></tr>
-        <tr><td>Statut :</td>     <td>C'est compliqué (avec la réalité en 2026)</td></tr>
-        <tr><td>Amis :</td>       <td><a href="discover.html">247 amis</a> · <a href="discover.html">Ajouter</a></td></tr>
+      <table class="stats-tbl" id="stats-tbl">
+        <tr><td>Humeur :</td>     <td class="editable" data-field="mood"     id="stat-mood">—</td></tr>
+        <tr><td>Lieu :</td>       <td class="editable" data-field="location" id="stat-location">—</td></tr>
+        <tr><td>Membre depuis :</td><td id="stat-since">—</td></tr>
+        <tr><td>Amis :</td>       <td><span id="friend-count">…</span> · <a href="discover.html">Ajouter</a></td></tr>
       </table>
 
       <!-- REAL AUDIO PLAYER -->
@@ -317,9 +323,10 @@
           <button id="play-pause-btn" onclick="togglePlay(event)">⏸</button>
           <div id="np-info">
             <div id="np-label">♬ À L'ÉCOUTE :</div>
-            <div id="np-title">—</div>
+            <div id="np-title" onclick="renameAudio(event)" title="Cliquer pour renommer">—</div>
           </div>
           <canvas id="vis-canvas" width="160" height="32"></canvas>
+          <button id="btn-delete-audio" onclick="deleteAudioFile(event)" title="Supprimer ce fichier">✕</button>
         </div>
         <input type="file" id="file-input" accept="audio/*" onchange="loadFile(this.files[0])">
       </div>
@@ -400,17 +407,8 @@
       <div class="box">
         <div class="box-hd">🐻 Top 8 <a href="#">Modifier »</a></div>
         <div class="box-bd">
-          <div class="friends-grid">
-            <div class="friend"><a class="friend-av" href="profiles/foxygrl.html" style="background:linear-gradient(135deg,#550020,#cc0044)">🦊</a><a class="friend-name" href="profiles/foxygrl.html">xX_FoxyGrl</a></div>
-            <div class="friend"><a class="friend-av" href="profiles/cybernerd99.html" style="background:linear-gradient(135deg,#001830,#0055aa)">🤖</a><a class="friend-name" href="profiles/cybernerd99.html">CyberNerd99</a></div>
-            <div class="friend"><a class="friend-av" href="profiles/moonchild.html" style="background:linear-gradient(135deg,#1a0040,#440088)">🌙</a><a class="friend-name" href="profiles/moonchild.html">MoonChild_</a></div>
-            <div class="friend"><a class="friend-av" href="profiles/oursbrun42.html" style="background:linear-gradient(135deg,#0a1500,#2a4800)">🐻</a><a class="friend-name" href="profiles/oursbrun42.html">OursBrun42</a></div>
-            <div class="friend"><a class="friend-av" href="#" style="background:linear-gradient(135deg,#200030,#660099)">⚡</a><a class="friend-name" href="#">StormByte</a></div>
-            <div class="friend"><a class="friend-av" href="#" style="background:linear-gradient(135deg,#200000,#660022)">🔥</a><a class="friend-name" href="#">Pyromanix</a></div>
-            <div class="friend"><a class="friend-av" href="#" style="background:linear-gradient(135deg,#001520,#004466)">🌊</a><a class="friend-name" href="#">OceanDream</a></div>
-            <div class="friend"><a class="friend-av" href="#" style="background:linear-gradient(135deg,#201500,#664400)">⭐</a><a class="friend-name" href="#">StarGazr_X</a></div>
-          </div>
-          <div style="text-align:center;margin-top:9px;font-size:11px"><a href="discover.html" style="color:var(--text-muted)">Voir les 247 amis »</a></div>
+          <div class="friends-grid" id="friends-grid"></div>
+          <div style="text-align:center;margin-top:9px;font-size:11px" id="friends-more"></div>
         </div>
       </div>
 
@@ -490,7 +488,9 @@ let ME = null;
   if (ME.skin) { document.documentElement.dataset.theme = ME.skin; updateSkinButtons(ME.skin); }
   if (ME.avatar_data) showAvatar(ME.avatar_data);
   if (ME.bio) aboutEl.innerHTML = ME.bio;
+  if (ME.audio_data) restoreAudio(ME.audio_data, ME.audio_name || '');
 
+  populateStats();
   loadFriends();
   loadComments();
 })();
@@ -638,25 +638,92 @@ document.getElementById('gif-modal').addEventListener('click', function(e){
 });
 
 // ===== REAL AUDIO PLAYER =====
-let audioCtx, analyser, source, animFrame, isPaused = false, audioBuffer;
+let audioCtx, analyser, source, animFrame, isPaused = false, audioBuffer, currentAudioName = '';
 function onDragOver(e) { e.preventDefault(); document.getElementById('audio-player').classList.add('drag-over'); }
 function onDragLeave()  { document.getElementById('audio-player').classList.remove('drag-over'); }
 function onDrop(e) { e.preventDefault(); onDragLeave(); const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('audio/')) loadFile(f); }
 
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
 async function loadFile(file) {
   if (!file) return;
+  const cleanName = file.name.replace(/\.[^.]+$/, '');
+  currentAudioName = cleanName;
   document.getElementById('drop-msg').style.display = 'none';
   document.getElementById('now-playing').style.display = 'flex';
-  document.getElementById('np-title').textContent = file.name.replace(/\.[^.]+$/,'');
+  document.getElementById('np-title').textContent = cleanName;
+
   if (audioCtx) { cancelAnimationFrame(animFrame); audioCtx.close(); }
-  if (source) try { source.stop(); } catch(e){}
+  if (source) try { source.stop(); } catch(e) {}
   audioCtx = new (window.AudioContext||window.webkitAudioContext)();
   analyser = audioCtx.createAnalyser();
   analyser.fftSize = 128;
   analyser.connect(audioCtx.destination);
+
   const buf = await file.arrayBuffer();
   audioBuffer = await audioCtx.decodeAudioData(buf);
   playFrom(0);
+
+  // Sauvegarder en base de données
+  try {
+    const base64 = await fileToBase64(file);
+    const { error } = await api.updateProfile({ audio_data: base64, audio_name: cleanName });
+    if (error) toast('Erreur sauvegarde audio', 'error');
+    else toast('🎵 ' + cleanName + ' sauvegardé !', 'success');
+  } catch(e) { toast('Erreur sauvegarde audio', 'error'); }
+}
+
+async function restoreAudio(data, name) {
+  try {
+    currentAudioName = name || '';
+    document.getElementById('drop-msg').style.display = 'none';
+    document.getElementById('now-playing').style.display = 'flex';
+    document.getElementById('np-title').textContent = name || '—';
+
+    if (audioCtx) { cancelAnimationFrame(animFrame); audioCtx.close(); }
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 128;
+    analyser.connect(audioCtx.destination);
+
+    const resp = await fetch(data);
+    const buf = await resp.arrayBuffer();
+    audioBuffer = await audioCtx.decodeAudioData(buf);
+    // Démarrer en pause (autoplay bloqué par les navigateurs)
+    audioCtx.suspend();
+    isPaused = true;
+    document.getElementById('play-pause-btn').textContent = '▶';
+  } catch(e) { console.warn('Restauration audio échouée:', e); }
+}
+
+function renameAudio(e) {
+  e.stopPropagation();
+  const newName = prompt('Nouveau nom :', currentAudioName || document.getElementById('np-title').textContent);
+  if (newName === null || !newName.trim()) return;
+  const name = newName.trim();
+  currentAudioName = name;
+  document.getElementById('np-title').textContent = name;
+  if (ME) api.updateProfile({ audio_name: name });
+}
+
+async function deleteAudioFile(e) {
+  e.stopPropagation();
+  if (!confirm('Supprimer ce fichier audio ?')) return;
+  const { error } = await api.deleteAudio();
+  if (error) { toast(error, 'error'); return; }
+  if (source) try { source.stop(); } catch(e) {}
+  if (audioCtx) { cancelAnimationFrame(animFrame); audioCtx.close(); audioCtx = null; }
+  audioBuffer = null; currentAudioName = '';
+  document.getElementById('now-playing').style.display = 'none';
+  document.getElementById('drop-msg').style.display = 'flex';
+  toast('🎵 Fichier supprimé', 'success');
 }
 function playFrom(offset) {
   if (source) try{source.stop();}catch(e){}
@@ -700,11 +767,15 @@ const GRADS = ['linear-gradient(135deg,#550020,#cc0044)','linear-gradient(135deg
 
 async function loadFriends() {
   const { data } = await api.getMyFriends();
-  const grid = document.querySelector('.friends-grid');
+  const grid = document.getElementById('friends-grid');
+  const more = document.getElementById('friends-more');
+  const countEl = document.getElementById('friend-count');
   if (!data || !data.length) {
     grid.innerHTML = '<div style="color:var(--text-dim);font-size:11px;grid-column:1/-1;text-align:center">Pas encore d\'amis… <a href="/discover.html" style="color:var(--accent)">Explorer</a></div>';
+    if (countEl) countEl.textContent = '0';
     return;
   }
+  if (countEl) countEl.textContent = data.length;
   const top = data.filter(f=>f.position).sort((a,b)=>a.position-b.position).concat(data.filter(f=>!f.position)).slice(0,8);
   grid.innerHTML = '';
   top.forEach((f,i) => {
@@ -713,8 +784,7 @@ async function loadFriends() {
     div.innerHTML = `<a class="friend-av" href="/profile.html?u=${f.username}" style="background:${GRADS[i%GRADS.length]};overflow:hidden">${av}</a><a class="friend-name" href="/profile.html?u=${f.username}">${f.display_name}</a>`;
     grid.appendChild(div);
   });
-  const countLink = document.querySelector('.friends-grid + div a');
-  if (countLink) countLink.textContent = `Voir les ${data.length} amis »`;
+  if (more) more.innerHTML = `<a href="discover.html" style="color:var(--text-muted)">Voir les ${data.length} amis »</a>`;
 }
 
 // ===== AVATAR UPLOAD (API) =====
@@ -735,6 +805,44 @@ function showAvatar(src) {
   img.src = src;
   img.style.display = 'block';
   emoji.style.display = 'none';
+}
+
+// ===== STATS ÉDITABLES =====
+function populateStats() {
+  const moodEl   = document.getElementById('stat-mood');
+  const locEl    = document.getElementById('stat-location');
+  const sinceEl  = document.getElementById('stat-since');
+  if (moodEl)  moodEl.textContent  = ME.mood     || '—';
+  if (locEl)   locEl.textContent   = ME.location || '—';
+  if (sinceEl) sinceEl.textContent = ME.created_at
+    ? new Date(ME.created_at).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'})
+    : '—';
+  document.querySelectorAll('#stats-tbl td.editable').forEach(td => {
+    td.addEventListener('click', () => makeStatEditable(td));
+  });
+}
+
+function makeStatEditable(td) {
+  if (td.querySelector('input')) return;
+  const field   = td.dataset.field;
+  const current = td.textContent === '—' ? '' : td.textContent;
+  const ph      = field === 'mood' ? 'Ton humeur...' : 'Ta ville...';
+  const input   = document.createElement('input');
+  input.value       = current;
+  input.placeholder = ph;
+  td.textContent    = '';
+  td.appendChild(input);
+  input.focus(); input.select();
+  const save = () => {
+    const val = input.value.trim();
+    td.textContent = val || '—';
+    if (ME) api.updateProfile({ [field]: val }).then(({ error }) => {
+      if (error) toast(error, 'error');
+      else { ME[field] = val; }
+    });
+  };
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
 }
 
 // ===== SKINZ =====
