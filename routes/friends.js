@@ -1,7 +1,6 @@
 const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
-const { awardBadge } = require('../lib/badges');
 
 // GET /api/friends/me — mes amis acceptés
 router.get('/me', requireAuth, async (req, res) => {
@@ -85,7 +84,6 @@ router.post('/accept/:username', requireAuth, async (req, res) => {
        ON CONFLICT (user_id, friend_id) DO UPDATE SET status = 'accepted'`,
       [req.session.userId, rid]
     );
-    awardBadge(req.session.userId, 'first_friend');
     res.json({ ok: true });
   } catch (e) {
     console.error(e);

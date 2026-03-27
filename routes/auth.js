@@ -1,7 +1,6 @@
 const router      = require('express').Router();
 const bcrypt      = require('bcryptjs');
 const { pool }    = require('../db');
-const { awardBadge } = require('../lib/badges');
 async function sendWelcomeEmail(to, displayName, username) {
   const key = process.env.RESEND_KEY;
   if (!key) return;
@@ -113,9 +112,6 @@ router.post('/register', async (req, res) => {
         );
       }
     } catch (_) { /* non-bloquant */ }
-
-    // Badge de bienvenue (non-bloquant)
-    awardBadge(r.rows[0].id, 'joined');
 
     // Email de bienvenue (non-bloquant)
     sendWelcomeEmail(email.toLowerCase().trim(), r.rows[0].display_name, r.rows[0].username);

@@ -2,10 +2,8 @@ const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
 const r2          = require('../lib/r2');
-const { awardBadge } = require('../lib/badges');
-
 const PUBLIC_FIELDS = `id, username, display_name, bio, location, mood,
-  song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, earned_badges, marquee_text, created_at, last_seen`;
+  song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, marquee_text, created_at, last_seen`;
 
 // Convertit un base64 data-URI en buffer + contentType
 function parseDataUri(dataUri) {
@@ -80,14 +78,6 @@ router.put('/me', requireAuth, async (req, res) => {
        audio_name, interests, uid,
        marquee_text !== undefined ? marquee_text : null]
     );
-
-    // Award badges
-    if ((avatar_data && avatar_data !== null) || (avatar_url && avatar_url !== null)) {
-      awardBadge(uid, 'customized');
-    }
-    if ((audio_data && audio_data !== null) || (audio_url && audio_url !== null)) {
-      awardBadge(uid, 'music_lover');
-    }
 
     res.json(r.rows[0]);
   } catch (e) {

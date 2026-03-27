@@ -228,9 +228,6 @@
     .blog-body{color:var(--text-muted);font-size:12px;line-height:1.7}
 
     /* ===== BADGES ===== */
-    .badges-row{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
-    .badge{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:3px 10px;font-size:11px;color:var(--text-muted);cursor:default;transition:all .2s}
-    .badge:hover{border-color:var(--accent);color:var(--accent)}
 
     /* ===== FOOTER ===== */
     #footer{text-align:center;padding:20px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border2);margin-top:8px;position:relative;z-index:1}
@@ -328,8 +325,6 @@
         <tr><td>Amis :</td>       <td><span id="friend-count">…</span> · <a href="discover.html">Ajouter</a></td></tr>
       </table>
 
-      <div id="badges-row" class="badges-row"></div>
-
       <!-- REAL AUDIO PLAYER -->
       <div id="audio-player" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)" onclick="document.getElementById('file-input').click()">
         <div id="drop-msg">
@@ -425,20 +420,6 @@
         </div>
       </div>
 
-      <!-- Badges -->
-      <div class="box">
-        <div class="box-hd">🐻 Badges</div>
-        <div class="box-bd">
-          <div class="blinkies">
-            <span class="bk bk1">☮ PEACE</span><span class="bk bk2">✓ ANTI-WAR</span>
-            <span class="bk bk3">♥ MCR FAN</span><span class="bk bk4">⚡ CODER</span>
-            <span class="bk bk5">★ OLD WEB</span><span class="bk bk6">🐻 OURSPACE</span>
-            <span class="bk bk1">💻 HTML QUEEN</span><span class="bk bk3">🎵 MUSIC ADDICT</span>
-            <span class="bk bk2">🌍 PRO PAIX</span><span class="bk bk4">🌙 NIGHT OWL</span>
-          </div>
-        </div>
-      </div>
-
       <!-- Comments -->
       <div class="box">
         <div class="box-hd">🐻 Commentaires <span id="cmt-count" style="font-size:10px;color:var(--text-dim)">0</span></div>
@@ -519,30 +500,9 @@ let ME = null;
 
   populateStats();
   renderInterests();
-  renderBadges();
   loadFriends();
   loadComments();
 })();
-
-// ===== BADGES =====
-function renderBadges() {
-  const BADGE_DEFS = {
-    joined:       { icon: '🐻', label: 'Pionnier·e',    desc: 'A rejoint Ourspace' },
-    first_post:   { icon: '✍️', label: 'Auteur·e',      desc: 'A publié son premier post' },
-    first_friend: { icon: '🤝', label: 'Social·e',      desc: 'A ajouté son premier ami' },
-    customized:   { icon: '🎨', label: 'Artiste',       desc: 'A personnalisé son profil' },
-    music_lover:  { icon: '🎵', label: 'Mélomane',      desc: 'A ajouté une musique' },
-  };
-  const row = document.getElementById('badges-row');
-  if (!row || !ME.earned_badges) return;
-  let badges = [];
-  try { badges = JSON.parse(ME.earned_badges); } catch(e) {}
-  row.innerHTML = badges.map(k => {
-    const b = BADGE_DEFS[k];
-    if (!b) return '';
-    return `<span class="badge" title="${b.desc}">${b.icon} ${b.label}</span>`;
-  }).join('');
-}
 
 // ===== COUNTER =====
 (function(){
