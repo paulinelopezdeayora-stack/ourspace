@@ -169,7 +169,11 @@
     <div class="composer-actions">
       <button class="btn-publish" onclick="publish()">📝 Publier</button>
       <button class="btn-clear" onclick="clearComposer()">Effacer</button>
-      <span id="post-count"></span>
+      <label style="margin-left:auto;font-size:11px;color:var(--text-dim);display:flex;align-items:center;gap:5px;cursor:pointer">
+        <input type="checkbox" id="no-comments" style="accent-color:var(--accent);cursor:pointer">
+        désactiver les commentaires
+      </label>
+      <span id="post-count" style="margin-left:8px"></span>
     </div>
   </div>
 
@@ -249,16 +253,17 @@ function publish() {
   const body  = document.getElementById('inp-body').value.trim();
   if (!title && !body) { document.getElementById('inp-title').focus(); return; }
   const post = {
-    id:      Date.now(),
-    author:  ME,
-    avatar:  MY_AVATAR,
-    title:   title || '(sans titre)',
-    body:    body,
-    photo:   pendingPhoto,
-    date:    formatDate(new Date()),
-    likes:   0,
-    likedBy: [],
-    comments: [],
+    id:               Date.now(),
+    author:           ME,
+    avatar:           MY_AVATAR,
+    title:            title || '(sans titre)',
+    body:             body,
+    photo:            pendingPhoto,
+    date:             formatDate(new Date()),
+    likes:            0,
+    likedBy:          [],
+    comments:         [],
+    commentsDisabled: document.getElementById('no-comments').checked,
   };
   const posts = loadPosts();
   posts.unshift(post);
@@ -268,8 +273,9 @@ function publish() {
 }
 
 function clearComposer() {
-  document.getElementById('inp-title').value = '';
-  document.getElementById('inp-body').value  = '';
+  document.getElementById('inp-title').value  = '';
+  document.getElementById('inp-body').value   = '';
+  document.getElementById('no-comments').checked = false;
   removePhoto({ stopPropagation: ()=>{} });
 }
 
@@ -310,6 +316,15 @@ function addComment(postId) {
 
 function toggleComments(id) {
   document.getElementById('cmts-' + id).classList.toggle('open');
+}
+
+function toggleCommentsDisabled(id) {
+  const posts = loadPosts();
+  const p = posts.find(p => p.id === id);
+  if (!p) return;
+  p.commentsDisabled = !p.commentsDisabled;
+  savePosts(posts);
+  renderFeed();
 }
 
 function toggleMenu(id) {
@@ -356,6 +371,7 @@ function renderFeed() {
         <div class="post-menu">
           <button class="post-menu-btn" onclick="toggleMenu(${p.id})">⋯</button>
           <div class="post-dropdown" id="menu-${p.id}">
+            <button onclick="toggleCommentsDisabled(${p.id})">${p.commentsDisabled ? '💬 Activer les commentaires' : '🔒 Désactiver les commentaires'}</button>
             <button class="del-btn" onclick="deletePost(${p.id})">🗑 Supprimer</button>
           </div>
         </div>` : ''}
@@ -367,18 +383,20 @@ function renderFeed() {
         <button class="react-btn ${liked?'liked':''}" onclick="likePost(${p.id})">
           ♥ <span>${p.likes||0}</span>
         </button>
-        <button class="cmt-toggle" onclick="toggleComments(${p.id})">
-          💬 ${p.comments.length} commentaire${p.comments.length!==1?'s':''}
-        </button>
+        ${p.commentsDisabled
+          ? `<span style="font-size:11px;color:var(--text-dim);margin-left:4px">🔒 commentaires désactivés</span>`
+          : `<button class="cmt-toggle" onclick="toggleComments(${p.id})">💬 ${p.comments.length} commentaire${p.comments.length!==1?'s':''}</button>`
+        }
         <span class="post-date-footer">${p.date}</span>
       </div>
       <div class="post-cmts" id="cmts-${p.id}">
         ${cmtsHtml}
+        ${p.commentsDisabled ? '' : `
         <div class="pcmt-form">
           <input id="cinp-${p.id}" type="text" placeholder="Ajouter un commentaire…"
                  onkeydown="if(event.key==='Enter')addComment(${p.id})">
           <button onclick="addComment(${p.id})">Envoyer</button>
-        </div>
+        </div>`}
       </div>
     </div>`;
   }).join('');
