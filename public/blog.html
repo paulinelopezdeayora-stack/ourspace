@@ -130,10 +130,14 @@
 
 <!-- NAV -->
 <div id="topnav">
-  <a href="index.html" class="brand">OURSPACE</a>
-  <a href="index.html">← Profil</a>
-  <a href="discover.html">🔍 Découvrir</a>
-  <span id="nav-user"></span>
+  <a href="/" class="brand">OURSPACE</a>
+  <a href="/">🏠 Accueil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="#" onclick="comingSoon(event,'Musique')">🎵 Musique</a>
+  <a href="#" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="#" onclick="comingSoon(event,'Messages')">💌 Messages</a>
+  <span id="nav-user" style="margin-left:auto"></span>
 </div>
 
 <!-- HEADER -->
@@ -202,6 +206,9 @@
 <script>
 let ME = null;
 let pendingPhoto = null;
+
+// ---- COMING SOON ----
+function comingSoon(e, name) { e.preventDefault(); toast('🚧 ' + name + ' — bientôt disponible !', 'info'); }
 
 // ---- INIT ----
 (async function init() {

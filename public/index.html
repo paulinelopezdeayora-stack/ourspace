@@ -133,7 +133,7 @@
     .int-item p{color:var(--text-muted);font-size:12px;min-height:16px}
     .int-item [contenteditable]:hover{outline:1px dashed var(--accent);border-radius:2px;cursor:text}
     .int-item [contenteditable]:focus{outline:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);border-radius:2px;padding:1px 3px}
-    .int-item p:empty:before{content:attr(data-ph);color:var(--text-muted);opacity:0.4;font-style:italic;pointer-events:none}
+    .int-item p.empty-ph:before{content:attr(data-ph);color:var(--text-muted);opacity:0.4;font-style:italic;pointer-events:none}
 
     /* ===== COUNTER ===== */
     #counter-wrap{text-align:center;padding:8px}
@@ -277,13 +277,12 @@
 <!-- NAVBAR -->
 <div id="navbar">
   <a href="/">🏠 Accueil</a>
-  <a href="/">👤 Profil</a>
   <a href="/discover.html">🔍 Découvrir</a>
-  <a href="#">🎵 Musique</a>
   <a href="/blog.html">📝 Blog</a>
-  <a href="#">👥 Groupes</a>
-  <a href="#">💌 Messages</a>
-  <a href="#">🐻 Ourspace+</a>
+  <a href="#" onclick="comingSoon(event,'Musique')">🎵 Musique</a>
+  <a href="#" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="#" onclick="comingSoon(event,'Messages')">💌 Messages</a>
+  <a href="#" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
 </div>
 
 <!-- MAIN -->
@@ -378,7 +377,7 @@
         <div class="box-bd">
           <div class="blog-title">"pourquoi j'ai rejoint OURSPACE"</div>
           <div class="blog-meta" id="blog-meta-date"></div>
-          <div class="blog-body">Premier post. Je sais pas trop quoi écrire. <span class="blink" style="color:var(--marquee)">Les ours ne font pas la guerre.</span> <a href="#" style="color:var(--accent)">Lire la suite…</a></div>
+          <div class="blog-body">Premier post. Je sais pas trop quoi écrire. <span class="blink" style="color:var(--marquee)">Les ours ne font pas la guerre.</span> <a href="/blog.html" style="color:var(--accent)">Lire la suite…</a></div>
         </div>
       </div>
     </div><!-- /left -->
@@ -401,7 +400,7 @@
 
       <!-- Top 8 -->
       <div class="box">
-        <div class="box-hd">🐻 Top 8 <a href="#">Modifier »</a></div>
+        <div class="box-hd">🐻 Top 8 <a href="/discover.html">Modifier »</a></div>
         <div class="box-bd">
           <div class="friends-grid" id="friends-grid"></div>
           <div style="text-align:center;margin-top:9px;font-size:11px" id="friends-more"></div>
@@ -447,7 +446,7 @@
 <div id="footer">
   <div style="color:var(--border);font-size:16px;letter-spacing:8px;margin-bottom:7px">🐻 ✦ 🐻</div>
   OURSPACE 2026 — <span class="blink" style="color:var(--accent)">fait avec ♥ et Comic Sans</span><br>
-  <div style="margin-top:5px"><a href="login.html">Connexion</a> · <a href="discover.html">Découvrir</a> · <a href="#">Blog</a></div>
+  <div style="margin-top:5px"><a href="login.html">Connexion</a> · <a href="discover.html">Découvrir</a> · <a href="/blog.html">Blog</a></div>
   <div style="margin-top:8px;color:var(--text-dim);font-size:10px">Best viewed in Netscape Navigator 7 · Les ours ne font pas la guerre.</div>
 </div>
 
@@ -881,10 +880,15 @@ function renderInterests() {
     div.appendChild(h4);
     div.appendChild(p);
     grid.appendChild(div);
-    const onBlur = () => saveInterests();
+    if (!item.text) p.classList.add('empty-ph');
+    const onBlur = () => {
+      if (!p.textContent.trim()) p.classList.add('empty-ph'); else p.classList.remove('empty-ph');
+      saveInterests();
+    };
     const onKey  = e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } };
     h4.addEventListener('blur', onBlur);
     h4.addEventListener('keydown', onKey);
+    p.addEventListener('focus', () => p.classList.remove('empty-ph'));
     p.addEventListener('blur', onBlur);
     p.addEventListener('keydown', onKey);
   });
@@ -915,7 +919,13 @@ document.querySelectorAll('.skin-btn').forEach(btn => {
     if (ME) api.updateProfile({ skin: t });
   });
 });
-document.getElementById('skinz-toggle').addEventListener('click', () => document.getElementById('skinz-panel').classList.toggle('open'));
+// skinz toggle géré par shared.js initSkinz()
+
+// ===== COMING SOON =====
+function comingSoon(e, name) {
+  e.preventDefault();
+  toast('🚧 ' + name + ' — bientôt disponible !', 'info');
+}
 updateSkinButtons(document.documentElement.dataset.theme || 'emo-dark');
 
 // ===== GLITCH (rare) =====
