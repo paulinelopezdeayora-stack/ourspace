@@ -1,17 +1,18 @@
 const router      = require('express').Router();
 const bcrypt      = require('bcryptjs');
 const { pool }    = require('../db');
-const { Resend }  = require('resend');
-const resend      = new Resend(process.env.RESEND_API_KEY);
-
 async function sendWelcomeEmail(to, displayName, username) {
-  if (!process.env.RESEND_API_KEY) return;
+  const key = process.env.RESEND_KEY;
+  if (!key) return;
   try {
-    await resend.emails.send({
-      from: 'OURSPACE <onboarding@resend.dev>',
-      to,
-      subject: '🐻 Bienvenue sur OURSPACE !',
-      html: `<!DOCTYPE html>
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'OURSPACE <onboarding@resend.dev>',
+        to,
+        subject: '🐻 Bienvenue sur OURSPACE !',
+        html: `<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -61,6 +62,7 @@ async function sendWelcomeEmail(to, displayName, username) {
 </div>
 </body>
 </html>`,
+      }),
     });
   } catch (e) {
     console.warn('Email de bienvenue non envoyé :', e.message);
