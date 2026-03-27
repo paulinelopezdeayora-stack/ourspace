@@ -20,7 +20,7 @@
 
     /* ===== RESET ===== */
     *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
-    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);overflow-x:hidden;min-height:100vh}
+    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);overflow-x:hidden;min-height:100vh;visibility:hidden}
     #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
     #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
     .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
@@ -474,6 +474,7 @@ let ME = null;
 (async function init() {
   ME = await requireLogin();
   if (!ME) return;
+  document.body.style.visibility = 'visible';
 
   document.getElementById('user-display').textContent = '👤 ' + ME.display_name;
   document.getElementById('logout-link').onclick = async e => {
