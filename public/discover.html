@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>★ OURSPACE ★ Découvrir</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    :root {
+      --bg:#000814;--bg2:#0d0020;--bg3:#140030;--accent:#cc55bb;--accent2:#7744aa;
+      --border:#3a1166;--border2:#1a0044;--text:#e0e0ff;--text-muted:#9977cc;
+      --text-dim:#444466;--card:rgba(13,0,32,0.85);--marquee:#bb7744;--online:#44bb88;
+    }
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--marquee:#dd8833;--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--marquee:#00aa33;--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--marquee:#4477cc;--online:#66aaff}
+
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important;}
+
+    body{
+      background-color:var(--bg);
+      background-image:
+        radial-gradient(ellipse at 20% 20%,rgba(120,0,180,0.12) 0%,transparent 50%),
+        radial-gradient(ellipse at 80% 80%,rgba(0,100,200,0.08) 0%,transparent 50%);
+      font-family:'Comic Sans MS','Comic Sans',cursive;
+      color:var(--text);overflow-x:hidden;min-height:100vh;
+    }
+
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:18px;}
+
+    .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim 0.7s ease-out forwards;z-index:99998;}
+    @keyframes sparkAnim{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0;}}
+
+    .star{position:fixed;background:var(--text);opacity:.3;border-radius:50%;animation:twinkle ease-in-out infinite;}
+    @keyframes twinkle{0%,100%{opacity:.5;}50%{opacity:.1;}}
+
+    #topnav{background:var(--bg2);border-bottom:1px solid var(--border);padding:7px 14px;display:flex;align-items:center;gap:10px;font-size:12px;}
+    #topnav a{color:var(--text-muted);text-decoration:none;padding:4px 10px;border:1px solid var(--border2);border-radius:2px;background:var(--bg3);transition:all 0.2s;}
+    #topnav a:hover{color:var(--accent);border-color:var(--accent);}
+    #topnav a.active{color:var(--accent);border-color:var(--accent);background:rgba(119,68,170,0.15);}
+
+    /* HEADER */
+    #header{
+      background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+      border-bottom:2px solid var(--border);padding:20px 20px 16px;text-align:center;
+    }
+    #site-title{
+      font-family:Impact,'Arial Black',sans-serif;
+      font-size:2.8em;letter-spacing:8px;
+      color:var(--accent);text-shadow:0 0 6px var(--accent2),0 0 20px var(--border);
+    }
+    #site-tagline{color:var(--text-muted);font-size:12px;margin-top:6px;letter-spacing:2px;}
+
+    .marquee-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px 0;overflow:hidden;}
+    .marquee-inner{display:inline-block;white-space:nowrap;animation:scroll 45s linear infinite;font-size:12px;font-weight:bold;color:var(--marquee);}
+    @keyframes scroll{from{transform:translateX(100vw);}to{transform:translateX(-100%);}}
+
+    /* MAIN */
+    #main{max-width:1100px;margin:0 auto;padding:16px 12px;}
+
+    /* FILTER BAR */
+    .filter-bar{
+      display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:4px;padding:12px 16px;margin-bottom:20px;
+    }
+    .filter-bar span{color:var(--text-dim);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-right:4px;}
+    .filter-btn{
+      background:var(--bg3);border:1px solid var(--border2);
+      color:var(--text-muted);padding:5px 14px;font-family:'Comic Sans MS',cursive;
+      font-size:12px;border-radius:2px;cursor:pointer;transition:all 0.2s;
+    }
+    .filter-btn:hover,.filter-btn.active{
+      background:var(--accent2);color:#fff;
+      border-color:var(--accent);box-shadow:0 0 8px rgba(119,68,170,0.3);
+    }
+    .filter-btn.active{font-weight:bold;}
+    .search-wrap{margin-left:auto;}
+    .search-wrap input{
+      background:var(--bg2);border:1px solid var(--border2);
+      color:var(--text);padding:5px 12px;font-family:'Comic Sans MS',cursive;
+      font-size:12px;border-radius:2px;width:200px;
+    }
+    .search-wrap input:focus{outline:none;border-color:var(--accent);}
+    .search-wrap input::placeholder{color:var(--text-dim);}
+
+    /* SECTION HEADERS */
+    .section-hd{
+      font-family:'Arial Black',sans-serif;font-size:15px;
+      color:var(--text-muted);margin:20px 0 12px;
+      display:flex;align-items:center;gap:10px;
+    }
+    .section-hd::after{
+      content:'';flex:1;height:1px;background:var(--border);
+    }
+
+    /* PROFILE GRID */
+    .profiles-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:24px;
+    }
+
+    /* PROFILE CARD */
+    .profile-card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:4px;
+      padding:14px;
+      text-align:center;
+      transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;
+      position:relative;
+    }
+    .profile-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 8px 24px rgba(119,68,170,0.25);
+      border-color:var(--accent2);
+    }
+
+    .card-avatar{
+      width:80px;height:80px;margin:0 auto 8px;
+      border-radius:6px;display:flex;align-items:center;
+      justify-content:center;font-size:36px;
+      border:2px solid var(--border);
+      box-shadow:0 0 8px rgba(0,0,0,0.4);
+    }
+
+    .card-username{
+      font-family:Impact,sans-serif;font-size:14px;
+      color:var(--accent);margin-bottom:3px;
+      word-break:break-all;
+    }
+    .card-meta{font-size:11px;color:var(--text-dim);margin-bottom:6px;}
+    .card-status{
+      font-size:11px;color:var(--text-muted);
+      font-style:italic;margin-bottom:10px;
+      line-height:1.4;min-height:30px;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    }
+
+    .online-dot{
+      position:absolute;top:10px;right:10px;
+      width:8px;height:8px;background:var(--online);
+      border-radius:50%;box-shadow:0 0 5px var(--online);
+      animation:pulse 1.2s step-end infinite;
+    }
+    @keyframes pulse{50%{opacity:0;}}
+
+    .btn-voir{
+      background:linear-gradient(180deg,var(--bg3),var(--bg2));
+      color:var(--text-muted);border:1px solid var(--border);
+      padding:4px 14px;font-family:'Comic Sans MS',cursive;
+      font-size:11px;border-radius:2px;text-decoration:none;
+      display:inline-block;transition:all 0.15s;
+    }
+    .btn-voir:hover{background:var(--accent2);color:#fff;border-color:var(--accent);}
+    .btn-voir.featured{
+      background:linear-gradient(180deg,var(--accent2),var(--bg3));
+      color:#fff;border-color:var(--accent);
+    }
+
+    /* Footer */
+    #footer{
+      text-align:center;padding:20px;color:var(--text-dim);
+      font-size:11px;border-top:1px solid var(--border2);margin-top:20px;
+    }
+    #footer a{color:var(--accent2);}
+    .blink{animation:blinkAnim 1.4s step-end infinite;}
+    @keyframes blinkAnim{50%{opacity:.35;}}
+
+    @media(max-width:900px){.profiles-grid{grid-template-columns:repeat(3,1fr);}}
+    @media(max-width:600px){
+      .profiles-grid{grid-template-columns:repeat(2,1fr);}
+      .search-wrap{margin-left:0;width:100%;}
+      .search-wrap input{width:100%;}
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor">🐻</div>
+<div id="stars"></div>
+
+<div id="topnav">
+  <!-- back link -->
+  <a href="/">← Retour</a>
+  <a href="discover.html" class="active">Profils</a>
+  <span style="color:var(--text-dim);font-size:11px;margin-left:auto">★ OURSPACE ★</span>
+</div>
+
+<div id="header">
+  <div id="site-title">✦ OURSPACE ✦</div>
+  <div id="site-tagline">Explore les profils · rencontre des ours <span class="blink" style="color:var(--accent)">🐻</span></div>
+</div>
+
+<div class="marquee-wrap">
+  <span class="marquee-inner">
+    👥 DÉCOUVRIR ✦ 24 profils actifs ce soir ✦ pleine lune ✦ tout le monde est en ligne ou presque ✦
+    join ourspace ✦ la paix en pixel art ✦ comic sans forever ✦ anti-guerre pro-ours ✦
+    fait avec ♥ en 2026 ✦ 👥
+  </span>
+</div>
+
+<div id="main">
+
+  <div class="filter-bar">
+    <span>Filtrer :</span>
+    <button class="filter-btn active" onclick="setFilter(this,'tous')">Tous</button>
+    <button class="filter-btn" onclick="setFilter(this,'online')">En ligne</button>
+    <button class="filter-btn" onclick="setFilter(this,'nouveaux')">Nouveaux</button>
+    <button class="filter-btn" onclick="setFilter(this,'pres')">Près de moi</button>
+    <div class="search-wrap">
+      <input type="text" placeholder="🔍 chercher un pseudo..." oninput="filterSearch(this.value)">
+    </div>
+  </div>
+
+  <div class="section-hd" id="grid-label">🔥 Tous les profils</div>
+  <div class="profiles-grid" id="grid-main"></div>
+  <div id="grid-empty" style="display:none;text-align:center;color:var(--text-dim);padding:40px;font-size:13px">
+    Aucun profil trouvé 🐻
+  </div>
+
+</div>
+
+<div id="footer">
+  <div style="color:var(--border);font-size:18px;letter-spacing:10px;margin-bottom:8px">🐻 ✦ 🐻</div>
+  <div>OURSPACE 2026 — <span class="blink" style="color:var(--accent)">fait avec ♥, Comic Sans, et l'espoir que ça suffira</span></div>
+  <div style="margin-top:6px">© 2026 Ourspace · <a href="#">Confidentialité</a> · <a href="#">Contact</a></div>
+  <div style="margin-top:8px;color:var(--text-dim);font-size:10px">Best viewed in Netscape Navigator 7 · Les ours ne font pas la guerre.</div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/shared.js"></script>
+<script>
+// ===== STARS =====
+(function(){
+  const sc=document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=Math.random()*2.5+0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}vw;top:${Math.random()*100}vh;animation-duration:${(Math.random()*3+1.5).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s`;
+    sc.appendChild(s);
+  }
+})();
+
+// ===== CURSOR =====
+(function(){
+  const cur=document.getElementById('cursor');
+  const colors=['#cc55bb','#7744aa','#5588bb','#bb7744'];
+  document.addEventListener('mousemove',e=>{
+    cur.style.left=e.clientX+'px';
+    cur.style.top=e.clientY+'px';
+    if(Math.random()>0.5)return;
+    const s=document.createElement('div');s.className='sparkle';
+    const sz=Math.random()*5+3;
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    s.style.cssText=`width:${sz}px;height:${sz}px;background:${c}99;box-shadow:0 0 4px ${c};left:${e.clientX-sz/2}px;top:${e.clientY-sz/2}px;--tx:${((Math.random()-.5)*50).toFixed(0)}px;--ty:${((Math.random()-.5)*50).toFixed(0)}px`;
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),700);
+  });
+})();
+
+// ===== PROFILE DATA (API) =====
+
+const GRADS = ['linear-gradient(135deg,#550020,#cc0044)','linear-gradient(135deg,#001830,#0055aa)','linear-gradient(135deg,#1a0040,#440088)','linear-gradient(135deg,#0a1500,#2a4800)','linear-gradient(135deg,#330000,#aa2200)','linear-gradient(135deg,#001a1a,#006666)','linear-gradient(135deg,#1a1a00,#666600)','linear-gradient(135deg,#000033,#003399)'];
+
+function createCard(u, idx) {
+  const card = document.createElement('div');
+  card.className = 'profile-card';
+  card.dataset.username = u.username;
+  card.dataset.display = (u.display_name||'').toLowerCase();
+
+  // Online dot : last_seen < 15 min
+  const minsSince = (Date.now() - new Date(u.last_seen)) / 60000;
+  if (minsSince < 15) { const dot=document.createElement('div'); dot.className='online-dot'; card.appendChild(dot); }
+
+  const av = document.createElement('div');
+  av.className = 'card-avatar';
+  av.style.background = GRADS[idx % GRADS.length];
+  if (u.avatar_data) {
+    const img = document.createElement('img');
+    img.src = u.avatar_data;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:4px';
+    av.appendChild(img);
+  } else {
+    av.textContent = '👤';
+  }
+  card.appendChild(av);
+
+  const un = document.createElement('div'); un.className='card-username'; un.textContent=u.display_name||u.username; card.appendChild(un);
+  const meta = document.createElement('div'); meta.className='card-meta'; meta.textContent=(u.location||'🌍')+' · '+timeAgo(u.last_seen); card.appendChild(meta);
+  const st = document.createElement('div'); st.className='card-status'; st.textContent=u.mood||u.bio||'🐻 …'; card.appendChild(st);
+  const btn = document.createElement('a'); btn.className='btn-voir'; btn.href=`/profile.html?u=${u.username}`; btn.textContent='Voir le profil'; card.appendChild(btn);
+
+  return card;
+}
+
+let allUsers = [];
+
+async function loadProfiles(q) {
+  const grid = document.getElementById('grid-main');
+  const empty = document.getElementById('grid-empty');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-dim);padding:30px">Chargement… 🐻</div>';
+
+  const { data, error } = await api.discover(q);
+  allUsers = data || [];
+
+  grid.innerHTML = '';
+  if (error || !allUsers.length) {
+    empty.style.display = 'block';
+    document.getElementById('grid-label').textContent = q ? `🔍 Résultats pour "${q}"` : '🔥 Tous les profils';
+    return;
+  }
+  empty.style.display = 'none';
+  document.getElementById('grid-label').textContent = q ? `🔍 Résultats pour "${q}" (${allUsers.length})` : `🔥 Tous les profils (${allUsers.length})`;
+  allUsers.forEach((u, i) => grid.appendChild(createCard(u, i)));
+}
+
+loadProfiles();
+
+// ===== SEARCH (debounced) =====
+let searchTimer;
+function filterSearch(val) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => loadProfiles(val.trim() || undefined), 350);
+}
+
+function setFilter(btn, filter) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  // online filter : client-side on current results
+  document.querySelectorAll('.profile-card').forEach(c => {
+    const isOnline = !!c.querySelector('.online-dot');
+    c.style.display = (filter==='online' && !isOnline) ? 'none' : '';
+  });
+}
+</script>
+</body>
+</html>

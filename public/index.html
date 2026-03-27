@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="emo-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>★ OURSPACE ★ xX_NéoNirvana_2026_Xx</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    /* ===== THEME VARS ===== */
+    :root {
+      --bg:#000814; --bg2:#0d0020; --bg3:#140030;
+      --accent:#cc55bb; --accent2:#7744aa;
+      --border:#3a1166; --border2:#1a0044;
+      --text:#e0e0ff; --text-muted:#9977cc; --text-dim:#444466;
+      --card:rgba(13,0,32,0.85); --marquee:#bb7744; --online:#44bb88;
+    }
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--marquee:#dd8833;--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--marquee:#00aa33;--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--marquee:#4477cc;--online:#66aaff}
+
+    /* ===== RESET ===== */
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
+    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);overflow-x:hidden;min-height:100vh}
+    #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
+    .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
+    @keyframes sparkAnim{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+    .star{position:fixed;background:var(--text);opacity:.3;border-radius:50%;animation:twinkle ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.5}50%{opacity:.1}}
+
+    /* ===== HEADER ===== */
+    #header{background:linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:2px solid var(--border);padding:16px 20px 12px;text-align:center;position:relative;z-index:10}
+    #logo-wrap{display:inline-flex;align-items:center;gap:16px}
+    .pixel-bear{width:48px;height:48px;image-rendering:pixelated;filter:drop-shadow(0 0 4px var(--accent2));animation:bearFloat 3s ease-in-out infinite}
+    @keyframes bearFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    #site-title{font-family:Impact,sans-serif;font-size:3em;letter-spacing:7px;color:var(--accent);text-shadow:0 0 6px var(--accent2);position:relative}
+    #site-title::before{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;color:color-mix(in srgb,var(--accent2) 60%,cyan);clip-path:polygon(0 20%,100% 20%,100% 45%,0 45%);animation:glitch1 9s infinite;opacity:0}
+    @keyframes glitch1{0%,94%,100%{opacity:0}95%{transform:translateX(-3px);opacity:.6}96%{transform:translateX(3px);opacity:.6}97%{transform:translateX(0);opacity:0}}
+    #site-tagline{color:var(--text-muted);font-size:11px;margin-top:4px;letter-spacing:2px}
+    #user-badge{position:absolute;top:12px;right:14px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+    #user-badge a{color:var(--accent2);text-decoration:none;font-size:11px}
+    #user-badge a:hover{color:var(--accent)}
+
+    /* ===== MARQUEE ===== */
+    .mq-wrap{background:var(--bg2);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:4px 0;overflow:hidden;position:relative;z-index:10}
+    .mq-inner{display:inline-block;white-space:nowrap;animation:mqScroll 50s linear infinite;font-size:12px;font-weight:bold;color:var(--marquee)}
+    @keyframes mqScroll{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+
+    /* ===== NAVBAR ===== */
+    #navbar{background:var(--bg2);display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border2);position:relative;z-index:10}
+    #navbar a{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border2);font-size:11px;font-family:Arial,sans-serif;border-radius:2px;transition:all .2s}
+    #navbar a:hover{background:var(--accent2);color:var(--text);border-color:var(--accent2)}
+
+    /* ===== MAIN ===== */
+    #main{max-width:1020px;margin:14px auto;padding:0 12px;position:relative;z-index:1}
+
+    /* ===== PROFILE TOP ===== */
+    #profile-top{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);padding:14px;border-radius:4px;margin-bottom:12px;backdrop-filter:blur(4px)}
+    #avatar-col{width:150px;min-width:150px;text-align:center}
+    .avatar-box{width:128px;height:128px;margin:0 auto 7px;background:linear-gradient(135deg,var(--bg3),var(--accent2));border:2px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:62px;box-shadow:0 0 10px var(--border);animation:avGlow 4s ease-in-out infinite;overflow:hidden;position:relative;cursor:pointer}
+    .avatar-box img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:3px}
+    .avatar-box .av-overlay{position:absolute;inset:0;background:#00000088;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:11px;color:#fff;text-align:center;padding:6px;border-radius:3px;line-height:1.4}
+    .avatar-box:hover .av-overlay{opacity:1}
+    #avatar-file{display:none}
+    @keyframes avGlow{0%,100%{box-shadow:0 0 8px var(--border)}50%{box-shadow:0 0 18px var(--accent2)88}}
+    .online-badge{font-size:11px;color:var(--online);margin-bottom:5px}
+    .dot-live{display:inline-block;width:7px;height:7px;background:var(--online);border-radius:50%;box-shadow:0 0 4px var(--online)88;animation:dotPulse 1.4s step-end infinite;vertical-align:middle}
+    @keyframes dotPulse{50%{opacity:0}}
+    #profile-info{flex:1}
+    #profile-info h2{font-family:Impact,sans-serif;font-size:1.9em;color:var(--accent);text-shadow:0 0 8px var(--accent)44;margin-bottom:5px}
+    .status-line{color:var(--text-muted);font-style:italic;font-size:13px;margin-bottom:10px;cursor:text}
+    .status-line[contenteditable="true"]:focus{outline:1px dashed var(--border);padding:2px 4px;border-radius:2px}
+    .stats-tbl{width:100%;border-collapse:collapse;font-size:12px}
+    .stats-tbl td{padding:3px 7px;border-bottom:1px solid var(--border2)}
+    .stats-tbl td:first-child{color:var(--text-muted);font-weight:bold;width:38%}
+    .stats-tbl td:last-child{color:var(--text)}
+    .stats-tbl a{color:var(--accent);text-decoration:none}
+    .stats-tbl a:hover{text-decoration:underline}
+
+    /* ===== AUDIO PLAYER ===== */
+    #audio-player{background:linear-gradient(180deg,var(--bg3),var(--bg2));border:1px solid var(--accent2);padding:10px 13px;border-radius:4px;margin-top:11px;min-height:56px;transition:border-color .2s}
+    #audio-player.drag-over{border-color:var(--accent);box-shadow:0 0 12px var(--accent)44}
+    #drop-msg{display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:12px}
+    #drop-msg .big{font-size:24px}
+    #drop-msg small{font-size:10px;display:block;color:var(--text-dim)}
+    #now-playing{display:none;align-items:center;gap:10px}
+    #np-info{flex:1}
+    #np-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+    #np-title{font-size:13px;font-weight:bold;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+    #play-pause-btn{background:var(--bg2);border:1px solid var(--border);color:var(--accent);width:30px;height:30px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+    #play-pause-btn:hover{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+    #vis-canvas{border-radius:3px;opacity:.85;background:transparent}
+    #file-input{display:none}
+
+    /* ===== TWO COLUMNS ===== */
+    #content{display:grid;grid-template-columns:1fr 290px;gap:13px}
+
+    /* ===== BOXES ===== */
+    .box{background:var(--card);border:1px solid var(--border);border-radius:4px;margin-bottom:12px;overflow:hidden;backdrop-filter:blur(2px)}
+    .box-hd{background:linear-gradient(180deg,var(--bg3),var(--bg2));padding:6px 11px;font-family:'Arial Black',sans-serif;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center}
+    .box-hd a{color:var(--border);font-size:10px;text-decoration:underline;cursor:pointer}
+    .box-hd a:hover{color:var(--accent2)}
+    .box-bd{padding:11px;font-size:13px;line-height:1.7}
+
+    /* ===== TEXT EFFECTS ===== */
+    .glow{color:var(--accent);text-shadow:0 0 7px var(--accent)55}
+    .blink{animation:blinkA 1.4s step-end infinite}
+    @keyframes blinkA{50%{opacity:.35}}
+    .rainbow{background:linear-gradient(90deg,#ff4444,#ff9900,#ffdd00,#44dd44,#4488ff,#aa44ff,#ff44aa);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:bold}
+    .warn{color:#ff5533;font-weight:bold}
+    .divider{text-align:center;color:var(--border);font-size:14px;letter-spacing:5px;margin:8px 0}
+    .quote-box{color:#66ff9988;font-style:italic;text-align:center;font-size:12px;padding:9px 13px;border:1px dashed #66ff9944;border-radius:3px;margin:8px 0}
+
+    /* ===== ABOUT ME (editable) ===== */
+    #about-content{color:var(--text);outline:none;min-height:80px}
+    #about-content:focus{outline:1px dashed var(--border);border-radius:3px;padding:4px}
+    #about-save-msg{font-size:10px;color:var(--online);height:14px;text-align:right;margin-top:4px;opacity:0;transition:opacity .3s}
+    #edit-about-btn{font-size:10px;color:var(--border);cursor:pointer;background:none;border:none;font-family:inherit}
+    #edit-about-btn:hover{color:var(--accent2)}
+
+    /* ===== INTERESTS ===== */
+    .int-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .int-item{background:color-mix(in srgb,var(--accent2) 10%,transparent);border:1px solid var(--border);border-radius:3px;padding:7px}
+    .int-item h4{color:var(--accent);font-size:11px;text-transform:uppercase;margin-bottom:3px}
+    .int-item p{color:var(--text-muted);font-size:12px}
+
+    /* ===== COUNTER ===== */
+    #counter-wrap{text-align:center;padding:8px}
+    .digits{display:inline-flex;gap:2px;background:#000;padding:5px;border:2px inset #1a1a1a;border-radius:3px}
+    .dgt{background:#080808;color:#00ff88;font-family:'Courier New',monospace;font-size:20px;font-weight:bold;width:20px;text-align:center}
+
+    /* ===== TOP FRIENDS ===== */
+    .friends-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+    .friend{text-align:center}
+    .friend-av{width:56px;height:56px;margin:0 auto 4px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid var(--border);cursor:pointer;transition:transform .2s;text-decoration:none}
+    .friend-av:hover{transform:scale(1.1);border-color:var(--accent)}
+    .friend-name{font-size:10px;color:var(--text-muted);cursor:pointer;text-decoration:none;display:block}
+    .friend-name:hover{color:var(--accent);text-decoration:underline}
+
+    /* ===== BLINKIES ===== */
+    .blinkies{display:flex;flex-wrap:wrap;gap:4px}
+    .bk{padding:3px 8px;font-size:10px;font-weight:bold;text-transform:uppercase;border:1px solid;border-radius:2px;animation:bkP 2s ease-in-out infinite}
+    @keyframes bkP{0%,100%{opacity:.85}50%{opacity:.5}}
+    .bk1{background:#160026;border-color:var(--accent);color:var(--accent)}
+    .bk2{background:#001510;border-color:#337755;color:#337755;animation-delay:.3s}
+    .bk3{background:#160000;border-color:#993322;color:#993322;animation-delay:.6s}
+    .bk4{background:#000d16;border-color:#336688;color:#336688;animation-delay:.9s}
+    .bk5{background:#161400;border-color:#887733;color:#887733;animation-delay:.2s}
+    .bk6{background:var(--bg2);border-color:var(--accent2);color:var(--accent2);animation-delay:.7s}
+
+    /* ===== COMMENTS ===== */
+    .cmt{display:flex;gap:9px;border-bottom:1px solid var(--border2);padding:9px 0}
+    .cmt:last-of-type{border-bottom:none}
+    .cmt-av{width:42px;min-width:42px;height:42px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--border)}
+    .cmt-author{color:var(--accent);font-weight:bold;font-size:12px}
+    .cmt-date{color:var(--text-dim);font-size:10px;margin-bottom:2px}
+    .cmt-text{color:var(--text);font-size:12px;line-height:1.5}
+    .cmt-gif{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;vertical-align:middle;font-size:22px}
+    /* gif animations */
+    .gif-sparkle .cmt-gif,.cmt-gif.gif-sparkle{animation:gifSpin 0.5s linear infinite}
+    @keyframes gifSpin{to{transform:rotate(360deg)}}
+    .cmt-gif.gif-flame{animation:gifShake .15s ease-in-out infinite alternate}
+    @keyframes gifShake{0%{transform:skewX(-5deg)}100%{transform:skewX(5deg)}}
+    .cmt-gif.gif-heart{animation:gifPulse .6s ease-in-out infinite}
+    @keyframes gifPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+    .cmt-gif.gif-peace,.cmt-gif.gif-star{animation:gifSpin 2s linear infinite}
+    .cmt-gif.gif-rainbow{animation:gifRain 1s linear infinite}
+    @keyframes gifRain{to{filter:hue-rotate(360deg)}}
+    .cmt-gif.gif-bounce{animation:gifBounce .4s ease-in-out infinite alternate}
+    @keyframes gifBounce{0%{transform:translateY(0)}100%{transform:translateY(-6px)}}
+
+    /* ===== COMMENT FORM ===== */
+    .cmt-form textarea{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px;font-family:'Comic Sans MS',cursive;font-size:12px;resize:vertical;min-height:50px;border-radius:3px;margin-top:8px}
+    .cmt-form textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 6px var(--accent)22}
+    .cmt-form textarea::placeholder{color:var(--text-dim)}
+    .cmt-form-row{display:flex;gap:6px;margin-top:5px}
+    .btn-post{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);border:1px solid var(--border2);padding:5px 14px;font-family:Arial,sans-serif;font-size:12px;cursor:pointer;border-radius:2px;transition:all .15s}
+    .btn-post:hover{background:var(--accent2);color:var(--text)}
+    .btn-gif{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);border:1px solid var(--border2);padding:5px 10px;font-family:Arial,sans-serif;font-size:11px;cursor:pointer;border-radius:2px;transition:all .15s}
+    .btn-gif:hover{background:var(--bg3);color:var(--accent)}
+
+    /* ===== GIF PICKER ===== */
+    #gif-modal{display:none;position:fixed;inset:0;background:#00000099;z-index:9990;align-items:center;justify-content:center}
+    #gif-modal.open{display:flex}
+    .gif-modal-inner{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px;max-width:380px;width:90%}
+    .gif-modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-family:'Arial Black',sans-serif;font-size:12px;color:var(--text-muted)}
+    .gif-modal-hd button{background:none;border:none;color:var(--text-dim);font-size:16px;cursor:pointer}
+    .gif-modal-hd button:hover{color:var(--accent)}
+    .gif-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+    .gif-thumb{width:52px;height:52px;border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;background:var(--bg3);transition:border-color .2s;flex-direction:column;gap:1px}
+    .gif-thumb:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent2) 15%,var(--bg3))}
+    .gif-thumb span{font-size:8px;color:var(--text-dim)}
+    /* gif preview animations */
+    .gif-thumb .gif-sparkle{animation:gifSpin .5s linear infinite;display:block}
+    .gif-thumb .gif-flame{animation:gifShake .15s ease-in-out infinite alternate;display:block}
+    .gif-thumb .gif-heart{animation:gifPulse .6s ease-in-out infinite;display:block}
+    .gif-thumb .gif-peace,.gif-thumb .gif-star{animation:gifSpin 2s linear infinite;display:block}
+    .gif-thumb .gif-rainbow{animation:gifRain 1s linear infinite;display:block}
+    .gif-thumb .gif-bounce{animation:gifBounce .4s ease-in-out infinite alternate;display:block}
+
+    /* ===== SKINZ PANEL ===== */
+    #skinz-panel{position:fixed;bottom:20px;right:16px;z-index:9000}
+    #skinz-toggle{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 13px;font-size:12px;color:var(--text-muted);cursor:pointer;backdrop-filter:blur(6px);user-select:none;transition:all .2s}
+    #skinz-toggle:hover{border-color:var(--accent);color:var(--accent)}
+    #skinz-options{display:none;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px;backdrop-filter:blur(8px)}
+    #skinz-panel.open #skinz-options{display:block}
+    .skin-btn{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-muted);font-family:'Comic Sans MS',cursive;font-size:12px;padding:5px 8px;cursor:pointer;border-radius:3px;margin-bottom:2px;transition:all .2s}
+    .skin-btn:hover{background:var(--bg3);color:var(--text)}
+    .skin-btn.skin-active{color:var(--accent);font-weight:bold}
+
+    /* ===== BLOG ===== */
+    .blog-title{color:var(--marquee);font-weight:bold;font-size:13px}
+    .blog-meta{color:var(--text-dim);font-size:10px;margin:4px 0 7px}
+    .blog-body{color:var(--text-muted);font-size:12px;line-height:1.7}
+
+    /* ===== FOOTER ===== */
+    #footer{text-align:center;padding:20px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border2);margin-top:8px;position:relative;z-index:1}
+    #footer a{color:var(--border)}
+
+    @media(max-width:700px){
+      #content{grid-template-columns:1fr}
+      #profile-top{flex-direction:column;align-items:center}
+      .friends-grid{grid-template-columns:repeat(4,1fr)}
+      #site-title{font-size:2em;letter-spacing:4px}
+      #user-badge{position:static;margin-top:8px;justify-content:center}
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor">🐻</div>
+<div id="stars"></div>
+
+<!-- GIF MODAL -->
+<div id="gif-modal">
+  <div class="gif-modal-inner">
+    <div class="gif-modal-hd">
+      🎞 GIF Y2K — clique pour insérer
+      <button onclick="document.getElementById('gif-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="gif-grid" id="gif-grid"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="user-badge">
+    <span id="user-display"></span>
+    <a href="login.html" id="logout-link">Déconnexion</a>
+  </div>
+  <div id="logo-wrap">
+    <canvas class="pixel-bear" id="bear-logo" width="48" height="48"></canvas>
+    <div>
+      <div id="site-title" data-text="✦ OURSPACE ✦">✦ OURSPACE ✦</div>
+      <div id="site-tagline">notre espace. notre paix. <span class="blink" style="color:var(--accent)">♥</span> old web revival 2026</div>
+    </div>
+    <canvas class="pixel-bear" id="bear-logo2" width="48" height="48"></canvas>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="mq-wrap">
+  <span class="mq-inner">🐻 BIENVENUE SUR OURSPACE 🐻 ✦ la guerre c'est nul ✦ make love not war ✦ MCR saved my life ✦ PEACE &amp; LOVE ✦ anti-war ✦ la musique guérit tout ✦ listening to: welcome to the black parade ✦ mood: sad but aesthetic ✦ HTML comme thérapie ✦ 2026 is chaotic ✦ besoin de paix ✦ les ours ne font pas la guerre 🐻 ✦</span>
+</div>
+
+<!-- NAVBAR -->
+<div id="navbar">
+  <a href="/">🏠 Accueil</a>
+  <a href="/">👤 Profil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="#">🎵 Musique</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="#">👥 Groupes</a>
+  <a href="#">💌 Messages</a>
+  <a href="#">🐻 Ourspace+</a>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="profile-top">
+    <div id="avatar-col">
+      <div class="avatar-box" onclick="document.getElementById('avatar-file').click()">
+        <span id="av-emoji">🦋</span>
+        <img id="av-photo" style="display:none">
+        <div class="av-overlay">📷 Changer<br>la photo</div>
+      </div>
+      <input type="file" id="avatar-file" accept="image/*" onchange="uploadAvatar(this.files[0])">
+      <div class="online-badge"><span class="dot-live"></span> En ligne</div>
+      <div style="font-size:11px;color:var(--text-muted)">Dernière co :<br><span style="color:var(--marquee)">À l'instant</span></div>
+      <div style="margin-top:8px;font-size:14px;letter-spacing:4px;color:var(--accent)">★★★★★</div>
+    </div>
+
+    <div id="profile-info">
+      <h2 id="profile-username">✦ xX_NéoNirvana_2026_Xx ✦</h2>
+      <div class="status-line" id="profile-status" contenteditable="false" title="Double-clic pour modifier">
+        🐻 "les guerres passent, le HTML reste" · humeur : existentielle mais ça compile
+      </div>
+      <table class="stats-tbl">
+        <tr><td>Humeur :</td>     <td>😔 mélancolique mais ✨ ça va aller</td></tr>
+        <tr><td>Âge :</td>        <td>22 ans (nés en 2004, lol)</td></tr>
+        <tr><td>Lieu :</td>       <td>🌍 Quelque part sur Terre (pas en guerre)</td></tr>
+        <tr><td>Philosophie :</td><td>Pacifiste convaincu(e)</td></tr>
+        <tr><td>Statut :</td>     <td>C'est compliqué (avec la réalité en 2026)</td></tr>
+        <tr><td>Amis :</td>       <td><a href="discover.html">247 amis</a> · <a href="discover.html">Ajouter</a></td></tr>
+      </table>
+
+      <!-- REAL AUDIO PLAYER -->
+      <div id="audio-player" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)" onclick="document.getElementById('file-input').click()">
+        <div id="drop-msg">
+          <span class="big">🎵</span>
+          <div>
+            <strong style="color:var(--accent)">Glisse ton MP3 ici</strong>
+            <small>ou clique pour choisir un fichier audio</small>
+          </div>
+        </div>
+        <div id="now-playing">
+          <button id="play-pause-btn" onclick="togglePlay(event)">⏸</button>
+          <div id="np-info">
+            <div id="np-label">♬ À L'ÉCOUTE :</div>
+            <div id="np-title">—</div>
+          </div>
+          <canvas id="vis-canvas" width="160" height="32"></canvas>
+        </div>
+        <input type="file" id="file-input" accept="audio/*" onchange="loadFile(this.files[0])">
+      </div>
+    </div>
+  </div><!-- /profile-top -->
+
+  <div id="content">
+    <!-- LEFT -->
+    <div>
+      <!-- About Me -->
+      <div class="box">
+        <div class="box-hd">
+          🐻 À Propos de Moi
+          <button id="edit-about-btn" onclick="toggleEditAbout()">✏️ Modifier</button>
+        </div>
+        <div class="box-bd">
+          <div id="about-content" contenteditable="false">
+            <span class="glow">✦ Bienvenue sur ma page ✦</span><br><br>
+            Je suis quelqu'un qui croit encore que la <span class="rainbow">paix est possible</span>.
+            En ces temps de <span class="warn">GUERRE</span> et de bruit médiatique permanent,
+            je me réfugie dans la musique, le code, et les vieux recoins d'internet.<br><br>
+            Ouais, j'ai recréé MySpace. Ouais je sais que c'est cringe.
+            <span class="blink" style="color:var(--accent)">Mais ça me fait du bien.</span><br><br>
+            Les années 2000 c'était pas parfait mais on avait le Top 8, les sonneries .mid,
+            et des profils Comic Sans sur fond étoilé. Plus simple. Plus humain, presque.<br><br>
+            <div class="divider">🐻 ✦ 🐻</div>
+            <div class="quote-box">"Quand le monde s'effondre, ouvre le HTML Inspector et arrange les choses toi-même."</div>
+            <br>
+            Si tu veux savoir comment ça va : <strong style="color:var(--marquee)">ça compile</strong>. C'est déjà quelque chose.
+          </div>
+          <div id="about-save-msg">✓ Sauvegardé</div>
+        </div>
+      </div>
+
+      <!-- Interests -->
+      <div class="box">
+        <div class="box-hd">🐻 Centres d'Intérêt</div>
+        <div class="box-bd">
+          <div class="int-grid">
+            <div class="int-item"><h4>🎵 Musique</h4><p>MCR, Evanescence, Linkin Park, Daft Punk</p></div>
+            <div class="int-item"><h4>🎮 Jeux</h4><p>Flash games RIP 😢, retro FPS, abandonware</p></div>
+            <div class="int-item"><h4>💻 Tech</h4><p>HTML/CSS/JS pur, old web revival, sites inutiles mais beaux</p></div>
+            <div class="int-item"><h4>📚 Lectures</h4><p>Orwell, Camus, mangas, fanfictions (honteuses)</p></div>
+            <div class="int-item"><h4>🎬 Films</h4><p>Matrix, The Crow, Hackers 1995, grain 35mm</p></div>
+            <div class="int-item"><h4>☮️ Opinions</h4><p>Contre la guerre. Pro-paix. Pro-CSS.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blog -->
+      <div class="box">
+        <div class="box-hd">🐻 Dernier Billet <a href="#">Voir tout »</a></div>
+        <div class="box-bd">
+          <div class="blog-title">"pourquoi j'ai recréé MySpace en 2026"</div>
+          <div class="blog-meta">14 mars 2026 · 03h47 · 42 commentaires</div>
+          <div class="blog-body">Je dormais pas. L'actu était trop lourde. J'ai ouvert mon éditeur et j'ai juste… commencé. Y'a un truc magique dans le fait de construire quelque chose avec du HTML brut en pleine nuit.<br><br>Et puis "OUR" + "OURS" — notre espace, l'espace des ours. <span class="blink" style="color:var(--marquee)">Les ours ne font pas la guerre.</span> <a href="#" style="color:var(--accent)">Lire la suite…</a></div>
+        </div>
+      </div>
+    </div><!-- /left -->
+
+    <!-- RIGHT -->
+    <div>
+      <!-- Counter -->
+      <div class="box">
+        <div class="box-hd">🐻 Visiteurs</div>
+        <div class="box-bd" id="counter-wrap">
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:7px;text-align:center">Vous êtes le visiteur n°</div>
+          <div class="digits" style="margin:0 auto;display:table">
+            <span class="dgt" id="d1">0</span><span class="dgt" id="d2">0</span>
+            <span class="dgt" id="d3">2</span><span class="dgt" id="d4">6</span>
+            <span class="dgt" id="d5">8</span><span class="dgt" id="d6">1</span>
+            <span class="dgt" id="d7">4</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 8 -->
+      <div class="box">
+        <div class="box-hd">🐻 Top 8 <a href="#">Modifier »</a></div>
+        <div class="box-bd">
+          <div class="friends-grid">
+            <div class="friend"><a class="friend-av" href="profiles/foxygrl.html" style="background:linear-gradient(135deg,#550020,#cc0044)">🦊</a><a class="friend-name" href="profiles/foxygrl.html">xX_FoxyGrl</a></div>
+            <div class="friend"><a class="friend-av" href="profiles/cybernerd99.html" style="background:linear-gradient(135deg,#001830,#0055aa)">🤖</a><a class="friend-name" href="profiles/cybernerd99.html">CyberNerd99</a></div>
+            <div class="friend"><a class="friend-av" href="profiles/moonchild.html" style="background:linear-gradient(135deg,#1a0040,#440088)">🌙</a><a class="friend-name" href="profiles/moonchild.html">MoonChild_</a></div>
+            <div class="friend"><a class="friend-av" href="profiles/oursbrun42.html" style="background:linear-gradient(135deg,#0a1500,#2a4800)">🐻</a><a class="friend-name" href="profiles/oursbrun42.html">OursBrun42</a></div>
+            <div class="friend"><a class="friend-av" href="#" style="background:linear-gradient(135deg,#200030,#660099)">⚡</a><a class="friend-name" href="#">StormByte</a></div>
+            <div class="friend"><a class="friend-av" href="#" style="background:linear-gradient(135deg,#200000,#660022)">🔥</a><a class="friend-name" href="#">Pyromanix</a></div>
+            <div class="friend"><a class="friend-av" href="#" style="background:linear-gradient(135deg,#001520,#004466)">🌊</a><a class="friend-name" href="#">OceanDream</a></div>
+            <div class="friend"><a class="friend-av" href="#" style="background:linear-gradient(135deg,#201500,#664400)">⭐</a><a class="friend-name" href="#">StarGazr_X</a></div>
+          </div>
+          <div style="text-align:center;margin-top:9px;font-size:11px"><a href="discover.html" style="color:var(--text-muted)">Voir les 247 amis »</a></div>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <div class="box">
+        <div class="box-hd">🐻 Badges</div>
+        <div class="box-bd">
+          <div class="blinkies">
+            <span class="bk bk1">☮ PEACE</span><span class="bk bk2">✓ ANTI-WAR</span>
+            <span class="bk bk3">♥ MCR FAN</span><span class="bk bk4">⚡ CODER</span>
+            <span class="bk bk5">★ OLD WEB</span><span class="bk bk6">🐻 OURSPACE</span>
+            <span class="bk bk1">💻 HTML QUEEN</span><span class="bk bk3">🎵 MUSIC ADDICT</span>
+            <span class="bk bk2">🌍 PRO PAIX</span><span class="bk bk4">🌙 NIGHT OWL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments -->
+      <div class="box">
+        <div class="box-hd">🐻 Commentaires <span id="cmt-count" style="font-size:10px;color:var(--text-dim)">0</span></div>
+        <div class="box-bd">
+          <div id="comments-list">
+            <!-- loaded from localStorage + defaults -->
+          </div>
+          <div class="divider">🐻</div>
+          <div class="cmt-form">
+            <div style="font-size:11px;color:var(--text-muted)">Laisse un commentaire :</div>
+            <textarea id="cmt-textarea" placeholder="Écris quelque chose…"></textarea>
+            <div class="cmt-form-row">
+              <button class="btn-post" onclick="postComment()">Poster !</button>
+              <button class="btn-gif" onclick="openGifPicker()">🎞 GIF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /right -->
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<div id="footer">
+  <div style="color:var(--border);font-size:16px;letter-spacing:8px;margin-bottom:7px">🐻 ✦ 🐻</div>
+  OURSPACE 2026 — <span class="blink" style="color:var(--accent)">fait avec ♥ et Comic Sans</span><br>
+  <div style="margin-top:5px"><a href="login.html">Connexion</a> · <a href="discover.html">Découvrir</a> · <a href="#">Blog</a></div>
+  <div style="margin-top:8px;color:var(--text-dim);font-size:10px">Best viewed in Netscape Navigator 7 · Les ours ne font pas la guerre.</div>
+</div>
+
+<!-- SKINZ PANEL -->
+<div id="skinz-panel">
+  <div id="skinz-options">
+    <button class="skin-btn" data-theme="emo-dark">🖤 Emo Dark</button>
+    <button class="skin-btn" data-theme="bubblegum">🌸 Bubblegum</button>
+    <button class="skin-btn" data-theme="matrix">💾 Matrix</button>
+    <button class="skin-btn" data-theme="midnight">🌙 Midnight</button>
+  </div>
+  <div id="skinz-toggle">🎨 Skinz</div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/shared.js"></script>
+<script>
+// ===== AUTH + INIT =====
+let ME = null;
+(async function init() {
+  ME = await requireLogin();
+  if (!ME) return;
+
+  document.getElementById('user-display').textContent = '👤 ' + ME.display_name;
+  document.getElementById('logout-link').onclick = async e => {
+    e.preventDefault(); await api.logout(); window.location.href = '/login.html';
+  };
+  document.title = '★ OURSPACE ★ ' + ME.username;
+  document.getElementById('profile-username').textContent = '✦ ' + ME.display_name + ' ✦';
+
+  const statusEl = document.getElementById('profile-status');
+  if (ME.mood) statusEl.textContent = ME.mood;
+
+  if (ME.skin) { document.documentElement.dataset.theme = ME.skin; updateSkinButtons(ME.skin); }
+  if (ME.avatar_data) showAvatar(ME.avatar_data);
+  if (ME.bio) aboutEl.innerHTML = ME.bio;
+
+  loadFriends();
+  loadComments();
+})();
+
+// ===== COUNTER =====
+(function(){
+  const TARGET = [0,0,2,6,8,1,4];
+  let done = false;
+  new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting || done) return;
+    done = true;
+    TARGET.forEach((t,i) => {
+      const el = document.getElementById('d'+(i+1));
+      let step=0, total=16+i*4;
+      const iv = setInterval(() => {
+        el.textContent = Math.floor(Math.random()*10);
+        if(++step>=total){ clearInterval(iv); el.textContent=t; }
+      }, 45);
+    });
+  }, {threshold:.5}).observe(document.getElementById('counter-wrap'));
+})();
+
+// ===== ABOUT ME (editable + API) =====
+const aboutEl   = document.getElementById('about-content');
+const saveMsgEl = document.getElementById('about-save-msg');
+
+function toggleEditAbout() {
+  const editing = aboutEl.contentEditable === 'true';
+  if (editing) {
+    aboutEl.contentEditable = 'false';
+    document.getElementById('edit-about-btn').textContent = '✏️ Modifier';
+    api.updateProfile({ bio: aboutEl.innerHTML }).then(({ error }) => {
+      if (error) { toast(error, 'error'); return; }
+      saveMsgEl.style.opacity = '1';
+      setTimeout(() => saveMsgEl.style.opacity = '0', 2000);
+    });
+  } else {
+    aboutEl.contentEditable = 'true';
+    aboutEl.focus();
+    document.getElementById('edit-about-btn').textContent = '💾 Sauvegarder';
+  }
+}
+
+// ===== STATUS (editable + API) =====
+const statusEl = document.getElementById('profile-status');
+statusEl.addEventListener('dblclick', () => { statusEl.contentEditable = 'true'; statusEl.focus(); });
+statusEl.addEventListener('blur', () => {
+  statusEl.contentEditable = 'false';
+  if (ME) api.updateProfile({ mood: statusEl.textContent });
+});
+
+// ===== COMMENTS (API) =====
+function renderGifToken(text) {
+  return text.replace(/\[gif:(\w+)\]/g, (_, name) => {
+    const map = { sparkle:'✨', flame:'🔥', heart:'❤️', peace:'☮️', skull:'💀', star:'⭐', rainbow:'🌈', bounce:'💃', bear:'🐻', glitter:'💎', nyan:'🌈🐱', matrix:'👾' };
+    return `<span class="cmt-gif gif-${name}">${map[name]||'✨'}</span>`;
+  });
+}
+
+function renderComment(c) {
+  const d = document.createElement('div');
+  d.className = 'cmt'; d.dataset.id = c.id;
+  const avHtml = c.author_avatar
+    ? `<img src="${c.author_avatar}" style="width:42px;height:42px;object-fit:cover;border-radius:4px">`
+    : '👤';
+  const canDelete = ME && c.author_username === ME.username;
+  d.innerHTML = `
+    <div class="cmt-av" style="background:var(--bg3)">${avHtml}</div>
+    <div style="flex:1">
+      <a class="cmt-author" href="/profile.html?u=${c.author_username}">${c.author_name}</a>
+      <div class="cmt-date">${timeAgo(c.created_at)}</div>
+      <div class="cmt-text">${renderGifToken(c.content.replace(/</g,'&lt;'))}</div>
+    </div>
+    ${canDelete?`<button onclick="deleteComment(${c.id},this)" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:12px;padding:0 4px" title="Supprimer">✕</button>`:''}`;
+  return d;
+}
+
+async function loadComments() {
+  if (!ME) return;
+  const { data, error } = await api.getComments(ME.username);
+  const list = document.getElementById('comments-list');
+  list.innerHTML = '';
+  if (error || !data.length) {
+    list.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:10px">Pas encore de commentaires… sois le premier 🐻</div>';
+    document.getElementById('cmt-count').textContent = '0';
+    return;
+  }
+  data.forEach(c => list.appendChild(renderComment(c)));
+  document.getElementById('cmt-count').textContent = data.length;
+}
+
+async function postComment() {
+  const ta = document.getElementById('cmt-textarea');
+  const text = ta.value.trim();
+  if (!text || !ME) return;
+  const { data, error } = await api.postComment(ME.username, text);
+  if (error) { toast(error, 'error'); return; }
+  ta.value = '';
+  const list = document.getElementById('comments-list');
+  if (list.querySelector('[style*="Pas encore"]')) list.innerHTML = '';
+  const el = renderComment(data);
+  el.style.cssText = 'opacity:0;transition:opacity .4s';
+  list.insertBefore(el, list.firstChild);
+  requestAnimationFrame(() => el.style.opacity = '1');
+  document.getElementById('cmt-count').textContent = parseInt(document.getElementById('cmt-count').textContent||0)+1;
+  for(let i=0;i<8;i++){const s=document.createElement('div');s.className='sparkle';const c=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),sz=Math.random()*6+3;s.style.cssText=`width:${sz}px;height:${sz}px;background:${c}99;box-shadow:0 0 4px ${c}44;left:${Math.random()*200+window.innerWidth/2-100}px;top:${window.innerHeight-100}px;--tx:${((Math.random()-.5)*80).toFixed(0)}px;--ty:${-(Math.random()*80+20).toFixed(0)}px`;document.body.appendChild(s);setTimeout(()=>s.remove(),700);}
+}
+
+async function deleteComment(id, btn) {
+  const { error } = await api.deleteComment(id);
+  if (error) { toast(error, 'error'); return; }
+  btn.closest('.cmt').remove();
+  document.getElementById('cmt-count').textContent = Math.max(0, parseInt(document.getElementById('cmt-count').textContent||1)-1);
+}
+
+// ===== GIF PICKER =====
+const GIFS = [
+  { name:'sparkle', em:'✨', label:'Sparkle' }, { name:'flame',   em:'🔥', label:'Flame'  },
+  { name:'heart',   em:'❤️', label:'Heart'  }, { name:'peace',   em:'☮️', label:'Peace'  },
+  { name:'skull',   em:'💀', label:'Skull'  }, { name:'star',    em:'⭐', label:'Star'   },
+  { name:'rainbow', em:'🌈', label:'Rainbow'}, { name:'bounce',  em:'💃', label:'Dance'  },
+  { name:'bear',    em:'🐻', label:'Bear'   }, { name:'glitter', em:'💎', label:'Glitter'},
+  { name:'nyan',    em:'🐱', label:'Nyan'   }, { name:'matrix',  em:'👾', label:'Matrix' },
+];
+(function(){
+  const grid = document.getElementById('gif-grid');
+  GIFS.forEach(g => {
+    const d = document.createElement('div');
+    d.className = 'gif-thumb';
+    d.title = g.label;
+    d.innerHTML = `<span class="gif-${g.name}">${g.em}</span><span>${g.label}</span>`;
+    d.onclick = () => insertGif(g.name);
+    grid.appendChild(d);
+  });
+})();
+function openGifPicker() { document.getElementById('gif-modal').classList.add('open'); }
+function insertGif(name) {
+  const ta = document.getElementById('cmt-textarea');
+  ta.value += ` [gif:${name}] `;
+  ta.focus();
+  document.getElementById('gif-modal').classList.remove('open');
+}
+document.getElementById('gif-modal').addEventListener('click', function(e){
+  if (e.target === this) this.classList.remove('open');
+});
+
+// ===== REAL AUDIO PLAYER =====
+let audioCtx, analyser, source, animFrame, isPaused = false, audioBuffer;
+function onDragOver(e) { e.preventDefault(); document.getElementById('audio-player').classList.add('drag-over'); }
+function onDragLeave()  { document.getElementById('audio-player').classList.remove('drag-over'); }
+function onDrop(e) { e.preventDefault(); onDragLeave(); const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('audio/')) loadFile(f); }
+
+async function loadFile(file) {
+  if (!file) return;
+  document.getElementById('drop-msg').style.display = 'none';
+  document.getElementById('now-playing').style.display = 'flex';
+  document.getElementById('np-title').textContent = file.name.replace(/\.[^.]+$/,'');
+  if (audioCtx) { cancelAnimationFrame(animFrame); audioCtx.close(); }
+  if (source) try { source.stop(); } catch(e){}
+  audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 128;
+  analyser.connect(audioCtx.destination);
+  const buf = await file.arrayBuffer();
+  audioBuffer = await audioCtx.decodeAudioData(buf);
+  playFrom(0);
+}
+function playFrom(offset) {
+  if (source) try{source.stop();}catch(e){}
+  source = audioCtx.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(analyser);
+  source.loop = true;
+  source.start(0, offset);
+  isPaused = false;
+  document.getElementById('play-pause-btn').textContent = '⏸';
+  drawVis();
+}
+function togglePlay(e) {
+  e.stopPropagation();
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended') { audioCtx.resume(); document.getElementById('play-pause-btn').textContent='⏸'; isPaused=false; drawVis(); }
+  else { audioCtx.suspend(); document.getElementById('play-pause-btn').textContent='▶'; isPaused=true; cancelAnimationFrame(animFrame); }
+}
+function drawVis() {
+  const canvas = document.getElementById('vis-canvas');
+  const ctx    = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const data   = new Uint8Array(analyser.frequencyBinCount);
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  function frame() {
+    animFrame = requestAnimationFrame(frame);
+    analyser.getByteFrequencyData(data);
+    ctx.clearRect(0,0,W,H);
+    const bw = W / data.length * 2;
+    data.forEach((v,i) => {
+      const h = (v/255)*H;
+      ctx.fillStyle = accent + 'bb';
+      ctx.fillRect(i*bw, H-h, bw-1, h);
+    });
+  }
+  frame();
+}
+
+// ===== TOP 8 FRIENDS (API) =====
+const GRADS = ['linear-gradient(135deg,#550020,#cc0044)','linear-gradient(135deg,#001830,#0055aa)','linear-gradient(135deg,#001a00,#005500)','linear-gradient(135deg,#1a0040,#440088)','linear-gradient(135deg,#200030,#660099)','linear-gradient(135deg,#200000,#660022)','linear-gradient(135deg,#001520,#004466)','linear-gradient(135deg,#201500,#664400)'];
+
+async function loadFriends() {
+  const { data } = await api.getMyFriends();
+  const grid = document.querySelector('.friends-grid');
+  if (!data || !data.length) {
+    grid.innerHTML = '<div style="color:var(--text-dim);font-size:11px;grid-column:1/-1;text-align:center">Pas encore d\'amis… <a href="/discover.html" style="color:var(--accent)">Explorer</a></div>';
+    return;
+  }
+  const top = data.filter(f=>f.position).sort((a,b)=>a.position-b.position).concat(data.filter(f=>!f.position)).slice(0,8);
+  grid.innerHTML = '';
+  top.forEach((f,i) => {
+    const av = f.avatar_data ? `<img src="${f.avatar_data}" style="width:100%;height:100%;object-fit:cover;border-radius:3px">` : '👤';
+    const div = document.createElement('div'); div.className='friend';
+    div.innerHTML = `<a class="friend-av" href="/profile.html?u=${f.username}" style="background:${GRADS[i%GRADS.length]};overflow:hidden">${av}</a><a class="friend-name" href="/profile.html?u=${f.username}">${f.display_name}</a>`;
+    grid.appendChild(div);
+  });
+  const countLink = document.querySelector('.friends-grid + div a');
+  if (countLink) countLink.textContent = `Voir les ${data.length} amis »`;
+}
+
+// ===== AVATAR UPLOAD (API) =====
+function uploadAvatar(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    showAvatar(e.target.result);
+    const { error } = await api.updateProfile({ avatar_data: e.target.result });
+    if (error) toast(error, 'error'); else toast('Photo mise à jour 🐻', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function showAvatar(src) {
+  const img   = document.getElementById('av-photo');
+  const emoji = document.getElementById('av-emoji');
+  img.src = src;
+  img.style.display = 'block';
+  emoji.style.display = 'none';
+}
+
+// ===== SKINZ =====
+function updateSkinButtons(theme) {
+  document.querySelectorAll('.skin-btn').forEach(b => b.classList.toggle('skin-active', b.dataset.theme === theme));
+}
+document.querySelectorAll('.skin-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = btn.dataset.theme;
+    document.documentElement.dataset.theme = t;
+    updateSkinButtons(t);
+    document.getElementById('skinz-panel').classList.remove('open');
+    if (ME) api.updateProfile({ skin: t });
+  });
+});
+document.getElementById('skinz-toggle').addEventListener('click', () => document.getElementById('skinz-panel').classList.toggle('open'));
+updateSkinButtons(document.documentElement.dataset.theme || 'emo-dark');
+
+// ===== GLITCH (rare) =====
+setInterval(()=>{
+  if(Math.random()>.5){document.body.style.filter=`hue-rotate(${Math.random()*12}deg)`;setTimeout(()=>document.body.style.filter='',80);}
+},20000);
+</script>
+</body>
+</html>
