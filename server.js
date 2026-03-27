@@ -38,6 +38,7 @@ app.use('/api/profiles', require('./routes/profiles'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/friends',  require('./routes/friends'));
 app.use('/api/discover', require('./routes/discover'));
+app.use('/api/posts',    require('./routes/posts'));
 
 // Toutes les autres routes → frontend (SPA-style)
 app.get('*', (req, res) => {
@@ -82,6 +83,27 @@ async function initDB() {
       profile_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       author_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       content TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS posts (
+      id SERIAL PRIMARY KEY,
+      user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title VARCHAR(200) DEFAULT '',
+      body TEXT DEFAULT '',
+      photo_data TEXT,
+      comments_disabled BOOLEAN DEFAULT false,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS post_likes (
+      post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+      user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      PRIMARY KEY (post_id, user_id)
+    );
+    CREATE TABLE IF NOT EXISTS post_comments (
+      id SERIAL PRIMARY KEY,
+      post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+      user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      text TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT NOW()
     );
   `);

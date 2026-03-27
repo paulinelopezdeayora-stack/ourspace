@@ -198,20 +198,24 @@
 </div>
 
 <script src="js/shared.js"></script>
+<script src="js/api.js"></script>
 <script>
-const POSTS_KEY = 'os-blog-posts';
+let ME = null;
 let pendingPhoto = null;
 
-// ---- USER INFO ----
-const ME = localStorage.getItem('os-user') || 'xX_NéoNirvana_2026_Xx';
-const MY_AVATAR = localStorage.getItem('os-avatar') || null;
-document.getElementById('nav-user').textContent = '👤 ' + ME;
-document.getElementById('comp-username').textContent = ME;
-if (MY_AVATAR) {
-  document.getElementById('comp-av-img').src = MY_AVATAR;
-  document.getElementById('comp-av-img').style.display = 'block';
-  document.getElementById('comp-av-emoji').style.display = 'none';
-}
+// ---- INIT ----
+(async function init() {
+  ME = await requireLogin();
+  if (!ME) return;
+  document.getElementById('nav-user').textContent = '👤 ' + ME.display_name;
+  document.getElementById('comp-username').textContent = ME.display_name || ME.username;
+  if (ME.avatar_data) {
+    document.getElementById('comp-av-img').src = ME.avatar_data;
+    document.getElementById('comp-av-img').style.display = 'block';
+    document.getElementById('comp-av-emoji').style.display = 'none';
+  }
+  await loadFeed();
+})();
 
 // ---- PHOTO ZONE ----
 function pzDragOver(e) { e.preventDefault(); document.getElementById('photo-zone').classList.add('drag-over'); }
@@ -241,90 +245,83 @@ function removePhoto(e) {
 }
 
 // ---- POSTS ----
-function loadPosts() {
-  return JSON.parse(localStorage.getItem(POSTS_KEY) || '[]');
-}
-function savePosts(posts) {
-  localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+async function loadFeed() {
+  const { data, error } = await api.getPosts(0);
+  if (error) { toast(error, 'error'); return; }
+  renderFeed(data);
 }
 
-function publish() {
+async function publish() {
   const title = document.getElementById('inp-title').value.trim();
   const body  = document.getElementById('inp-body').value.trim();
   if (!title && !body) { document.getElementById('inp-title').focus(); return; }
-  const post = {
-    id:               Date.now(),
-    author:           ME,
-    avatar:           MY_AVATAR,
-    title:            title || '(sans titre)',
-    body:             body,
-    photo:            pendingPhoto,
-    date:             formatDate(new Date()),
-    likes:            0,
-    likedBy:          [],
-    comments:         [],
-    commentsDisabled: document.getElementById('no-comments').checked,
-  };
-  const posts = loadPosts();
-  posts.unshift(post);
-  savePosts(posts);
+  const { error } = await api.createPost({
+    title, body,
+    photo_data:        pendingPhoto,
+    comments_disabled: document.getElementById('no-comments').checked,
+  });
+  if (error) { toast(error, 'error'); return; }
   clearComposer();
-  renderFeed();
+  await loadFeed();
 }
 
 function clearComposer() {
-  document.getElementById('inp-title').value  = '';
-  document.getElementById('inp-body').value   = '';
-  document.getElementById('no-comments').checked = false;
+  document.getElementById('inp-title').value         = '';
+  document.getElementById('inp-body').value          = '';
+  document.getElementById('no-comments').checked     = false;
   removePhoto({ stopPropagation: ()=>{} });
 }
 
-function deletePost(id) {
+async function deletePost(id) {
   if (!confirm('Supprimer ce post ?')) return;
-  savePosts(loadPosts().filter(p => p.id !== id));
-  renderFeed();
+  const { error } = await api.deletePost(id);
+  if (error) { toast(error, 'error'); return; }
+  await loadFeed();
 }
 
-function likePost(id) {
-  const posts = loadPosts();
-  const p = posts.find(p => p.id === id);
-  if (!p) return;
-  const idx = p.likedBy.indexOf(ME);
-  if (idx === -1) { p.likes++; p.likedBy.push(ME); }
-  else            { p.likes--; p.likedBy.splice(idx,1); }
-  savePosts(posts);
-  renderFeed();
+async function likePost(id) {
+  const { error } = await api.likePost(id);
+  if (error) { toast(error, 'error'); return; }
+  await loadFeed();
 }
 
-function addComment(postId) {
+async function loadComments(postId) {
+  const { data, error } = await api.getPostComments(postId);
+  if (error) { toast(error, 'error'); return; }
+  const list = document.querySelector(`#cmts-${postId} .cmts-list`);
+  if (!list) return;
+  list.innerHTML = data.map(c => `
+    <div class="pcmt">
+      <div class="pcmt-av">${c.avatar_data ? `<img src="${c.avatar_data}">` : avEmoji(c.username)}</div>
+      <div>
+        <span class="pcmt-author">${esc(c.display_name || c.username)}</span>
+        <span class="pcmt-date"> · ${timeAgo(c.created_at)}</span><br>
+        <span class="pcmt-text">${esc(c.text)}</span>
+      </div>
+    </div>`).join('');
+}
+
+async function addComment(postId) {
   const inp = document.getElementById('cinp-' + postId);
   const txt = inp.value.trim();
   if (!txt) return;
-  const posts = loadPosts();
-  const p = posts.find(p => p.id === postId);
-  if (!p) return;
-  p.comments.push({ author: ME, avatar: MY_AVATAR, text: txt, date: formatDate(new Date()) });
-  savePosts(posts);
+  const { error } = await api.addPostComment(postId, txt);
+  if (error) { toast(error, 'error'); return; }
   inp.value = '';
-  renderFeed();
-  // re-open comments
-  setTimeout(() => {
-    const cmts = document.getElementById('cmts-' + postId);
-    if (cmts) cmts.classList.add('open');
-  }, 50);
+  await loadComments(postId);
 }
 
 function toggleComments(id) {
-  document.getElementById('cmts-' + id).classList.toggle('open');
+  const cmts = document.getElementById('cmts-' + id);
+  const opening = !cmts.classList.contains('open');
+  cmts.classList.toggle('open');
+  if (opening) loadComments(id);
 }
 
-function toggleCommentsDisabled(id) {
-  const posts = loadPosts();
-  const p = posts.find(p => p.id === id);
-  if (!p) return;
-  p.commentsDisabled = !p.commentsDisabled;
-  savePosts(posts);
-  renderFeed();
+async function toggleCommentsDisabled(id) {
+  const { error } = await api.togglePostComments(id);
+  if (error) { toast(error, 'error'); return; }
+  await loadFeed();
 }
 
 function toggleMenu(id) {
@@ -337,66 +334,54 @@ document.addEventListener('click', e => {
 });
 
 // ---- RENDER ----
-function renderFeed() {
-  const posts = loadPosts();
+function renderFeed(posts) {
   const feed  = document.getElementById('feed');
   const empty = document.getElementById('empty-state');
-  document.getElementById('post-count').textContent = posts.length ? posts.length + ' post' + (posts.length>1?'s':'') : '';
+  const cntEl = document.getElementById('post-count');
+  if (cntEl) cntEl.textContent = posts.length ? posts.length + ' post' + (posts.length > 1 ? 's' : '') : '';
 
   if (!posts.length) { feed.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
   feed.innerHTML = posts.map(p => {
-    const isMe   = p.author === ME;
-    const liked  = (p.likedBy||[]).includes(ME);
-    const cmtsHtml = p.comments.map(c => `
-      <div class="pcmt">
-        <div class="pcmt-av">${c.avatar ? `<img src="${c.avatar}">` : avEmoji(c.author)}</div>
-        <div>
-          <span class="pcmt-author">${esc(c.author)}</span>
-          <span class="pcmt-date"> · ${c.date}</span><br>
-          <span class="pcmt-text">${esc(c.text)}</span>
-        </div>
-      </div>`).join('');
-
+    const isMe = p.username === ME.username;
     return `
     <div class="post" id="post-${p.id}">
       <div class="post-head">
-        <div class="post-av">${p.avatar ? `<img src="${p.avatar}">` : avEmoji(p.author)}</div>
+        <div class="post-av">${p.avatar_data ? `<img src="${p.avatar_data}">` : avEmoji(p.username)}</div>
         <div>
-          <div class="post-author">${esc(p.author)}</div>
-          <div class="post-date">${p.date}</div>
+          <div class="post-author">${esc(p.display_name || p.username)}</div>
+          <div class="post-date">${timeAgo(p.created_at)}</div>
         </div>
         ${isMe ? `
         <div class="post-menu">
           <button class="post-menu-btn" onclick="toggleMenu(${p.id})">⋯</button>
           <div class="post-dropdown" id="menu-${p.id}">
-            <button onclick="toggleCommentsDisabled(${p.id})">${p.commentsDisabled ? '💬 Activer les commentaires' : '🔒 Désactiver les commentaires'}</button>
+            <button onclick="toggleCommentsDisabled(${p.id})">${p.comments_disabled ? '💬 Activer les commentaires' : '🔒 Désactiver les commentaires'}</button>
             <button class="del-btn" onclick="deletePost(${p.id})">🗑 Supprimer</button>
           </div>
         </div>` : ''}
       </div>
       ${p.title ? `<div class="post-title">${esc(p.title)}</div>` : ''}
-      ${p.body   ? `<div class="post-body">${esc(p.body)}</div>` : ''}
-      ${p.photo  ? `<img class="post-photo" src="${p.photo}" loading="lazy">` : ''}
+      ${p.body  ? `<div class="post-body">${esc(p.body)}</div>`  : ''}
+      ${p.photo_data ? `<img class="post-photo" src="${p.photo_data}" loading="lazy">` : ''}
       <div class="post-footer">
-        <button class="react-btn ${liked?'liked':''}" onclick="likePost(${p.id})">
-          ♥ <span>${p.likes||0}</span>
+        <button class="react-btn ${p.liked ? 'liked' : ''}" onclick="likePost(${p.id})">
+          ♥ <span>${p.like_count || 0}</span>
         </button>
-        ${p.commentsDisabled
+        ${p.comments_disabled
           ? `<span style="font-size:11px;color:var(--text-dim);margin-left:4px">🔒 commentaires désactivés</span>`
-          : `<button class="cmt-toggle" onclick="toggleComments(${p.id})">💬 ${p.comments.length} commentaire${p.comments.length!==1?'s':''}</button>`
-        }
-        <span class="post-date-footer">${p.date}</span>
+          : `<button class="cmt-toggle" onclick="toggleComments(${p.id})">💬 ${p.comment_count} commentaire${p.comment_count !== 1 ? 's' : ''}</button>`}
+        <span class="post-date-footer">${timeAgo(p.created_at)}</span>
       </div>
       <div class="post-cmts" id="cmts-${p.id}">
-        ${cmtsHtml}
-        ${p.commentsDisabled ? '' : `
+        <div class="cmts-list"></div>
+        ${!p.comments_disabled ? `
         <div class="pcmt-form">
           <input id="cinp-${p.id}" type="text" placeholder="Ajouter un commentaire…"
                  onkeydown="if(event.key==='Enter')addComment(${p.id})">
           <button onclick="addComment(${p.id})">Envoyer</button>
-        </div>`}
+        </div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -406,28 +391,11 @@ function renderFeed() {
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 }
-function formatDate(d) {
-  return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})
-    + ' · ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-}
 function avEmoji(name) {
   const emojis = ['🦊','🤖','🌙','🐻','🦋','⚡','🔥','🌊','⭐','🐺','🌸','🎸'];
-  let h = 0; for (const c of name) h = (h*31 + c.charCodeAt(0)) & 0xffff;
+  let h = 0; for (const c of String(name)) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
   return emojis[h % emojis.length];
 }
-
-// ---- SEED DEFAULT POSTS ----
-(function(){
-  if (loadPosts().length === 0) {
-    const seed = [
-      { id:1000, author:'xX_FoxyGrl_Xx', avatar:null, title:'3h du mat', body:'Le monde fait peur. J\'ai ouvert un vieux site abandonné des années 2000 et j\'ai pleuré de nostalgie. Genre, les gens décoraient leurs pages avec des GIFs de flammes et du Comic Sans. C\'était mieux.', photo:null, date:'24 mars 2026 · 03:12', likes:7, likedBy:[], comments:[{author:'MoonChild_', avatar:null, text:'je ressens exactement ça. la nostalgie c\'est une forme de résistance', date:'24 mars 2026 · 03:45'}] },
-      { id:1001, author:'OursBrun42', avatar:null, title:'Vue depuis le sommet ce matin', body:'3h de marche. Pas de réseau. Pas d\'actu. Juste les sapins et le vent. Ça devrait être obligatoire.', photo:null, date:'23 mars 2026 · 08:30', likes:14, likedBy:[], comments:[{author:'CyberNerd99', avatar:null, text:'t\'as raison. le prochain serveur je le monte en forêt', date:'23 mars 2026 · 12:00'}] },
-    ];
-    savePosts(seed);
-  }
-})();
-
-renderFeed();
 </script>
 </body>
 </html>

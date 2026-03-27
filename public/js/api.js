@@ -44,6 +44,15 @@ const api = (() => {
     removeFriend:  (username) => req('DELETE', `/api/friends/${username}`),
     updateTop8:    (order)    => req('PUT',  '/api/friends/top8', { order }),
 
+    // Posts (blog)
+    getPosts:           (page)       => req('GET',    `/api/posts?page=${page||0}`),
+    createPost:         (body)       => req('POST',   '/api/posts', body),
+    deletePost:         (id)         => req('DELETE', `/api/posts/${id}`),
+    likePost:           (id)         => req('POST',   `/api/posts/${id}/like`),
+    getPostComments:    (id)         => req('GET',    `/api/posts/${id}/comments`),
+    addPostComment:     (id, text)   => req('POST',   `/api/posts/${id}/comments`, { text }),
+    togglePostComments: (id)         => req('PATCH',  `/api/posts/${id}/comments-toggle`),
+
     // Découvrir
     discover: (q, page) => {
       const params = new URLSearchParams();
