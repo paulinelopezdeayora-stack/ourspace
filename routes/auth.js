@@ -91,6 +91,9 @@ router.post('/register', async (req, res) => {
       [username, email.toLowerCase().trim(), hash, (display_name || username).trim()]
     );
     req.session.userId = r.rows[0].id;
+    await new Promise((resolve, reject) =>
+      req.session.save(err => err ? reject(err) : resolve())
+    );
 
     // Auto-amitié avec le premier membre du réseau (Tom de Ourspace)
     try {
@@ -140,7 +143,10 @@ router.post('/login', async (req, res) => {
     await pool.query('UPDATE users SET last_seen = NOW() WHERE id = $1', [user.id]);
 
     const { password_hash, ...safe } = user;
-    res.json({ ok: true, user: safe });
+    req.session.save(err => {
+      if (err) return res.status(500).json({ error: 'Erreur session' });
+      res.json({ ok: true, user: safe });
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Erreur serveur' });
