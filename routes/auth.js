@@ -40,17 +40,19 @@ async function sendWelcomeEmail(to, displayName, username) {
   <div class="body">
     <span class="bear">🐻</span>
     <p>Salut <span class="name">${displayName}</span> !</p>
-    <p>Bienvenue sur <strong style="color:#cc55bb">OURSPACE</strong> — le seul réseau social où les ours ne font pas la guerre. 🕊️</p>
+    <p>Bienvenue sur <strong style="color:#cc55bb">OURSPACE</strong> — Le réseau social des grands nostalgiques des internets du début. Ici pas d'IA, pas de faux comptes, quelques trolls car on les accueille aussi mais surtout de l'authenticité et des fautes de goûts. C'est un espace safe, modéré et adorable. Rencontrez-vous, échangez, faites communauté mes petits ours, c'est chez nous ici. 🕊️</p>
     <p>Ton compte <strong style="color:#9977cc">@${username}</strong> est prêt. Tu peux maintenant :</p>
     <ul style="color:#9977cc;padding-left:18px">
       <li>🎵 Mettre ta musique de profil</li>
       <li>📸 Uploader ta photo</li>
-      <li>💬 Laisser des commentaires sur les profils</li>
+      <li>💬 Laisser des commentaires adorables sur les autres profils</li>
       <li>👥 Découvrir d'autres membres</li>
       <li>🎨 Choisir ton skin (Emo Dark, Bubblegum, Matrix…)</li>
     </ul>
     <a class="btn" href="https://ourspace-production-3dbb.up.railway.app">→ Accéder à mon profil</a>
-    <p style="color:#444466;font-size:11px;text-align:center">Les années 2000 c'était pas parfait mais on avait le Top 8.<br>Maintenant on a Ourspace. <span class="stars">★ ★ ★</span></p>
+    <p style="color:#9977cc;font-size:12px;text-align:center;margin-top:16px">Fait avec amour et Comic Sans,</p>
+    <p style="color:#cc55bb;font-size:13px;font-weight:bold;text-align:center;margin-top:4px">Poppy Fusée</p>
+    <p style="color:#444466;font-size:13px;text-align:center;letter-spacing:6px;margin-top:8px">★ ★ ★</p>
   </div>
   <div class="footer">
     OURSPACE 2026 — fait avec ♥ et Comic Sans<br>
