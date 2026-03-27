@@ -40,6 +40,7 @@ app.use('/api/friends',  require('./routes/friends'));
 app.use('/api/discover', require('./routes/discover'));
 app.use('/api/posts',    require('./routes/posts'));
 app.use('/api/media',    require('./routes/media'));
+app.use('/api/visits',   require('./routes/visits'));
 
 // Toutes les autres routes → frontend (SPA-style)
 app.get('*', (req, res) => {
@@ -124,6 +125,16 @@ async function initDB() {
       ('MoonChild_', 'moon@ourspace.demo', $1, '🌙 MoonChild', 'La nuit c''est mieux. Je code des trucs inutiles mais beaux. Insomniaque professionnelle.', 'insomnique again ⭐', 'midnight', '["joined","music_lover"]')
     ON CONFLICT (username) DO NOTHING
   `, [demoHash]);
+
+  // Compteur de visites
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS site_stats (
+      key   VARCHAR(50) PRIMARY KEY,
+      value BIGINT DEFAULT 0
+    );
+    INSERT INTO site_stats (key, value) VALUES ('total_visits', 0)
+    ON CONFLICT (key) DO NOTHING;
+  `);
 
   console.log('🐻 Base de données prête');
 }

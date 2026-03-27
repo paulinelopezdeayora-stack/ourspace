@@ -402,12 +402,7 @@
         <div class="box-hd">🐻 Visiteurs</div>
         <div class="box-bd" id="counter-wrap">
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:7px;text-align:center">Vous êtes le visiteur n°</div>
-          <div class="digits" style="margin:0 auto;display:table">
-            <span class="dgt" id="d1">0</span><span class="dgt" id="d2">0</span>
-            <span class="dgt" id="d3">2</span><span class="dgt" id="d4">6</span>
-            <span class="dgt" id="d5">8</span><span class="dgt" id="d6">1</span>
-            <span class="dgt" id="d7">4</span>
-          </div>
+          <div class="digits" id="digits-row" style="margin:0 auto;display:table"></div>
         </div>
       </div>
 
@@ -504,22 +499,43 @@ let ME = null;
   loadComments();
 })();
 
-// ===== COUNTER =====
-(function(){
-  const TARGET = [0,0,2,6,8,1,4];
+// ===== COUNTER (réel) =====
+(async function(){
+  // Incrémente et récupère le vrai total
+  let count = 0;
+  try {
+    const r = await fetch('/api/visits', { method:'POST', credentials:'same-origin' });
+    const j = await r.json();
+    count = j.count || 0;
+  } catch(e) { count = 0; }
+
+  const digits = String(count).padStart(7, '0').split('');
+  const row = document.getElementById('digits-row');
+  if (!row) return;
+
+  // Crée les spans dynamiquement
+  digits.forEach(d => {
+    const s = document.createElement('span');
+    s.className = 'dgt';
+    s.textContent = '0';
+    row.appendChild(s);
+  });
+
+  // Animation slot machine
   let done = false;
   new IntersectionObserver(([e]) => {
     if (!e.isIntersecting || done) return;
     done = true;
-    TARGET.forEach((t,i) => {
-      const el = document.getElementById('d'+(i+1));
-      let step=0, total=16+i*4;
+    const spans = row.querySelectorAll('.dgt');
+    digits.forEach((t, i) => {
+      const el = spans[i];
+      let step = 0, total = 16 + i * 4;
       const iv = setInterval(() => {
-        el.textContent = Math.floor(Math.random()*10);
-        if(++step>=total){ clearInterval(iv); el.textContent=t; }
+        el.textContent = Math.floor(Math.random() * 10);
+        if (++step >= total) { clearInterval(iv); el.textContent = t; }
       }, 45);
     });
-  }, {threshold:.5}).observe(document.getElementById('counter-wrap'));
+  }, { threshold: .5 }).observe(document.getElementById('counter-wrap'));
 })();
 
 // ===== ABOUT ME (editable + API) =====
