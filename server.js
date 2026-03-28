@@ -148,6 +148,12 @@ async function initDB() {
     UPDATE users SET username = 'poppy_fusee' WHERE id = 1 AND username != 'poppy_fusee'
   `);
 
+  // Renommer "Opinions" → "Mon rêve" dans les intérêts sauvegardés
+  await pool.query(`
+    UPDATE users SET interests = REPLACE(interests, '☮️ Opinions', '🌙 Mon rêve')
+    WHERE interests LIKE '%Opinions%'
+  `);
+
   // Nettoyer les valeurs par défaut song qui polluent les profils vierges
   await pool.query(`UPDATE users SET song_title  = '' WHERE song_title  = 'Welcome to the Black Parade'`);
   await pool.query(`UPDATE users SET song_artist = '' WHERE song_artist = 'My Chemical Romance'`);
