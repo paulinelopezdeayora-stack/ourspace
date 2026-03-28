@@ -96,15 +96,14 @@ router.put('/me', requireAuth, async (req, res) => {
          marquee_text = COALESCE($15,            marquee_text)
        WHERE id = $14
        RETURNING ${PUBLIC_FIELDS}`,
-      [display_name, bio, location, mood, song_title, song_artist, skin,
-       newAvatarData !== undefined ? newAvatarData : null,
-       newAvatarUrl  !== undefined ? newAvatarUrl  : null,
-       newAudioData  !== undefined ? newAudioData  : null,
-       newAudioUrl   !== undefined ? newAudioUrl   : null,
-       audio_name !== undefined ? audio_name : null,
-       interests   !== undefined ? interests   : null,
+      // pg v8 interdit les undefined — on convertit tout en null
+      [display_name ?? null, bio ?? null, location ?? null, mood ?? null,
+       song_title ?? null, song_artist ?? null, skin ?? null,
+       newAvatarData ?? null, newAvatarUrl ?? null,
+       newAudioData  ?? null, newAudioUrl  ?? null,
+       audio_name   ?? null, interests    ?? null,
        uid,
-       marquee_text !== undefined ? marquee_text : null]
+       marquee_text ?? null]
     );
 
     res.json(r.rows[0]);
