@@ -51,35 +51,7 @@ app.use('/api/discover', require('./routes/discover'));
 app.use('/api/posts',    require('./routes/posts'));
 app.use('/api/media',    require('./routes/media'));
 app.use('/api/visits',   require('./routes/visits'));
-
-// Endpoint debug temporaire — à supprimer après diagnostic
-app.get('/api/debug/audio', require('./middleware/requireAuth'), async (req, res) => {
-  const { pool } = require('./db');
-  const r2       = require('./lib/r2');
-  const uid      = req.session.userId;
-  const u = await pool.query('SELECT audio_url, audio_name, audio_data FROM users WHERE id=$1', [uid]);
-  const row = u.rows[0] || {};
-  const info = {
-    uid,
-    audio_url:  row.audio_url  || null,
-    audio_name: row.audio_name || null,
-    has_data:   !!row.audio_data,
-  };
-  if (row.audio_url) {
-    const key = row.audio_url.replace('/api/media/', '');
-    info.r2_key = key;
-    try {
-      const obj = await r2.getObject(key);
-      info.r2_ok = true;
-      info.r2_contentType = obj.ContentType;
-    } catch(e) {
-      info.r2_ok    = false;
-      info.r2_error = e.message;
-      info.r2_code  = e.name || e.Code;
-    }
-  }
-  res.json(info);
-});
+app.use('/api/messages', require('./routes/messages'));
 
 // Toutes les autres routes → frontend (SPA-style)
 app.get('*', (req, res) => {
@@ -151,6 +123,18 @@ async function initDB() {
       text TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT NOW()
     );
+    CREATE TABLE IF NOT EXISTS messages (
+      id          SERIAL PRIMARY KEY,
+      sender_id   INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      receiver_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      body        TEXT NOT NULL,
+      read_at     TIMESTAMP DEFAULT NULL,
+      created_at  TIMESTAMP DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_messages_conv
+      ON messages (LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id), created_at);
+    CREATE INDEX IF NOT EXISTS idx_messages_receiver_unread
+      ON messages (receiver_id, read_at) WHERE read_at IS NULL;
   `);
 
   // Seed demo users

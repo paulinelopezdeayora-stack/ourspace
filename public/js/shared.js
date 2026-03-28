@@ -104,6 +104,36 @@ function initSkinz() {
   });
 }
 
+// ---- BADGE MESSAGES NON LUS ----
+async function initMsgBadge() {
+  const link = document.querySelector('a[href="/messages.html"]');
+  if (!link) return;
+  async function refresh() {
+    const { data } = await api.getUnreadCount();
+    if (!data) return;
+    const n = data.count || 0;
+    let badge = link.querySelector('.msg-badge');
+    if (n > 0) {
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'msg-badge';
+        badge.style.cssText = `
+          display:inline-block;background:#cc2200;color:#fff;
+          font-size:9px;font-family:Arial,sans-serif;font-weight:bold;
+          border-radius:8px;padding:1px 5px;margin-left:4px;
+          vertical-align:middle;line-height:14px;min-width:14px;text-align:center;
+        `;
+        link.appendChild(badge);
+      }
+      badge.textContent = n > 99 ? '99+' : n;
+    } else if (badge) {
+      badge.remove();
+    }
+  }
+  refresh();
+  setInterval(refresh, 15000);
+}
+
 // ---- AUTO-INIT on DOMContentLoaded ----
 document.addEventListener('DOMContentLoaded', () => {
   loadTheme();

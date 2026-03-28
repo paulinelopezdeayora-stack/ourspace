@@ -53,6 +53,13 @@ const api = (() => {
     addPostComment:     (id, text)   => req('POST',   `/api/posts/${id}/comments`, { text }),
     togglePostComments: (id)         => req('PATCH',  `/api/posts/${id}/comments-toggle`),
 
+    // Messages privés
+    getConversations: ()             => req('GET',   '/api/messages/conversations'),
+    getUnreadCount:   ()             => req('GET',   '/api/messages/unread-count'),
+    getThread:        (username)     => req('GET',   `/api/messages/${username}`),
+    sendMessage:      (username, body) => req('POST', `/api/messages/${username}`, { body }),
+    markRead:         (username)     => req('PATCH', `/api/messages/${username}/read`),
+
     // Découvrir
     discover: (q, page) => {
       const params = new URLSearchParams();

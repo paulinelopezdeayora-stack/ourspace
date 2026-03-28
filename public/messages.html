@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="emo-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💌 Messages — OURSPACE</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    :root {
+      --bg:#000814; --bg2:#0d0020; --bg3:#140030;
+      --accent:#cc55bb; --accent2:#7744aa;
+      --border:#3a1166; --border2:#1a0044;
+      --text:#e0e0ff; --text-muted:#9977cc; --text-dim:#444466;
+      --card:rgba(13,0,32,0.85); --marquee:#bb7744; --online:#44bb88;
+    }
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--marquee:#dd8833;--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--marquee:#00aa33;--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--marquee:#4477cc;--online:#66aaff}
+
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
+    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);overflow-x:hidden;min-height:100vh;visibility:hidden}
+    #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
+    .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
+    @keyframes sparkAnim{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+    .star{position:fixed;background:var(--text);opacity:.3;border-radius:50%;animation:twinkle ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.5}50%{opacity:.1}}
+
+    /* HEADER */
+    #header{background:linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:2px solid var(--border);padding:12px 20px;text-align:center;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;gap:14px}
+    #logo-wrap{display:inline-flex;align-items:center;gap:12px}
+    .pixel-bear{width:38px;height:38px;image-rendering:pixelated;filter:drop-shadow(0 0 4px var(--accent2));animation:bearFloat 3s ease-in-out infinite}
+    @keyframes bearFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+    #site-title{font-family:Impact,sans-serif;font-size:2.2em;letter-spacing:6px;color:var(--accent);text-shadow:0 0 6px var(--accent2)}
+    #user-badge{position:absolute;top:12px;right:14px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+    #user-badge a{color:var(--accent2);text-decoration:none;font-size:11px}
+    #user-badge a:hover{color:var(--accent)}
+
+    /* NAVBAR */
+    #navbar{background:var(--bg2);display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border2);position:relative;z-index:10}
+    #navbar a{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border2);font-size:11px;font-family:Arial,sans-serif;border-radius:2px;transition:all .2s}
+    #navbar a:hover{background:var(--accent2);color:var(--text);border-color:var(--accent2)}
+    #navbar a.active{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+    #navbar a[data-soon]{opacity:0.55}
+    #navbar a[data-soon]::after{content:' 🔜';font-size:9px;vertical-align:super}
+
+    /* MAIN LAYOUT */
+    #app{max-width:1040px;margin:18px auto;padding:0 12px;position:relative;z-index:1;display:flex;gap:14px;height:calc(100vh - 160px);min-height:400px}
+
+    /* LEFT: CONVERSATIONS */
+    #conv-panel{width:260px;flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:4px;display:flex;flex-direction:column;overflow:hidden}
+    #conv-header{padding:10px 14px;border-bottom:1px solid var(--border2);font-size:13px;font-weight:bold;color:var(--accent);display:flex;align-items:center;gap:8px}
+    #conv-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+    #conv-list::-webkit-scrollbar{width:4px}
+    #conv-list::-webkit-scrollbar-thumb{background:var(--border)}
+    .conv-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .15s;position:relative}
+    .conv-item:hover{background:rgba(119,68,170,.15)}
+    .conv-item.active{background:rgba(119,68,170,.28);border-left:3px solid var(--accent)}
+    .conv-av{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);object-fit:cover;font-size:20px;line-height:36px;text-align:center;background:var(--bg2);flex-shrink:0}
+    .conv-av img{width:36px;height:36px;border-radius:50%;object-fit:cover;display:block}
+    .conv-info{flex:1;min-width:0}
+    .conv-name{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .conv-preview{font-size:10px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;font-family:Arial,sans-serif}
+    .conv-unread{background:var(--accent);color:#fff;font-size:9px;font-family:Arial,sans-serif;font-weight:bold;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center;line-height:14px;flex-shrink:0}
+    .conv-time{font-size:9px;color:var(--text-dim);font-family:Arial,sans-serif;position:absolute;top:8px;right:10px}
+    #conv-empty{padding:24px 14px;text-align:center;color:var(--text-dim);font-size:12px;font-family:Arial,sans-serif}
+
+    /* RIGHT: THREAD */
+    #thread-panel{flex:1;background:var(--card);border:1px solid var(--border);border-radius:4px;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    #thread-header{padding:10px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;flex-shrink:0}
+    #thread-avatar{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);font-size:20px;line-height:34px;text-align:center;background:var(--bg2);flex-shrink:0}
+    #thread-avatar img{width:34px;height:34px;border-radius:50%;object-fit:cover;display:block}
+    #thread-name{font-size:14px;color:var(--accent);font-weight:bold}
+    #thread-name a{color:inherit;text-decoration:none}
+    #thread-name a:hover{text-decoration:underline}
+    #thread-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+    #thread-messages::-webkit-scrollbar{width:4px}
+    #thread-messages::-webkit-scrollbar-thumb{background:var(--border)}
+    .msg-bubble{max-width:68%;display:flex;flex-direction:column;gap:3px}
+    .msg-bubble.mine{align-self:flex-end;align-items:flex-end}
+    .msg-bubble.theirs{align-self:flex-start;align-items:flex-start}
+    .bubble-body{padding:8px 12px;border-radius:12px;font-size:12px;line-height:1.45;word-break:break-word;font-family:Arial,sans-serif}
+    .mine .bubble-body{background:var(--accent2);color:#fff;border-bottom-right-radius:3px}
+    .theirs .bubble-body{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-bottom-left-radius:3px}
+    .bubble-meta{font-size:9px;color:var(--text-dim);font-family:Arial,sans-serif;padding:0 4px}
+    .bubble-unread{color:var(--accent2);font-size:9px}
+    #thread-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:13px;font-family:Arial,sans-serif;text-align:center;padding:20px}
+    #thread-placeholder{flex:1;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:13px;font-family:Arial,sans-serif;flex-direction:column;gap:12px}
+    #thread-placeholder .big-icon{font-size:48px}
+
+    /* COMPOSE */
+    #compose-area{border-top:1px solid var(--border2);padding:12px;display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+    #compose-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Comic Sans MS',cursive;font-size:12px;padding:8px 12px;resize:none;min-height:38px;max-height:100px;outline:none;transition:border-color .2s;line-height:1.4}
+    #compose-input:focus{border-color:var(--accent)}
+    #compose-input::placeholder{color:var(--text-dim)}
+    #send-btn{background:var(--accent2);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-family:'Comic Sans MS',cursive;font-size:12px;cursor:pointer;white-space:nowrap;transition:background .15s;line-height:22px;height:38px}
+    #send-btn:hover{background:var(--accent)}
+    #send-btn:disabled{opacity:.5}
+
+    /* SKINZ */
+    #skinz-panel{position:fixed;right:-140px;top:100px;z-index:500;transition:right .3s;width:140px}
+    #skinz-panel.open{right:0}
+    #skinz-toggle{position:absolute;left:-28px;top:0;background:var(--bg2);border:1px solid var(--border);border-right:none;padding:6px 8px;cursor:pointer;font-size:12px;border-radius:3px 0 0 3px;color:var(--text-muted)}
+    .skinz-inner{background:var(--bg2);border:1px solid var(--border);border-radius:3px 0 0 3px;padding:10px 8px;display:flex;flex-direction:column;gap:6px}
+    .skin-btn{background:var(--bg3);color:var(--text-muted);border:1px solid var(--border2);padding:6px 8px;font-size:11px;font-family:'Comic Sans MS',cursive;cursor:pointer;text-align:left;border-radius:2px;transition:all .2s}
+    .skin-btn:hover,.skin-btn.skin-active{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+
+    /* RESPONSIVE */
+    @media(max-width:640px){
+      #app{flex-direction:column;height:auto}
+      #conv-panel{width:100%;height:180px}
+      #thread-panel{height:calc(100vh - 380px);min-height:300px}
+    }
+  </style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="cursor">🐻</div>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="logo-wrap">
+    <canvas class="pixel-bear" id="bear-logo" width="48" height="48"></canvas>
+    <div>
+      <div id="site-title">OURSPACE</div>
+    </div>
+  </div>
+  <div id="user-badge">
+    <a href="/" id="badge-name">🏠 Accueil</a>
+    <a href="#" onclick="doLogout(event)">🚪 Déco</a>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<div id="navbar">
+  <a href="/">🏠 Accueil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="/messages.html" class="active">💌 Messages</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Conversations -->
+  <div id="conv-panel">
+    <div id="conv-header">💌 Messages <span id="unread-total" style="font-size:10px;color:var(--text-muted);font-weight:normal"></span></div>
+    <div id="conv-list"><div id="conv-empty">Aucune conversation pour l'instant…<br><br>Va sur le profil d'un ami et clique sur<br><b>💌 Envoyer un message</b> !</div></div>
+  </div>
+
+  <!-- Thread -->
+  <div id="thread-panel">
+    <div id="thread-header" style="display:none">
+      <div id="thread-avatar">👤</div>
+      <div>
+        <div id="thread-name"></div>
+        <div id="thread-status" style="font-size:10px;color:var(--text-dim);font-family:Arial,sans-serif"></div>
+      </div>
+    </div>
+    <div id="thread-placeholder">
+      <div class="big-icon">💌</div>
+      <div>Sélectionne une conversation<br>ou envoie un premier message !</div>
+    </div>
+    <div id="thread-messages" style="display:none"></div>
+    <div id="compose-area" style="display:none">
+      <textarea id="compose-input" placeholder="Écris ton message…" rows="1" maxlength="2000"></textarea>
+      <button id="send-btn" onclick="sendMsg()">Envoyer 💌</button>
+    </div>
+  </div>
+</div>
+
+<!-- SKINZ -->
+<div id="skinz-panel">
+  <button id="skinz-toggle">🎨</button>
+  <div class="skinz-inner">
+    <button class="skin-btn" data-theme="emo-dark">🖤 Emo Dark</button>
+    <button class="skin-btn" data-theme="bubblegum">🌸 Bubblegum</button>
+    <button class="skin-btn" data-theme="matrix">💾 Matrix</button>
+    <button class="skin-btn" data-theme="midnight">🌙 Midnight</button>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/shared.js"></script>
+<script>
+let ME = null;
+let currentThread = null; // username de la personne active
+let pollTimer = null;
+let convData = [];
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(async () => {
+  ME = await requireLogin();
+  if (!ME) return;
+  document.getElementById('badge-name').textContent = '👤 ' + ME.display_name;
+  document.body.style.visibility = 'visible';
+  drawBear('bear-logo', null);
+
+  // Pré-ouvrir conversation si ?with= présent
+  const params = new URLSearchParams(location.search);
+  const withUser = params.get('with');
+
+  await loadConversations();
+  initMsgBadge();
+
+  if (withUser) {
+    openThread(withUser);
+  }
+
+  // Polling toutes les 5 secondes
+  pollTimer = setInterval(poll, 5000);
+})();
+
+async function poll() {
+  await loadConversations(true);
+  if (currentThread) {
+    await loadThread(currentThread, true);
+  }
+}
+
+// ── CONVERSATIONS ─────────────────────────────────────────────────────────────
+async function loadConversations(silent = false) {
+  const { data } = await api.getConversations();
+  if (!data) return;
+  convData = data;
+  renderConversations();
+  updateUnreadTotal();
+}
+
+function renderConversations() {
+  const list = document.getElementById('conv-list');
+  const empty = document.getElementById('conv-empty');
+  if (!convData.length) {
+    list.innerHTML = '';
+    list.appendChild(empty || makeEmpty());
+    return;
+  }
+  list.innerHTML = '';
+  convData.forEach(c => {
+    const item = document.createElement('div');
+    item.className = 'conv-item' + (currentThread === c.partner_username ? ' active' : '');
+    item.dataset.username = c.partner_username;
+    item.onclick = () => openThread(c.partner_username);
+
+    const avSrc = c.partner_avatar_url || c.partner_avatar_data;
+    const avHtml = avSrc
+      ? `<div class="conv-av"><img src="${avSrc}" alt=""></div>`
+      : `<div class="conv-av">👤</div>`;
+
+    const preview = c.body
+      ? (c.sender_id === ME.id ? '→ ' : '') + c.body.slice(0, 40) + (c.body.length > 40 ? '…' : '')
+      : '';
+    const unreadN = parseInt(c.unread_count, 10);
+
+    item.innerHTML = `
+      ${avHtml}
+      <div class="conv-info">
+        <div class="conv-name">${escHtml(c.partner_display_name)}</div>
+        <div class="conv-preview">${escHtml(preview)}</div>
+      </div>
+      ${unreadN > 0 ? `<div class="conv-unread">${unreadN > 99 ? '99+' : unreadN}</div>` : ''}
+      <div class="conv-time">${timeAgo(c.created_at)}</div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function updateUnreadTotal() {
+  const total = convData.reduce((s, c) => s + parseInt(c.unread_count, 10), 0);
+  const el = document.getElementById('unread-total');
+  el.textContent = total > 0 ? `(${total} non lu${total > 1 ? 's' : ''})` : '';
+}
+
+// ── THREAD ────────────────────────────────────────────────────────────────────
+async function openThread(username) {
+  currentThread = username;
+
+  // Highlight conv item
+  document.querySelectorAll('.conv-item').forEach(i => {
+    i.classList.toggle('active', i.dataset.username === username);
+  });
+
+  // Show thread panel parts
+  document.getElementById('thread-placeholder').style.display = 'none';
+  document.getElementById('thread-messages').style.display    = 'flex';
+  document.getElementById('thread-header').style.display      = 'flex';
+  document.getElementById('compose-area').style.display       = 'flex';
+
+  // Header
+  const conv = convData.find(c => c.partner_username === username);
+  const avSrc = conv ? (conv.partner_avatar_url || conv.partner_avatar_data) : null;
+  const name  = conv ? conv.partner_display_name : username;
+
+  const avEl = document.getElementById('thread-avatar');
+  if (avSrc) {
+    avEl.innerHTML = `<img src="${avSrc}" alt="">`;
+  } else {
+    avEl.innerHTML = '👤';
+  }
+  document.getElementById('thread-name').innerHTML =
+    `<a href="/profile.html?u=${encodeURIComponent(username)}">${escHtml(name)}</a>`;
+
+  await loadThread(username);
+  await api.markRead(username);
+
+  // Refresh conv list to clear unread badge
+  await loadConversations(true);
+
+  document.getElementById('compose-input').focus();
+}
+
+async function loadThread(username, silent = false) {
+  const { data } = await api.getThread(username);
+  if (!data) return;
+
+  const box = document.getElementById('thread-messages');
+  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
+
+  box.innerHTML = '';
+  if (!data.length) {
+    box.innerHTML = '<div id="thread-empty">Aucun message pour l\'instant…<br>Sois le premier à dire bonjour ! 👋</div>';
+    return;
+  }
+
+  data.forEach(m => {
+    const isMine = m.sender_id === ME.id;
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble ' + (isMine ? 'mine' : 'theirs');
+    const readMark = isMine && m.read_at ? ' ✓✓' : (isMine ? ' ✓' : '');
+    bubble.innerHTML = `
+      <div class="bubble-body">${escHtml(m.body)}</div>
+      <div class="bubble-meta">${timeAgo(m.created_at)}${readMark}</div>
+    `;
+    box.appendChild(bubble);
+  });
+
+  // Auto-scroll to bottom if already near bottom or first load
+  if (wasAtBottom || !silent) {
+    box.scrollTop = box.scrollHeight;
+  }
+}
+
+// ── SEND ──────────────────────────────────────────────────────────────────────
+async function sendMsg() {
+  const input = document.getElementById('compose-input');
+  const body  = input.value.trim();
+  if (!body || !currentThread) return;
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  input.value  = '';
+
+  const { data, error } = await api.sendMessage(currentThread, body);
+  if (error) {
+    toast('Erreur : ' + error, 'error');
+    input.value = body;
+  } else {
+    await loadThread(currentThread);
+    await loadConversations(true);
+  }
+  btn.disabled = false;
+  input.focus();
+  autoResize(input);
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// Enter to send (Shift+Enter for newline)
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('compose-input');
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMsg();
+    }
+  });
+  input.addEventListener('input', () => autoResize(input));
+});
+
+async function doLogout(e) {
+  e.preventDefault();
+  await api.logout();
+  location.href = '/login.html';
+}
+
+function comingSoon(e, name) {
+  e.preventDefault();
+  toast(`${name} arrive bientôt ! 🔜`, 'info');
+}
+</script>
+</body>
+</html>
