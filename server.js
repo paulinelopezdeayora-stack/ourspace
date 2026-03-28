@@ -138,17 +138,10 @@ async function initDB() {
       ON messages (receiver_id, read_at) WHERE read_at IS NULL;
   `);
 
-  // Seed demo users
-  const bcrypt = require('bcryptjs');
-  const demoHash = await bcrypt.hash('ourspace2026', 8);
+  // Suppression des comptes de démo
   await pool.query(`
-    INSERT INTO users (username, email, password_hash, display_name, bio, mood, skin, earned_badges)
-    VALUES
-      ('xX_FoxyGrl_Xx', 'foxy@ourspace.demo', $1, '🦊 FoxyGrl', 'Grande nostalgique des années 2000. J''ai encore mes vieilles .mp3 de Winamp. Je code des sites inutiles mais beaux.', 'melancholy vibes 🖤', 'emo-dark', '["joined","first_post","first_friend"]'),
-      ('OursBrun42', 'ours@ourspace.demo', $1, 'OursBrun42', 'J''aime la randonnée et les vieux PC. Ma page perso c''est mon jardin numérique. 3h de marche sans réseau c''est obligatoire.', 'en forêt 🌲', 'matrix', '["joined","first_post"]'),
-      ('MoonChild_', 'moon@ourspace.demo', $1, '🌙 MoonChild', 'La nuit c''est mieux. Je code des trucs inutiles mais beaux. Insomniaque professionnelle.', 'insomnique again ⭐', 'midnight', '["joined","music_lover"]')
-    ON CONFLICT (username) DO NOTHING
-  `, [demoHash]);
+    DELETE FROM users WHERE username IN ('xX_FoxyGrl_Xx', 'OursBrun42', 'MoonChild_')
+  `);
 
   // Compteur de visites
   await pool.query(`
