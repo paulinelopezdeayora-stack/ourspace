@@ -108,8 +108,8 @@ router.put('/me', requireAuth, async (req, res) => {
 
     res.json(r.rows[0]);
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'Erreur serveur' });
+    console.error('PUT /profiles/me error:', e.message, e.code);
+    res.status(500).json({ error: e.message || 'Erreur serveur' });
   }
 });
 
