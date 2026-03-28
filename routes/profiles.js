@@ -153,8 +153,8 @@ router.post('/me/audio', requireAuth, (req, res, next) => {
   try {
     const r = await pool.query(
       `UPDATE users SET
-         audio_url  = COALESCE($1, audio_url),
-         audio_data = CASE WHEN $2 IS NOT NULL THEN $2 ELSE audio_data END,
+         audio_url  = COALESCE($1::text, audio_url),
+         audio_data = CASE WHEN $2::text IS NOT NULL THEN $2::text ELSE audio_data END,
          audio_name = $3
        WHERE id = $4
        RETURNING audio_url, audio_name`,
