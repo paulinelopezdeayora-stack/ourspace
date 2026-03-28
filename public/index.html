@@ -752,7 +752,12 @@ async function restoreAudio(data, name) {
     } else {
       // URL R2 ou autre → fetch normal
       const resp = await fetch(data);
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`HTTP ${resp.status} : ${txt.slice(0, 120)}`);
+      }
       arrayBuffer = await resp.arrayBuffer();
+      if (!arrayBuffer.byteLength) throw new Error('Fichier vide reçu');
     }
     audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
     // Démarrer en pause (autoplay bloqué par les navigateurs)
