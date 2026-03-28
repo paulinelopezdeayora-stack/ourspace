@@ -797,7 +797,9 @@ function playFrom(offset) {
 }
 function togglePlay(e) {
   e.stopPropagation();
-  if (!audioCtx) return;
+  if (!audioCtx || !audioBuffer) return;
+  // Après un restore au chargement, source n'existe pas encore → on la crée au 1er clic
+  if (!source) { playFrom(0); return; }
   if (audioCtx.state === 'suspended') { audioCtx.resume(); document.getElementById('play-pause-btn').textContent='⏸'; isPaused=false; drawVis(); }
   else { audioCtx.suspend(); document.getElementById('play-pause-btn').textContent='▶'; isPaused=true; cancelAnimationFrame(animFrame); }
 }
