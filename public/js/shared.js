@@ -6,6 +6,10 @@ const OS_THEMES = {
   'bubblegum': { label:'🌸 Bubblegum',  hue: 330 },
   'matrix':    { label:'💾 Matrix',     hue: 130 },
   'midnight':  { label:'🌙 Midnight',   hue: 215 },
+  'pastel':    { label:'🍬 Pastel Dream', hue: 300 },
+  'batcave':   { label:'🦇 Batcave',    hue: 0   },
+  'dogperson': { label:'🐶 Dog Person', hue:  35 },
+  'catperson': { label:'🐱 Cat Person', hue: 170 },
 };
 
 function applyTheme(name) {
@@ -100,6 +104,8 @@ function initSkinz() {
     btn.addEventListener('click', () => {
       applyTheme(btn.dataset.theme);
       panel.classList.remove('open');
+      // Synchro DB depuis toutes les pages (api.js doit être chargé)
+      if (typeof api !== 'undefined') api.updateProfile({ skin: btn.dataset.theme });
     });
   });
 }
