@@ -52,6 +52,7 @@ app.use('/api/posts',    require('./routes/posts'));
 app.use('/api/media',    require('./routes/media'));
 app.use('/api/visits',   require('./routes/visits'));
 app.use('/api/messages', require('./routes/messages'));
+app.use('/api/admin',   require('./routes/admin'));
 
 // Toutes les autres routes → frontend (SPA-style)
 app.get('*', (req, res) => {

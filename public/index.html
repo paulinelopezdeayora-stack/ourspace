@@ -441,6 +441,18 @@
   </div><!-- /content -->
 </div><!-- /main -->
 
+<!-- PANNEAU ADMIN (visible uniquement pour l'user #1) -->
+<div id="admin-panel" style="display:none;max-width:1020px;margin:0 auto 18px;padding:0 12px">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:14px 18px">
+    <div style="font-size:13px;color:var(--accent);margin-bottom:10px;font-weight:bold">🔧 Admin — Membres inscrits</div>
+    <div id="admin-emails-list" style="font-family:Arial,sans-serif;font-size:12px;color:var(--text-muted);margin-bottom:10px;max-height:180px;overflow-y:auto;line-height:1.8"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="adminCopyEmails()" style="background:var(--accent2);color:#fff;border:none;padding:6px 14px;font-family:'Comic Sans MS',cursive;font-size:12px;cursor:pointer;border-radius:3px">📋 Copier tous les emails</button>
+      <button onclick="adminCopyCSV()" style="background:var(--bg3);color:var(--text-muted);border:1px solid var(--border);padding:6px 14px;font-family:'Comic Sans MS',cursive;font-size:12px;cursor:pointer;border-radius:3px">📄 Copier CSV</button>
+    </div>
+  </div>
+</div>
+
 <div id="footer">
   <div style="color:var(--border);font-size:16px;letter-spacing:8px;margin-bottom:7px">🐻 ✦ 🐻</div>
   OURSPACE 2026 — <span class="blink" style="color:var(--accent)">fait avec ♥ et Comic Sans</span><br>
@@ -510,7 +522,30 @@ let ME = null;
   loadFriends();
   loadComments();
   initMsgBadge();
+  if (ME.id === 1) loadAdminPanel();
 })();
+
+// ===== ADMIN =====
+let adminUsers = [];
+async function loadAdminPanel() {
+  const { data } = await fetch('/api/admin/emails', { credentials: 'same-origin' }).then(r => r.json()).then(d => ({ data: d })).catch(() => ({ data: null }));
+  if (!data) return;
+  adminUsers = data;
+  document.getElementById('admin-panel').style.display = 'block';
+  const list = document.getElementById('admin-emails-list');
+  list.innerHTML = data.map(u =>
+    `<div><span style="color:var(--text-dim);width:24px;display:inline-block">${u.id}.</span> <b style="color:var(--text)">${u.display_name}</b> <span style="color:var(--text-dim)">@${u.username}</span> — ${u.email}</div>`
+  ).join('') + `<div style="margin-top:6px;color:var(--text-dim)">${data.length} membre${data.length > 1 ? 's' : ''} inscrit${data.length > 1 ? 's' : ''}</div>`;
+}
+function adminCopyEmails() {
+  const emails = adminUsers.map(u => u.email).join(', ');
+  navigator.clipboard.writeText(emails).then(() => toast('📋 ' + adminUsers.length + ' emails copiés !', 'success'));
+}
+function adminCopyCSV() {
+  const csv = 'id,username,display_name,email,inscription\n' +
+    adminUsers.map(u => `${u.id},${u.username},"${u.display_name}",${u.email},${new Date(u.created_at).toLocaleDateString('fr-FR')}`).join('\n');
+  navigator.clipboard.writeText(csv).then(() => toast('📄 CSV copié !', 'success'));
+}
 
 // ===== COUNTER (réel) =====
 (async function(){
