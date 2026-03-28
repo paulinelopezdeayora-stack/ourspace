@@ -791,6 +791,7 @@ function playFrom(offset) {
   source.connect(analyser);
   source.loop = true;
   source.start(0, offset);
+  audioCtx.resume(); // indispensable si contexte suspendu (cas restore après refresh)
   isPaused = false;
   document.getElementById('play-pause-btn').textContent = '⏸';
   drawVis();
