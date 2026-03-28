@@ -2,6 +2,8 @@ const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
 const r2          = require('../lib/r2');
+const multer      = require('multer');
+const upload      = multer({ storage: multer.memoryStorage(), limits: { fileSize: 30 * 1024 * 1024 } });
 const PUBLIC_FIELDS = `id, username, display_name, bio, location, mood,
   song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, marquee_text, created_at, last_seen`;
 
@@ -109,6 +111,49 @@ router.put('/me', requireAuth, async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/profiles/me/audio — upload multipart (plus fiable que base64 JSON)
+router.post('/me/audio', requireAuth, upload.single('audio'), async (req, res) => {
+  const uid  = req.session.userId;
+  const file = req.file;
+  if (!file) return res.status(400).json({ error: 'Aucun fichier audio fourni' });
+
+  const audioName = (req.body.audio_name || file.originalname || '').replace(/\.[^.]+$/, '') || 'Piste';
+
+  let audio_url  = null;
+  let audio_data = null;
+
+  // Tentative upload R2
+  if (process.env.R2_ENDPOINT) {
+    try {
+      const ext = (file.mimetype.split('/')[1] || 'mp3').replace('mpeg', 'mp3');
+      audio_url = await r2.upload(`audio_${uid}.${ext}`, file.buffer, file.mimetype);
+    } catch (r2err) {
+      console.warn('R2 audio upload failed, fallback base64:', r2err.message);
+    }
+  }
+
+  // Fallback : base64 en DB
+  if (!audio_url) {
+    audio_data = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+  }
+
+  try {
+    const r = await pool.query(
+      `UPDATE users SET
+         audio_url  = COALESCE($1, audio_url),
+         audio_data = CASE WHEN $2 IS NOT NULL THEN $2 ELSE audio_data END,
+         audio_name = $3
+       WHERE id = $4
+       RETURNING audio_url, audio_data, audio_name`,
+      [audio_url, audio_data, audioName, uid]
+    );
+    res.json({ ok: true, ...r.rows[0] });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erreur base de données' });
   }
 });
 

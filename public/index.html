@@ -709,16 +709,23 @@ async function loadFile(file) {
   audioBuffer = await audioCtx.decodeAudioData(buf);
   playFrom(0);
 
-  // Sauvegarder en base de données
+  // Sauvegarder via multipart (plus fiable que base64 JSON)
   try {
-    const base64 = await fileToBase64(file);
-    const { data, error } = await api.updateProfile({ audio_data: base64, audio_name: cleanName });
-    if (error) toast('Erreur sauvegarde audio : ' + error, 'error');
+    const form = new FormData();
+    form.append('audio', file);
+    form.append('audio_name', cleanName);
+    const resp = await fetch('/api/profiles/me/audio', {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: form
+    });
+    const json = await resp.json();
+    if (!resp.ok) toast('Erreur sauvegarde : ' + (json.error || resp.status), 'error');
     else {
       toast('🎵 ' + cleanName + ' sauvegardé !', 'success');
-      if (data) ME = data; // Mettre à jour ME (avec audio_url si R2 a réussi)
+      if (ME) { ME.audio_url = json.audio_url; ME.audio_data = json.audio_data; ME.audio_name = json.audio_name; }
     }
-  } catch(e) { toast('Erreur sauvegarde audio', 'error'); }
+  } catch(e) { toast('Erreur réseau : ' + e.message, 'error'); }
 }
 
 async function restoreAudio(data, name) {
