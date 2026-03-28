@@ -274,7 +274,7 @@ function renderProfile(p) {
   document.getElementById('profile-displayname').textContent = '✦ ' + p.display_name + ' ✦';
   document.getElementById('profile-mood').textContent = p.mood || '';
   document.getElementById('st-username').textContent = '@' + p.username;
-  document.getElementById('st-location').textContent = p.location || '🌍 Quelque part sur Terre';
+  document.getElementById('st-location').textContent = p.location || '—';
   document.getElementById('st-since').textContent = new Date(p.created_at).toLocaleDateString('fr-FR', {month:'long',year:'numeric'});
   document.getElementById('st-song').textContent = p.song_title ? `${p.song_title} — ${p.song_artist}` : '—';
 

@@ -71,8 +71,8 @@ async function initDB() {
       bio TEXT DEFAULT '',
       location VARCHAR(100) DEFAULT '',
       mood VARCHAR(255) DEFAULT '',
-      song_title VARCHAR(200) DEFAULT 'Welcome to the Black Parade',
-      song_artist VARCHAR(200) DEFAULT 'My Chemical Romance',
+      song_title VARCHAR(200) DEFAULT '',
+      song_artist VARCHAR(200) DEFAULT '',
       avatar_data TEXT,
       audio_data  TEXT,
       audio_name  VARCHAR(255) DEFAULT '',
@@ -147,6 +147,10 @@ async function initDB() {
   await pool.query(`
     UPDATE users SET username = 'poppy_fusee' WHERE id = 1 AND username != 'poppy_fusee'
   `);
+
+  // Nettoyer les valeurs par défaut song qui polluent les profils vierges
+  await pool.query(`UPDATE users SET song_title  = '' WHERE song_title  = 'Welcome to the Black Parade'`);
+  await pool.query(`UPDATE users SET song_artist = '' WHERE song_artist = 'My Chemical Romance'`);
 
   // Compteur de visites
   await pool.query(`
