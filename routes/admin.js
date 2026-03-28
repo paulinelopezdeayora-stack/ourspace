@@ -23,4 +23,23 @@ router.get('/emails', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
+// GET /api/admin/stats — chiffres globaux
+router.get('/stats', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const [msgs, posts, cmts] = await Promise.all([
+      pool.query('SELECT COUNT(*) FROM messages'),
+      pool.query('SELECT COUNT(*) FROM posts'),
+      pool.query('SELECT COUNT(*) FROM comments'),
+    ]);
+    res.json({
+      messages: parseInt(msgs.rows[0].count),
+      posts:    parseInt(posts.rows[0].count),
+      comments: parseInt(cmts.rows[0].count),
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 module.exports = router;

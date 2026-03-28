@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="emo-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔧 Admin — OURSPACE</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    :root{--bg:#000814;--bg2:#0d0020;--bg3:#140030;--accent:#cc55bb;--accent2:#7744aa;--border:#3a1166;--border2:#1a0044;--text:#e0e0ff;--text-muted:#9977cc;--text-dim:#444466;--card:rgba(13,0,32,0.85);--marquee:#bb7744;--online:#44bb88}
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--marquee:#dd8833;--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--marquee:#00aa33;--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--marquee:#4477cc;--online:#66aaff}
+    [data-theme="pastel"]   {--bg:#fff8fc;--bg2:#ffeef8;--bg3:#ffe4f5;--accent:#dd66bb;--accent2:#bb44aa;--border:#f0aadd;--border2:#fad4ef;--text:#442233;--text-muted:#aa6688;--text-dim:#ddaabb;--card:rgba(255,240,250,0.9);--marquee:#cc55aa;--online:#88cc99}
+    [data-theme="batcave"]  {--bg:#050505;--bg2:#0a0a0a;--bg3:#111;--accent:#cccccc;--accent2:#888;--border:#333;--border2:#1a1a1a;--text:#e8e8e8;--text-muted:#777;--text-dim:#333;--card:rgba(10,10,10,0.92);--marquee:#aaa;--online:#aaa}
+    [data-theme="dogperson"]{--bg:#1a0e00;--bg2:#261400;--bg3:#321a00;--accent:#ff9933;--accent2:#cc6600;--border:#663300;--border2:#331900;--text:#fff0dd;--text-muted:#cc9955;--text-dim:#664422;--card:rgba(26,14,0,0.88);--marquee:#ff8800;--online:#88dd44}
+    [data-theme="catperson"]{--bg:#00100c;--bg2:#001a14;--bg3:#00231b;--accent:#33ddaa;--accent2:#229977;--border:#115544;--border2:#082a1f;--text:#ccfff0;--text-muted:#55aa88;--text-dim:#224433;--card:rgba(0,16,12,0.88);--marquee:#22cc99;--online:#55ffcc}
+
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
+    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);min-height:100vh;visibility:hidden}
+    #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
+    .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
+    @keyframes sparkAnim{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+    .star{position:fixed;background:var(--text);opacity:.3;border-radius:50%;animation:twinkle ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.5}50%{opacity:.1}}
+
+    #header{background:linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:2px solid var(--border);padding:12px 20px;text-align:center;position:relative;z-index:10}
+    #site-title{font-family:Impact,sans-serif;font-size:2em;letter-spacing:6px;color:var(--accent);text-shadow:0 0 6px var(--accent2)}
+    #user-badge{position:absolute;top:12px;right:14px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+    #user-badge a{color:var(--accent2);text-decoration:none;font-size:11px}
+    #user-badge a:hover{color:var(--accent)}
+
+    #navbar{background:var(--bg2);display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border2);position:relative;z-index:10}
+    #navbar a{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border2);font-size:11px;font-family:Arial,sans-serif;border-radius:2px;transition:all .2s}
+    #navbar a:hover{background:var(--accent2);color:var(--text);border-color:var(--accent2)}
+    #navbar a.active{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+    #navbar a[data-soon]{opacity:0.55}
+    #navbar a[data-soon]::after{content:' 🔜';font-size:9px;vertical-align:super}
+    #nav-admin{border-color:var(--accent)!important;color:var(--accent)!important}
+
+    #main{max-width:900px;margin:20px auto;padding:0 14px;position:relative;z-index:1;display:flex;flex-direction:column;gap:16px}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:16px 20px}
+    .card-title{font-size:14px;color:var(--accent);font-weight:bold;margin-bottom:12px}
+
+    /* Tableau membres */
+    table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px}
+    th{text-align:left;color:var(--text-dim);padding:6px 10px;border-bottom:1px solid var(--border2);font-weight:normal;font-size:11px}
+    td{padding:7px 10px;border-bottom:1px solid var(--border2);color:var(--text-muted);vertical-align:middle}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:rgba(119,68,170,.08)}
+    .u-id{color:var(--text-dim);width:30px}
+    .u-name{color:var(--text);font-weight:bold}
+    .u-username{color:var(--text-dim)}
+    .u-email{color:var(--accent2)}
+    .u-date{color:var(--text-dim);font-size:11px;white-space:nowrap}
+
+    .btn{background:var(--accent2);color:#fff;border:none;padding:7px 16px;font-family:'Comic Sans MS',cursive;font-size:12px;cursor:pointer;border-radius:3px;transition:background .15s}
+    .btn:hover{background:var(--accent)}
+    .btn-ghost{background:var(--bg3);color:var(--text-muted);border:1px solid var(--border)}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    #stats-row{display:flex;gap:12px;flex-wrap:wrap}
+    .stat-box{background:var(--bg2);border:1px solid var(--border2);border-radius:4px;padding:12px 18px;text-align:center;flex:1;min-width:100px}
+    .stat-num{font-size:22px;font-weight:bold;color:var(--accent);font-family:Impact,sans-serif}
+    .stat-lbl{font-size:10px;color:var(--text-dim);font-family:Arial,sans-serif;margin-top:2px}
+  </style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="cursor">🐻</div>
+
+<div id="header">
+  <div id="site-title">🔧 ADMIN</div>
+  <div id="user-badge">
+    <a href="/">🏠 Accueil</a>
+    <a href="#" onclick="doLogout(event)">🚪 Déco</a>
+  </div>
+</div>
+
+<div id="navbar">
+  <a href="/">🏠 Accueil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="/messages.html">💌 Messages</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
+  <a href="/admin.html" class="active" id="nav-admin">🔧 Admin</a>
+</div>
+
+<div id="main">
+
+  <!-- Stats globales -->
+  <div class="card">
+    <div class="card-title">📊 Vue d'ensemble</div>
+    <div id="stats-row">
+      <div class="stat-box"><div class="stat-num" id="stat-members">…</div><div class="stat-lbl">membres</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-messages">…</div><div class="stat-lbl">messages envoyés</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-posts">…</div><div class="stat-lbl">posts publiés</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-comments">…</div><div class="stat-lbl">commentaires</div></div>
+    </div>
+  </div>
+
+  <!-- Liste des membres + emails -->
+  <div class="card">
+    <div class="card-title">👤 Membres inscrits</div>
+    <div style="overflow-x:auto">
+      <table id="members-table">
+        <thead><tr>
+          <th>#</th><th>Membre</th><th>Username</th><th>Email</th><th>Inscription</th>
+        </tr></thead>
+        <tbody id="members-body"><tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:20px">Chargement…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="copyEmails()">📋 Copier tous les emails</button>
+      <button class="btn btn-ghost" onclick="copyCSV()">📄 Copier en CSV</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/shared.js"></script>
+<script>
+let users = [];
+
+(async () => {
+  const me = await requireLogin();
+  if (!me) return;
+  if (me.id !== 1) { location.href = '/'; return; }
+  document.body.style.visibility = 'visible';
+
+  await Promise.all([loadMembers(), loadStats()]);
+})();
+
+async function loadMembers() {
+  const r = await fetch('/api/admin/emails', { credentials: 'same-origin' });
+  users = await r.json();
+  const tbody = document.getElementById('members-body');
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td class="u-id">${u.id}</td>
+      <td class="u-name">${escHtml(u.display_name)}</td>
+      <td class="u-username"><a href="/profile.html?u=${u.username}" style="color:var(--text-muted);text-decoration:none">@${u.username}</a></td>
+      <td class="u-email">${u.email}</td>
+      <td class="u-date">${new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
+    </tr>
+  `).join('');
+  document.getElementById('stat-members').textContent = users.length;
+}
+
+async function loadStats() {
+  const [msgs, posts, cmts] = await Promise.all([
+    fetch('/api/admin/stats', { credentials: 'same-origin' }).then(r => r.json()).catch(() => ({})),
+  ]);
+  if (msgs) {
+    document.getElementById('stat-messages').textContent = msgs.messages ?? '—';
+    document.getElementById('stat-posts').textContent    = msgs.posts    ?? '—';
+    document.getElementById('stat-comments').textContent = msgs.comments ?? '—';
+  }
+}
+
+function copyEmails() {
+  navigator.clipboard.writeText(users.map(u => u.email).join(', '))
+    .then(() => toast('📋 ' + users.length + ' emails copiés !', 'success'));
+}
+
+function copyCSV() {
+  const csv = 'id,username,display_name,email,inscription\n' +
+    users.map(u => `${u.id},${u.username},"${u.display_name}",${u.email},${new Date(u.created_at).toLocaleDateString('fr-FR')}`).join('\n');
+  navigator.clipboard.writeText(csv).then(() => toast('📄 CSV copié !', 'success'));
+}
+
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function doLogout(e) { e.preventDefault(); api.logout().then(() => location.href = '/login.html'); }
+function comingSoon(e, name) { e.preventDefault(); toast('🚧 ' + name + ' — bientôt disponible !', 'info'); }
+</script>
+</body>
+</html>
