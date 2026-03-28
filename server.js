@@ -143,6 +143,11 @@ async function initDB() {
     DELETE FROM users WHERE username IN ('xX_FoxyGrl_Xx', 'OursBrun42', 'MoonChild_')
   `);
 
+  // Fix username owner : poppy_fuse → poppy_fusee
+  await pool.query(`
+    UPDATE users SET username = 'poppy_fusee' WHERE id = 1 AND username != 'poppy_fusee'
+  `);
+
   // Compteur de visites
   await pool.query(`
     CREATE TABLE IF NOT EXISTS site_stats (
