@@ -52,6 +52,35 @@ app.use('/api/posts',    require('./routes/posts'));
 app.use('/api/media',    require('./routes/media'));
 app.use('/api/visits',   require('./routes/visits'));
 
+// Endpoint debug temporaire — à supprimer après diagnostic
+app.get('/api/debug/audio', require('./middleware/requireAuth'), async (req, res) => {
+  const { pool } = require('./db');
+  const r2       = require('./lib/r2');
+  const uid      = req.session.userId;
+  const u = await pool.query('SELECT audio_url, audio_name, audio_data FROM users WHERE id=$1', [uid]);
+  const row = u.rows[0] || {};
+  const info = {
+    uid,
+    audio_url:  row.audio_url  || null,
+    audio_name: row.audio_name || null,
+    has_data:   !!row.audio_data,
+  };
+  if (row.audio_url) {
+    const key = row.audio_url.replace('/api/media/', '');
+    info.r2_key = key;
+    try {
+      const obj = await r2.getObject(key);
+      info.r2_ok = true;
+      info.r2_contentType = obj.ContentType;
+    } catch(e) {
+      info.r2_ok    = false;
+      info.r2_error = e.message;
+      info.r2_code  = e.name || e.Code;
+    }
+  }
+  res.json(info);
+});
+
 // Toutes les autres routes → frontend (SPA-style)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
