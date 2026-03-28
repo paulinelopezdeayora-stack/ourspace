@@ -1,19 +1,22 @@
-const router   = require('express').Router();
-const r2       = require('../lib/r2');
-const { Readable } = require('stream');
+const router = require('express').Router();
+const r2     = require('../lib/r2');
 
 // GET /api/media/:key  — sert un fichier depuis R2
 router.get('/:key', async (req, res) => {
   try {
     const obj = await r2.getObject(req.params.key);
+    // Collecter tous les chunks du web ReadableStream (plus fiable que .pipe())
+    const chunks = [];
+    for await (const chunk of obj.Body) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    const buffer = Buffer.concat(chunks);
     res.setHeader('Content-Type',  obj.ContentType || 'application/octet-stream');
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    // AWS SDK v3 retourne un web ReadableStream, pas un Node.js stream.
-    // Readable.fromWeb() fait la conversion nécessaire pour .pipe()
-    Readable.fromWeb(obj.Body).pipe(res);
+    res.send(buffer);
   } catch (e) {
     console.error('Media R2 error:', e.message);
-    res.status(404).send('Not found');
+    res.status(500).send('Erreur : ' + e.message);
   }
 });
 

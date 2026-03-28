@@ -759,7 +759,10 @@ async function restoreAudio(data, name) {
     audioCtx.suspend();
     isPaused = true;
     document.getElementById('play-pause-btn').textContent = '▶';
-  } catch(e) { console.warn('Restauration audio échouée:', e); }
+  } catch(e) {
+    console.warn('Restauration audio échouée:', e);
+    toast('⚠️ Lecture audio : ' + e.message, 'error');
+  }
 }
 
 function renameAudio(e) {
