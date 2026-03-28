@@ -131,12 +131,16 @@ router.post('/me/audio', requireAuth, upload.single('audio'), async (req, res) =
       const ext = (file.mimetype.split('/')[1] || 'mp3').replace('mpeg', 'mp3');
       audio_url = await r2.upload(`audio_${uid}.${ext}`, file.buffer, file.mimetype);
     } catch (r2err) {
-      console.warn('R2 audio upload failed, fallback base64:', r2err.message);
+      console.error('R2 audio upload failed:', r2err.message);
+      return res.status(500).json({ error: 'Stockage R2 indisponible : ' + r2err.message });
     }
   }
 
-  // Fallback : base64 en DB
+  // Fallback base64 uniquement si R2 pas configuré (petits fichiers)
   if (!audio_url) {
+    if (file.size > 5 * 1024 * 1024) {
+      return res.status(413).json({ error: 'Fichier trop grand sans R2 (max 5 Mo). Configure R2 pour les gros fichiers.' });
+    }
     audio_data = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
   }
 
@@ -147,13 +151,13 @@ router.post('/me/audio', requireAuth, upload.single('audio'), async (req, res) =
          audio_data = CASE WHEN $2 IS NOT NULL THEN $2 ELSE audio_data END,
          audio_name = $3
        WHERE id = $4
-       RETURNING audio_url, audio_data, audio_name`,
+       RETURNING audio_url, audio_name`,
       [audio_url, audio_data, audioName, uid]
     );
-    res.json({ ok: true, ...r.rows[0] });
+    res.json({ ok: true, audio_data: audio_data, ...r.rows[0] });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'Erreur base de données' });
+    console.error('DB audio save error:', e);
+    res.status(500).json({ error: 'Erreur base de données : ' + e.message });
   }
 });
 
