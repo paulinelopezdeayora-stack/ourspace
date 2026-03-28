@@ -954,7 +954,6 @@ function renderInterests() {
     const div = document.createElement('div');
     div.className = 'int-item';
     const h4 = document.createElement('h4');
-    h4.contentEditable = 'true';
     h4.textContent = item.title;
     const p = document.createElement('p');
     p.contentEditable = 'true';
@@ -964,16 +963,12 @@ function renderInterests() {
     div.appendChild(p);
     grid.appendChild(div);
     if (!item.text) p.classList.add('empty-ph');
-    const onBlur = () => {
+    p.addEventListener('focus', () => p.classList.remove('empty-ph'));
+    p.addEventListener('blur', () => {
       if (!p.textContent.trim()) p.classList.add('empty-ph'); else p.classList.remove('empty-ph');
       saveInterests();
-    };
-    const onKey  = e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } };
-    h4.addEventListener('blur', onBlur);
-    h4.addEventListener('keydown', onKey);
-    p.addEventListener('focus', () => p.classList.remove('empty-ph'));
-    p.addEventListener('blur', onBlur);
-    p.addEventListener('keydown', onKey);
+    });
+    p.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); p.blur(); } });
   });
 }
 
