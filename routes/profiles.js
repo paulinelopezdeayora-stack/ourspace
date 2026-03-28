@@ -115,10 +115,16 @@ router.put('/me', requireAuth, async (req, res) => {
 });
 
 // POST /api/profiles/me/audio — upload multipart (plus fiable que base64 JSON)
-router.post('/me/audio', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/me/audio', requireAuth, (req, res, next) => {
+  // Callback form pour capturer les erreurs multer en JSON (sinon Express renvoie du HTML)
+  upload.single('audio')(req, res, (err) => {
+    if (err) return res.status(400).json({ error: 'Erreur parsing fichier : ' + err.message });
+    next();
+  });
+}, async (req, res) => {
   const uid  = req.session.userId;
   const file = req.file;
-  if (!file) return res.status(400).json({ error: 'Aucun fichier audio fourni' });
+  if (!file) return res.status(400).json({ error: 'Aucun fichier audio fourni (champ "audio" manquant)' });
 
   const audioName = (req.body.audio_name || file.originalname || '').replace(/\.[^.]+$/, '') || 'Piste';
 
