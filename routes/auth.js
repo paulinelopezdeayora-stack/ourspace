@@ -1,6 +1,7 @@
 const router      = require('express').Router();
 const bcrypt      = require('bcryptjs');
 const { pool }    = require('../db');
+const requireAuth = require('../middleware/requireAuth');
 async function sendWelcomeEmail(to, displayName, username) {
   const key = process.env.RESEND_KEY;
   if (!key) return;
@@ -165,8 +166,8 @@ router.get('/me', async (req, res) => {
 
   try {
     const r = await pool.query(
-      `SELECT id, username, display_name, bio, location, mood,
-              song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, marquee_text, earned_badges, created_at, last_seen
+      `SELECT id, username, email, display_name, bio, location, mood,
+              song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, marquee_text, custom_css, earned_badges, created_at, last_seen
        FROM users WHERE id = $1`,
       [req.session.userId]
     );
@@ -175,6 +176,68 @@ router.get('/me', async (req, res) => {
       return res.status(401).json({ error: 'Session expirée' });
     }
     res.json(r.rows[0]);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// PUT /api/auth/password — changer le mot de passe
+router.put('/password', requireAuth, async (req, res) => {
+  const { current_password, new_password } = req.body;
+  if (!current_password || !new_password)
+    return res.status(400).json({ error: 'Mot de passe actuel et nouveau requis' });
+  if (new_password.length < 6)
+    return res.status(400).json({ error: 'Nouveau mot de passe trop court (min 6 caractères)' });
+
+  try {
+    const r = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.session.userId]);
+    if (!r.rows[0] || !(await bcrypt.compare(current_password, r.rows[0].password_hash)))
+      return res.status(401).json({ error: 'Mot de passe actuel incorrect' });
+
+    const hash = await bcrypt.hash(new_password, 12);
+    await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hash, req.session.userId]);
+    res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// PUT /api/auth/email — changer l'adresse email
+router.put('/email', requireAuth, async (req, res) => {
+  const { password, new_email } = req.body;
+  if (!password || !new_email)
+    return res.status(400).json({ error: 'Mot de passe et nouvel email requis' });
+
+  try {
+    const r = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.session.userId]);
+    if (!r.rows[0] || !(await bcrypt.compare(password, r.rows[0].password_hash)))
+      return res.status(401).json({ error: 'Mot de passe incorrect' });
+
+    await pool.query('UPDATE users SET email = $1 WHERE id = $2', [new_email.toLowerCase().trim(), req.session.userId]);
+    res.json({ ok: true });
+  } catch (e) {
+    if (e.code === '23505') return res.status(400).json({ error: 'Email déjà utilisé' });
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// DELETE /api/auth/account — supprimer son compte
+router.delete('/account', requireAuth, async (req, res) => {
+  const { password } = req.body;
+  if (!password)
+    return res.status(400).json({ error: 'Mot de passe requis pour confirmer' });
+
+  try {
+    const r = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.session.userId]);
+    if (!r.rows[0] || !(await bcrypt.compare(password, r.rows[0].password_hash)))
+      return res.status(401).json({ error: 'Mot de passe incorrect' });
+
+    await pool.query('DELETE FROM users WHERE id = $1', [req.session.userId]);
+    req.session.destroy();
+    res.json({ ok: true });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Erreur serveur' });

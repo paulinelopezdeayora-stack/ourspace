@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="emo-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚙️ Paramètres — OURSPACE</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    :root{--bg:#000814;--bg2:#0d0020;--bg3:#140030;--accent:#cc55bb;--accent2:#7744aa;--border:#3a1166;--border2:#1a0044;--text:#e0e0ff;--text-muted:#9977cc;--text-dim:#444466;--card:rgba(13,0,32,0.85);--marquee:#bb7744;--online:#44bb88}
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--marquee:#dd8833;--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--marquee:#00aa33;--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--marquee:#4477cc;--online:#66aaff}
+    [data-theme="pastel"]   {--bg:#fff8fc;--bg2:#ffeef8;--bg3:#ffe4f5;--accent:#dd66bb;--accent2:#bb44aa;--border:#f0aadd;--border2:#fad4ef;--text:#442233;--text-muted:#aa6688;--text-dim:#ddaabb;--card:rgba(255,240,250,0.9);--marquee:#cc55aa;--online:#88cc99}
+    [data-theme="batcave"]  {--bg:#050505;--bg2:#0a0a0a;--bg3:#111;--accent:#cccccc;--accent2:#888;--border:#333;--border2:#1a1a1a;--text:#e8e8e8;--text-muted:#777;--text-dim:#333;--card:rgba(10,10,10,0.92);--marquee:#aaa;--online:#aaa}
+    [data-theme="dogperson"]{--bg:#1a0e00;--bg2:#261400;--bg3:#321a00;--accent:#ff9933;--accent2:#cc6600;--border:#663300;--border2:#331900;--text:#fff0dd;--text-muted:#cc9955;--text-dim:#664422;--card:rgba(26,14,0,0.88);--marquee:#ff8800;--online:#88dd44}
+    [data-theme="catperson"]{--bg:#00100c;--bg2:#001a14;--bg3:#00231b;--accent:#33ddaa;--accent2:#229977;--border:#115544;--border2:#082a1f;--text:#ccfff0;--text-muted:#55aa88;--text-dim:#224433;--card:rgba(0,16,12,0.88);--marquee:#22cc99;--online:#55ffcc}
+
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
+    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);min-height:100vh;visibility:hidden}
+    #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
+    .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
+    @keyframes sparkAnim{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+    .star{position:fixed;background:var(--text);opacity:.3;border-radius:50%;animation:twinkle ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.5}50%{opacity:.1}}
+
+    #header{background:linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:2px solid var(--border);padding:12px 20px;text-align:center;position:relative;z-index:10}
+    #site-title{font-family:Impact,sans-serif;font-size:2em;letter-spacing:6px;color:var(--accent);text-shadow:0 0 6px var(--accent2)}
+    #user-badge{position:absolute;top:12px;right:14px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+    #user-badge a{color:var(--accent2);text-decoration:none;font-size:11px}
+    #user-badge a:hover{color:var(--accent)}
+
+    #navbar{background:var(--bg2);display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border2);position:relative;z-index:10}
+    #navbar a{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border2);font-size:11px;font-family:Arial,sans-serif;border-radius:2px;transition:all .2s}
+    #navbar a:hover{background:var(--accent2);color:var(--text);border-color:var(--accent2)}
+    #navbar a.active{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+    #navbar a[data-soon]{opacity:0.55}
+    #navbar a[data-soon]::after{content:' 🔜';font-size:9px;vertical-align:super}
+    #nav-admin{border-color:var(--accent)!important;color:var(--accent)!important}
+
+    #main{max-width:680px;margin:20px auto;padding:0 14px;position:relative;z-index:1;display:flex;flex-direction:column;gap:16px}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:18px 20px}
+    .card-title{font-size:14px;color:var(--accent);font-weight:bold;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .card-title span{font-size:11px;color:var(--text-dim);font-weight:normal}
+
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:11px;color:var(--text-muted);font-family:Arial,sans-serif;margin-bottom:5px;letter-spacing:.5px}
+    .field input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 10px;font-family:'Comic Sans MS',cursive;font-size:13px;border-radius:3px;outline:none;transition:border-color .2s}
+    .field input:focus{border-color:var(--accent)}
+    .field input::placeholder{color:var(--text-dim)}
+
+    .btn{background:var(--accent2);color:#fff;border:none;padding:8px 18px;font-family:'Comic Sans MS',cursive;font-size:12px;cursor:pointer;border-radius:3px;transition:background .15s}
+    .btn:hover{background:var(--accent)}
+    .btn-danger{background:#660011;color:#ffaaaa;border:1px solid #cc0022}
+    .btn-danger:hover{background:#990022;color:#fff}
+
+    .section-sep{border:none;border-top:1px solid var(--border2);margin:14px 0}
+
+    .ok-msg{font-size:11px;color:var(--online);opacity:0;transition:opacity .4s;margin-left:10px}
+
+    /* CSS editor */
+    #css-editor{width:100%;height:160px;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:9px;font-family:'Courier New',monospace;font-size:12px;resize:vertical;border-radius:3px;line-height:1.5;outline:none;transition:border-color .2s}
+    #css-editor:focus{border-color:var(--accent)}
+    .css-hints{font-size:11px;color:var(--text-dim);font-family:Arial,sans-serif;line-height:1.7;margin-bottom:8px}
+    .css-hints code{color:var(--accent);background:var(--bg2);padding:1px 5px;border-radius:2px;border:1px solid var(--border2)}
+
+    /* danger zone */
+    .danger-zone{border-color:#440011!important}
+    .danger-zone .card-title{color:#cc3344}
+    .danger-label{font-size:11px;color:#886677;font-family:Arial,sans-serif;line-height:1.6;margin-bottom:12px}
+  </style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="cursor">🐻</div>
+
+<div id="header">
+  <div id="site-title">⚙️ PARAMÈTRES</div>
+  <div id="user-badge">
+    <a href="/">🏠 Mon profil</a>
+    <a href="#" onclick="doLogout(event)">🚪 Déco</a>
+  </div>
+</div>
+
+<div id="navbar">
+  <a href="/">🏠 Accueil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="/messages.html">💌 Messages</a>
+  <a href="/settings.html" class="active">⚙️ Paramètres</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
+  <a href="/admin.html" id="nav-admin" style="display:none">🔧 Admin</a>
+</div>
+
+<div id="main">
+
+  <!-- Mot de passe -->
+  <div class="card">
+    <div class="card-title">🔑 Changer le mot de passe</div>
+    <div class="field">
+      <label>Mot de passe actuel</label>
+      <input type="password" id="pwd-current" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div class="field">
+      <label>Nouveau mot de passe</label>
+      <input type="password" id="pwd-new" placeholder="min. 6 caractères" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <label>Confirmer le nouveau mot de passe</label>
+      <input type="password" id="pwd-confirm" placeholder="••••••••" autocomplete="new-password">
+    </div>
+    <div style="display:flex;align-items:center">
+      <button class="btn" onclick="changePassword()">💾 Modifier</button>
+      <span class="ok-msg" id="pwd-ok">✓ Mot de passe modifié !</span>
+    </div>
+  </div>
+
+  <!-- Email -->
+  <div class="card">
+    <div class="card-title">📧 Changer l'adresse email <span id="current-email-display"></span></div>
+    <div class="field">
+      <label>Nouvel email</label>
+      <input type="email" id="email-new" placeholder="nouveau@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Mot de passe (confirmation)</label>
+      <input type="password" id="email-pwd" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div style="display:flex;align-items:center">
+      <button class="btn" onclick="changeEmail()">💾 Modifier</button>
+      <span class="ok-msg" id="email-ok">✓ Email modifié !</span>
+    </div>
+  </div>
+
+  <!-- CSS Custom -->
+  <div class="card">
+    <div class="card-title">🎨 CSS personnalisé <span>s'applique sur ton profil public</span></div>
+    <div class="css-hints">
+      Sélecteurs utiles :
+      <code>body</code> <code>#profile-top</code> <code>.box</code>
+      <code>.box-hd</code> <code>#header</code> <code>.avatar-box</code>
+    </div>
+    <textarea id="css-editor" spellcheck="false" placeholder="/* Exemple :
+body { background: #000 url('https://…') repeat; }
+.box { border: 2px solid hotpink !important; }
+#header { background: linear-gradient(90deg,#ff00ff,#00ffff); }
+*/"></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+      <button class="btn" onclick="saveCss()">💾 Sauvegarder</button>
+      <button class="btn" style="background:var(--bg3);color:var(--text-muted);border:1px solid var(--border)" onclick="clearCss()">🗑 Effacer</button>
+      <span class="ok-msg" id="css-ok">✓ Sauvegardé</span>
+    </div>
+  </div>
+
+  <!-- Danger zone -->
+  <div class="card danger-zone">
+    <div class="card-title">⚠️ Zone dangereuse</div>
+    <div class="danger-label">
+      La suppression de ton compte est <strong>irréversible</strong>. Tous tes posts, commentaires et messages seront effacés définitivement.
+    </div>
+    <div class="field">
+      <label>Confirme ton mot de passe pour supprimer</label>
+      <input type="password" id="delete-pwd" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-danger" onclick="deleteAccount()">🗑 Supprimer mon compte</button>
+  </div>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/shared.js"></script>
+<script>
+let ME = null;
+
+(async () => {
+  ME = await requireLogin();
+  if (!ME) return;
+  document.body.style.visibility = 'visible';
+  if (ME.id === 1) document.getElementById('nav-admin').style.display = '';
+
+  // Affiche l'email actuel
+  const emailDisplay = document.getElementById('current-email-display');
+  if (emailDisplay) emailDisplay.textContent = '— actuel : ' + (ME.email || '');
+
+  // Charge le CSS custom
+  if (ME.custom_css) document.getElementById('css-editor').value = ME.custom_css;
+})();
+
+// Mot de passe
+async function changePassword() {
+  const current = document.getElementById('pwd-current').value;
+  const next    = document.getElementById('pwd-new').value;
+  const confirm = document.getElementById('pwd-confirm').value;
+  if (!current || !next) return toast('Remplis tous les champs', 'error');
+  if (next !== confirm)  return toast('Les mots de passe ne correspondent pas', 'error');
+  if (next.length < 6)   return toast('Nouveau mot de passe trop court (min 6)', 'error');
+
+  const res = await fetch('/api/auth/password', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ current_password: current, new_password: next }),
+  });
+  const data = await res.json();
+  if (data.error) return toast(data.error, 'error');
+
+  document.getElementById('pwd-current').value = '';
+  document.getElementById('pwd-new').value = '';
+  document.getElementById('pwd-confirm').value = '';
+  showOk('pwd-ok');
+}
+
+// Email
+async function changeEmail() {
+  const newEmail = document.getElementById('email-new').value.trim();
+  const pwd      = document.getElementById('email-pwd').value;
+  if (!newEmail || !pwd) return toast('Remplis tous les champs', 'error');
+
+  const res = await fetch('/api/auth/email', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ new_email: newEmail, password: pwd }),
+  });
+  const data = await res.json();
+  if (data.error) return toast(data.error, 'error');
+
+  document.getElementById('email-new').value = '';
+  document.getElementById('email-pwd').value = '';
+  document.getElementById('current-email-display').textContent = '— actuel : ' + newEmail;
+  showOk('email-ok');
+}
+
+// CSS
+async function saveCss() {
+  const css = document.getElementById('css-editor').value;
+  const { error } = await api.updateProfile({ custom_css: css });
+  if (error) return toast(error, 'error');
+  ME.custom_css = css || null;
+  showOk('css-ok');
+}
+async function clearCss() {
+  if (!confirm('Effacer tout le CSS custom ?')) return;
+  document.getElementById('css-editor').value = '';
+  const { error } = await api.updateProfile({ custom_css: '' });
+  if (error) toast(error, 'error');
+  else { ME.custom_css = null; toast('CSS effacé', 'success'); }
+}
+
+// Supprimer le compte
+async function deleteAccount() {
+  const pwd = document.getElementById('delete-pwd').value;
+  if (!pwd) return toast('Entre ton mot de passe pour confirmer', 'error');
+  if (!confirm('⚠️ Supprimer définitivement ton compte ? Cette action est irréversible.')) return;
+
+  const res = await fetch('/api/auth/account', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ password: pwd }),
+  });
+  const data = await res.json();
+  if (data.error) return toast(data.error, 'error');
+  location.href = '/login.html';
+}
+
+function showOk(id) {
+  const el = document.getElementById(id);
+  el.style.opacity = '1';
+  setTimeout(() => el.style.opacity = '0', 2500);
+}
+function doLogout(e) { e.preventDefault(); api.logout().then(() => location.href = '/login.html'); }
+function comingSoon(e, name) { e.preventDefault(); toast('🚧 ' + name + ' — bientôt disponible !', 'info'); }
+</script>
+</body>
+</html>
