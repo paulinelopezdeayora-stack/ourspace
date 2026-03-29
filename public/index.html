@@ -965,6 +965,8 @@ function renderInterests() {
   if (!grid) return;
   let items = DEFAULT_INTERESTS.map(d => ({ ...d }));
   if (ME.interests) { try { items = JSON.parse(ME.interests); } catch(e) {} }
+  // Migration : ancien titre Tech → Obsessions
+  items = items.map(i => i.title === '💻 Tech' ? { ...i, title: '🌀 Obsessions' } : i);
   grid.innerHTML = '';
   items.forEach(item => {
     const div = document.createElement('div');
