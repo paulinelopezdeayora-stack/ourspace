@@ -269,6 +269,14 @@ let PROFILE = null;
 })();
 
 function renderProfile(p) {
+  // Inject user's custom CSS (sanitized)
+  if (p.custom_css) {
+    const style = document.createElement('style');
+    style.id = 'user-custom-css';
+    style.textContent = p.custom_css.replace(/<\/style\s*>/gi, '');
+    document.head.appendChild(style);
+  }
+
   document.title = '★ OURSPACE ★ ' + p.display_name;
   document.getElementById('header-username').textContent = p.username;
   document.getElementById('profile-displayname').textContent = '✦ ' + p.display_name + ' ✦';

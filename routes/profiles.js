@@ -5,7 +5,7 @@ const r2          = require('../lib/r2');
 const multer      = require('multer');
 const upload      = multer({ storage: multer.memoryStorage(), limits: { fileSize: 30 * 1024 * 1024 } });
 const PUBLIC_FIELDS = `id, username, display_name, bio, location, mood,
-  song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, marquee_text, created_at, last_seen`;
+  song_title, song_artist, avatar_data, avatar_url, audio_data, audio_url, audio_name, skin, interests, marquee_text, custom_css, created_at, last_seen`;
 
 // Convertit un base64 data-URI en buffer + contentType
 function parseDataUri(dataUri) {
@@ -31,7 +31,7 @@ router.get('/:username', async (req, res) => {
 
 // PUT /api/profiles/me
 router.put('/me', requireAuth, async (req, res) => {
-  const { display_name, bio, location, mood, song_title, song_artist, skin, avatar_data, audio_data, audio_name, interests, marquee_text } = req.body;
+  const { display_name, bio, location, mood, song_title, song_artist, skin, avatar_data, audio_data, audio_name, interests, marquee_text, custom_css } = req.body;
   const uid = req.session.userId;
 
   try {
@@ -93,7 +93,8 @@ router.put('/me', requireAuth, async (req, res) => {
          audio_url    = CASE WHEN $11::text IS NOT NULL THEN $11::text ELSE audio_url   END,
          audio_name   = COALESCE($12,            audio_name),
          interests    = COALESCE($13,            interests),
-         marquee_text = COALESCE($15,            marquee_text)
+         marquee_text = COALESCE($15,            marquee_text),
+         custom_css   = CASE WHEN $16::text IS NOT NULL THEN NULLIF($16::text,'') ELSE custom_css END
        WHERE id = $14
        RETURNING ${PUBLIC_FIELDS}`,
       // pg v8 interdit les undefined — on convertit tout en null
@@ -103,7 +104,7 @@ router.put('/me', requireAuth, async (req, res) => {
        newAudioData  ?? null, newAudioUrl  ?? null,
        audio_name   ?? null, interests    ?? null,
        uid,
-       marquee_text ?? null]
+       marquee_text ?? null, custom_css ?? null]
     );
 
     res.json(r.rows[0]);
