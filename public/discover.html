@@ -119,6 +119,7 @@
   <a href="/music.html">🎵 Musique</a>
   <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
   <a href="/messages.html">💌 Messages</a>
+  <a href="/notifications.html">🔔 Notifs</a>
   <a href="/settings.html">⚙️ Paramètres</a>
   <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
 </div>
@@ -276,6 +277,8 @@ function renderGrid() {
 }
 
 loadProfiles();
+initMsgBadge();
+initNotifBadge();
 
 // Recherche debounced
 let searchTimer;

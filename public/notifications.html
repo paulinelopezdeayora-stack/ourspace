@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="emo-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔔 Notifications — OURSPACE</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    :root{--bg:#000814;--bg2:#0d0020;--bg3:#140030;--accent:#cc55bb;--accent2:#7744aa;--border:#3a1166;--border2:#1a0044;--text:#e0e0ff;--text-muted:#9977cc;--text-dim:#444466;--card:rgba(13,0,32,0.85);--marquee:#bb7744;--online:#44bb88}
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--marquee:#dd8833;--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--marquee:#00aa33;--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--marquee:#4477cc;--online:#66aaff}
+    [data-theme="pastel"]   {--bg:#fff8fc;--bg2:#ffeef8;--bg3:#ffe4f5;--accent:#dd66bb;--accent2:#bb44aa;--border:#f0aadd;--border2:#fad4ef;--text:#442233;--text-muted:#aa6688;--text-dim:#ddaabb;--card:rgba(255,240,250,0.9);--marquee:#cc55aa;--online:#88cc99}
+    [data-theme="batcave"]  {--bg:#050505;--bg2:#0a0a0a;--bg3:#111;--accent:#cccccc;--accent2:#888;--border:#333;--border2:#1a1a1a;--text:#e8e8e8;--text-muted:#777;--text-dim:#333;--card:rgba(10,10,10,0.92);--marquee:#aaa;--online:#aaa}
+    [data-theme="dogperson"]{--bg:#1a0e00;--bg2:#261400;--bg3:#321a00;--accent:#ff9933;--accent2:#cc6600;--border:#663300;--border2:#331900;--text:#fff0dd;--text-muted:#cc9955;--text-dim:#664422;--card:rgba(26,14,0,0.88);--marquee:#ff8800;--online:#88dd44}
+    [data-theme="catperson"]{--bg:#00100c;--bg2:#001a14;--bg3:#00231b;--accent:#33ddaa;--accent2:#229977;--border:#115544;--border2:#082a1f;--text:#ccfff0;--text-muted:#55aa88;--text-dim:#224433;--card:rgba(0,16,12,0.88);--marquee:#22cc99;--online:#55ffcc}
+
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
+    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);min-height:100vh;visibility:hidden}
+    #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
+    .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
+    @keyframes sparkAnim{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+    .star{position:fixed;background:var(--text);opacity:.3;border-radius:50%;animation:twinkle ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.5}50%{opacity:.1}}
+
+    #header{background:linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:2px solid var(--border);padding:12px 20px;text-align:center;position:relative;z-index:10}
+    #site-title{font-family:Impact,sans-serif;font-size:2em;letter-spacing:6px;color:var(--accent);text-shadow:0 0 6px var(--accent2)}
+
+    #navbar{background:var(--bg2);display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border2);position:relative;z-index:10}
+    #navbar a{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border2);font-size:11px;font-family:Arial,sans-serif;border-radius:2px;transition:all .2s}
+    #navbar a:hover{background:var(--accent2);color:var(--text);border-color:var(--accent2)}
+    #navbar a.active{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+    #navbar a[data-soon]{opacity:0.55}
+    #navbar a[data-soon]::after{content:' 🔜';font-size:9px;vertical-align:super}
+
+    #main{max-width:640px;margin:20px auto;padding:0 14px 40px;position:relative;z-index:1}
+
+    .page-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .page-hd h2{font-family:Impact,sans-serif;font-size:1.3em;color:var(--accent);letter-spacing:2px}
+    .btn-readall{background:var(--bg3);border:1px solid var(--border);color:var(--text-muted);padding:5px 14px;font-family:'Comic Sans MS',cursive;font-size:11px;border-radius:3px;cursor:pointer;transition:all .2s}
+    .btn-readall:hover{background:var(--accent2);color:#fff;border-color:var(--accent)}
+
+    .notif-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border2);border-radius:4px;padding:12px 14px;margin-bottom:8px;transition:border-color .2s;text-decoration:none;color:inherit}
+    .notif-item:hover{border-color:var(--accent2)}
+    .notif-item.unread{border-left:3px solid var(--accent);background:color-mix(in srgb,var(--card) 85%,var(--accent) 15%)}
+    .notif-av{width:40px;height:40px;min-width:40px;border-radius:4px;background:linear-gradient(135deg,var(--bg3),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;border:1px solid var(--border);flex-shrink:0}
+    .notif-av img{width:100%;height:100%;object-fit:cover}
+    .notif-icon{font-size:16px;min-width:24px;text-align:center}
+    .notif-text{flex:1;font-size:13px;color:var(--text-muted);line-height:1.5}
+    .notif-text strong{color:var(--text)}
+    .notif-time{font-size:10px;color:var(--text-dim);white-space:nowrap;margin-left:8px}
+
+    .empty-state{text-align:center;padding:50px 20px;color:var(--text-dim)}
+    .empty-state .big{font-size:52px;margin-bottom:12px}
+    .empty-state p{font-size:13px;line-height:1.8}
+
+    #footer{text-align:center;padding:16px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border2)}
+    #footer a{color:var(--border)}
+
+    @media(max-width:600px){
+      #navbar{overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      #navbar::-webkit-scrollbar{display:none}
+      #navbar a{white-space:nowrap;flex-shrink:0}
+    }
+  </style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="cursor">🐻</div>
+
+<div id="header">
+  <div id="site-title">🔔 NOTIFICATIONS</div>
+</div>
+
+<div id="navbar">
+  <a href="/">🏠 Accueil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
+  <a href="/messages.html">💌 Messages</a>
+  <a href="/notifications.html" class="active">🔔 Notifs</a>
+  <a href="/settings.html">⚙️ Paramètres</a>
+  <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
+  <a href="/admin.html" id="nav-admin" style="display:none">🔧 Admin</a>
+</div>
+
+<div id="main">
+  <div class="page-hd">
+    <h2>🔔 Tes notifications</h2>
+    <button class="btn-readall" onclick="markAllRead()">✓ Tout marquer comme lu</button>
+  </div>
+  <div id="notif-list"></div>
+</div>
+
+<div id="footer">
+  <a href="/">OURSPACE</a> · <a href="/legal.html">Mentions légales</a>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/shared.js"></script>
+<script>
+let ME = null;
+
+(async () => {
+  ME = await requireLogin();
+  if (!ME) return;
+  document.body.style.visibility = 'visible';
+  if (ME.id === 1) document.getElementById('nav-admin').style.display = '';
+  initMsgBadge();
+  initNotifBadge();
+  await loadNotifs();
+})();
+
+const NOTIF_LABELS = {
+  comment:        (name) => `<strong>${name}</strong> a commenté ton profil`,
+  friend_request: (name) => `<strong>${name}</strong> veut être ton ami·e`,
+  friend_accept:  (name) => `<strong>${name}</strong> a accepté ta demande d'ami`,
+  post_like:      (name) => `<strong>${name}</strong> a aimé ton billet ♥`,
+  post_comment:   (name) => `<strong>${name}</strong> a commenté ton billet`,
+};
+
+const NOTIF_ICONS = {
+  comment:        '💬',
+  friend_request: '👋',
+  friend_accept:  '🤝',
+  post_like:      '♥',
+  post_comment:   '💬',
+};
+
+const NOTIF_LINKS = {
+  comment:        (n) => `/?notif=1`,
+  friend_request: (n) => `/profile.html?u=${n.actor_username}`,
+  friend_accept:  (n) => `/profile.html?u=${n.actor_username}`,
+  post_like:      (n) => `/blog.html`,
+  post_comment:   (n) => `/blog.html`,
+};
+
+function timeAgo(date) {
+  const s = Math.floor((Date.now() - new Date(date)) / 1000);
+  if (s < 60)     return 'à l\'instant';
+  if (s < 3600)   return Math.floor(s/60) + ' min';
+  if (s < 86400)  return Math.floor(s/3600) + 'h';
+  if (s < 604800) return Math.floor(s/86400) + 'j';
+  return new Date(date).toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+}
+
+async function loadNotifs() {
+  const res  = await fetch('/api/notifications', { credentials: 'same-origin' });
+  const data = await res.json();
+  const list = document.getElementById('notif-list');
+
+  if (!data.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="big">🔔</div>
+        <p>Aucune notification pour l'instant.<br>
+        Quand quelqu'un commente ton profil, aime ton billet<br>
+        ou t'envoie une demande d'ami — ça apparaîtra ici.</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  data.forEach(n => {
+    const a = document.createElement('a');
+    a.className = 'notif-item' + (n.read_at ? '' : ' unread');
+    a.href = (NOTIF_LINKS[n.type] || (() => '/'))(n);
+
+    const src = n.actor_avatar_url || n.actor_avatar;
+    const avHtml = src
+      ? `<img src="${src}" alt="${n.actor_name}">`
+      : (NOTIF_ICONS[n.type] || '🐻');
+
+    a.innerHTML = `
+      <div class="notif-av">${avHtml}</div>
+      <div class="notif-text">${(NOTIF_LABELS[n.type] || (() => 'Nouvelle notification'))(n.actor_name)}</div>
+      <div class="notif-time">${timeAgo(n.created_at)}</div>`;
+    list.appendChild(a);
+  });
+}
+
+async function markAllRead() {
+  await fetch('/api/notifications/read-all', { method: 'PATCH', credentials: 'same-origin' });
+  // Retire le style unread
+  document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+  // Vide le badge dans la navbar
+  document.querySelectorAll('.notif-badge').forEach(el => el.remove());
+}
+
+function comingSoon(e, name) { e.preventDefault(); toast('🚧 ' + name + ' — bientôt disponible !', 'info'); }
+</script>
+</body>
+</html>

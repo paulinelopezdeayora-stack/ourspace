@@ -217,6 +217,8 @@ function comingSoon(e, name) { e.preventDefault(); toast('🚧 ' + name + ' — 
   document.getElementById('inp-song-artist').value = ME.song_artist || '';
 
   await loadFriendsMusic();
+  initMsgBadge();
+  initNotifBadge();
 })();
 
 // ---- EDIT FORM ----

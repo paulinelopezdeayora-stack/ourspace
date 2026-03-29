@@ -143,6 +143,7 @@
   <a href="/">← Accueil</a>
   <a href="/discover.html">🔍 Découvrir</a>
   <a href="/messages.html">💌 Messages</a>
+  <a href="/notifications.html">🔔 Notifs</a>
   <a href="/settings.html">⚙️ Paramètres</a>
   <span id="nav-user" style="margin-left:auto;color:var(--text-dim);font-size:11px"></span>
 </div>
@@ -273,6 +274,8 @@ let PROFILE = null;
   ME = meRes.data || null;
   if (ME) {
     document.getElementById('nav-user').textContent = '👤 ' + ME.display_name;
+    initMsgBadge();
+    initNotifBadge();
   }
 
   // Load profile

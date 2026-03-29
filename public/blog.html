@@ -150,6 +150,7 @@
   <a href="/music.html">🎵 Musique</a>
   <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
   <a href="/messages.html">💌 Messages</a>
+  <a href="/notifications.html">🔔 Notifs</a>
   <a href="/settings.html">⚙️ Paramètres</a>
   <span id="nav-user" style="margin-left:auto"></span>
 </div>
@@ -249,6 +250,8 @@ function comingSoon(e, name) { e.preventDefault(); toast('🚧 ' + name + ' — 
     document.getElementById('comp-av-emoji').style.display = 'none';
   }
   await loadFeed();
+  initMsgBadge();
+  initNotifBadge();
 })();
 
 // ---- PHOTO ZONE ----

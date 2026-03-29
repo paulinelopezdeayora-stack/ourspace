@@ -90,6 +90,7 @@
   <a href="/music.html">🎵 Musique</a>
   <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
   <a href="/messages.html">💌 Messages</a>
+  <a href="/notifications.html">🔔 Notifs</a>
   <a href="/settings.html" class="active">⚙️ Paramètres</a>
   <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
   <a href="/admin.html" id="nav-admin" style="display:none">🔧 Admin</a>
@@ -205,6 +206,9 @@ let ME = null;
 
   // Charge le CSS custom
   if (ME.custom_css) document.getElementById('css-editor').value = ME.custom_css;
+
+  initMsgBadge();
+  initNotifBadge();
 })();
 
 // Mot de passe

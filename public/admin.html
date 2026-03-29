@@ -135,6 +135,8 @@ let users = [];
   document.body.style.visibility = 'visible';
 
   await Promise.all([loadMembers(), loadStats()]);
+  initMsgBadge();
+  initNotifBadge();
 })();
 
 async function loadMembers() {
