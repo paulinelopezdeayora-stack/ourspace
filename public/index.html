@@ -1026,11 +1026,18 @@ document.querySelectorAll('.skin-btn').forEach(btn => {
 // skinz toggle géré par shared.js initSkinz()
 
 // ===== CSS CUSTOM =====
+function applyCustomCss(css) {
+  let el = document.getElementById('user-custom-css');
+  if (!el) { el = document.createElement('style'); el.id = 'user-custom-css'; document.head.appendChild(el); }
+  el.textContent = css ? css.replace(/<\/style\s*>/gi, '') : '';
+}
+
 async function saveCss() {
   const css = document.getElementById('css-editor').value;
-  const { error } = await api.updateProfile({ custom_css: css || null });
+  const { error } = await api.updateProfile({ custom_css: css });
   if (error) { toast(error, 'error'); return; }
-  ME.custom_css = css;
+  ME.custom_css = css || null;
+  applyCustomCss(css);
   const msg = document.getElementById('css-save-msg');
   msg.style.opacity = '1';
   setTimeout(() => msg.style.opacity = '0', 2000);
@@ -1040,7 +1047,7 @@ async function clearCss() {
   document.getElementById('css-editor').value = '';
   const { error } = await api.updateProfile({ custom_css: '' });
   if (error) toast(error, 'error');
-  else { ME.custom_css = null; toast('CSS effacé', 'success'); }
+  else { ME.custom_css = null; applyCustomCss(''); toast('CSS effacé', 'success'); }
 }
 
 // ===== COMING SOON =====
