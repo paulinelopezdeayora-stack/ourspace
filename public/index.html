@@ -299,6 +299,7 @@
   <a href="/music.html">🎵 Musique</a>
   <a href="#" data-soon="true" onclick="comingSoon(event,'Groupes')">👥 Groupes</a>
   <a href="/messages.html">💌 Messages</a>
+  <a href="/notifications.html">🔔 Notifs</a>
   <a href="/settings.html">⚙️ Paramètres</a>
   <a href="#" data-soon="true" onclick="comingSoon(event,'Ourspace+')">🐻 Ourspace+</a>
   <a href="/admin.html" id="nav-admin" style="display:none;border-color:var(--accent)!important;color:var(--accent)!important">🔧 Admin</a>
@@ -525,6 +526,7 @@ let ME = null;
   loadFriends();
   loadComments();
   initMsgBadge();
+  initNotifBadge();
   if (ME.id === 1) {
     const navAdmin = document.getElementById('nav-admin');
     if (navAdmin) navAdmin.style.display = '';
@@ -952,7 +954,7 @@ function makeStatEditable(td) {
 const DEFAULT_INTERESTS = [
   { title: '🎵 Musique',   text: '' },
   { title: '🎮 Jeux',      text: '' },
-  { title: '💻 Tech',      text: '' },
+  { title: '🌀 Obsessions', text: '' },
   { title: '📚 Lectures',  text: '' },
   { title: '🎬 Films',     text: '' },
   { title: '🌙 Mon rêve',  text: '' },
