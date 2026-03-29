@@ -91,6 +91,12 @@
     <input type="email" id="r-email" placeholder="ton@email.com" required>
     <label>Mot de passe <span style="color:#444">(min 6 caractères)</span></label>
     <input type="password" id="r-pass" placeholder="••••••••" required>
+    <div style="margin-top:14px;display:flex;align-items:flex-start;gap:8px">
+      <input type="checkbox" id="r-legal" required style="width:auto;margin-top:2px;accent-color:#ff00ff;flex-shrink:0">
+      <label for="r-legal" style="font-size:11px;color:#9966cc;text-transform:none;margin:0;line-height:1.5;cursor:pointer">
+        J'ai <strong style="color:#ddd">15 ans ou plus</strong> et j'accepte les <a href="/legal.html" target="_blank" style="color:#ff00ff">conditions d'utilisation</a>
+      </label>
+    </div>
     <button class="btn-submit" type="submit">Rejoindre Ourspace 🐻</button>
     <div class="error-msg" id="r-error"></div>
     <div class="form-footer">Déjà un compte ? <a onclick="switchTab('login')">Se connecter</a></div>
