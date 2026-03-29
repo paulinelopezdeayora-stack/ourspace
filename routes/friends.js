@@ -139,4 +139,25 @@ router.put('/top8', requireAuth, async (req, res) => {
   }
 });
 
+// GET /api/friends/:username — top 8 amis d'un profil public
+router.get('/:username', async (req, res) => {
+  try {
+    const u = await pool.query('SELECT id FROM users WHERE username = $1', [req.params.username.toLowerCase()]);
+    if (!u.rows[0]) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    const r = await pool.query(
+      `SELECT u.id, u.username, u.display_name, u.avatar_data, u.avatar_url, f.position
+       FROM friends f
+       JOIN users u ON u.id = f.friend_id
+       WHERE f.user_id = $1 AND f.status = 'accepted'
+       ORDER BY f.position NULLS LAST, u.display_name
+       LIMIT 8`,
+      [u.rows[0].id]
+    );
+    res.json(r.rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 module.exports = router;

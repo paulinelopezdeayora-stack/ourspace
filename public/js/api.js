@@ -37,7 +37,8 @@ const api = (() => {
     deleteComment: (id)       => req('DELETE', `/api/comments/${id}`),
 
     // Amis
-    getMyFriends:  ()         => req('GET',  '/api/friends/me'),
+    getMyFriends:      ()         => req('GET',  '/api/friends/me'),
+    getProfileFriends: (username) => req('GET',  `/api/friends/${username}`),
     getRequests:   ()         => req('GET',  '/api/friends/requests'),
     sendRequest:   (username) => req('POST', `/api/friends/request/${username}`),
     acceptFriend:  (username) => req('POST', `/api/friends/accept/${username}`),

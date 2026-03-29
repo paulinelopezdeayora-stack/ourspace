@@ -121,6 +121,14 @@
     @keyframes barBounce{from{height:4px}to{height:18px}}
     .audio-bars.paused .audio-bar{animation-play-state:paused;height:6px}
 
+    /* TOP 8 */
+    .friends-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;text-align:center}
+    .friend-av{width:56px;height:56px;margin:0 auto 4px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid var(--border);overflow:hidden;transition:transform .2s;text-decoration:none;display:block}
+    .friend-av:hover{transform:scale(1.1);border-color:var(--accent)}
+    .friend-av img{width:100%;height:100%;object-fit:cover}
+    .friend-name{display:block;font-size:10px;color:var(--text-muted);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .friend-name:hover{color:var(--accent)}
+
     #footer{text-align:center;padding:18px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border2);margin-top:8px;position:relative;z-index:1}
     #footer a{color:var(--border)}
 
@@ -201,6 +209,14 @@
     </div>
   </div>
 
+  <!-- Top 8 -->
+  <div class="box" id="box-top8" style="display:none">
+    <div class="box-hd">🐻 Top 8</div>
+    <div class="box-bd">
+      <div class="friends-grid" id="friends-grid"></div>
+    </div>
+  </div>
+
   <!-- Comments -->
   <div class="box">
     <div class="box-hd">🐻 Commentaires <span id="cmt-count" style="font-size:10px;color:var(--text-dim)">0</span></div>
@@ -267,6 +283,7 @@ let PROFILE = null;
   }
   PROFILE = data;
   renderProfile(data);
+  loadProfileFriends(data.username);
   loadComments(data.username);
 })();
 
@@ -358,6 +375,26 @@ function renderActions() {
   msgBtn.href = `/messages.html?with=${encodeURIComponent(PROFILE.username)}`;
   msgBtn.textContent = '💌 Envoyer un message';
   row.appendChild(msgBtn);
+}
+
+// ===== TOP 8 =====
+const GRADS = ['linear-gradient(135deg,#550020,#cc0044)','linear-gradient(135deg,#001830,#0055aa)','linear-gradient(135deg,#001a00,#005500)','linear-gradient(135deg,#1a0040,#440088)','linear-gradient(135deg,#200030,#660099)','linear-gradient(135deg,#200000,#660022)','linear-gradient(135deg,#001520,#004466)','linear-gradient(135deg,#201500,#664400)'];
+
+async function loadProfileFriends(username) {
+  const { data } = await api.getProfileFriends(username);
+  if (!data || !data.length) return;
+  document.getElementById('box-top8').style.display = '';
+  const grid = document.getElementById('friends-grid');
+  grid.innerHTML = '';
+  data.forEach((f, i) => {
+    const src = f.avatar_url || f.avatar_data;
+    const av  = src ? `<img src="${src}" alt="${f.display_name}">` : '👤';
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <a class="friend-av" href="/profile.html?u=${f.username}" style="background:${GRADS[i%GRADS.length]}">${av}</a>
+      <a class="friend-name" href="/profile.html?u=${f.username}">${f.display_name}</a>`;
+    grid.appendChild(div);
+  });
 }
 
 // ===== COMMENTS =====
