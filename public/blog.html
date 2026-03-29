@@ -326,7 +326,7 @@ async function loadComments(postId) {
   if (!list) return;
   list.innerHTML = data.map(c => `
     <div class="pcmt">
-      <div class="pcmt-av">${c.avatar_data ? `<img src="${c.avatar_data}">` : avEmoji(c.username)}</div>
+      <div class="pcmt-av">${(c.avatar_url||c.avatar_data) ? `<img src="${c.avatar_url||c.avatar_data}">` : avEmoji(c.username)}</div>
       <div>
         <span class="pcmt-author">${esc(c.display_name || c.username)}</span>
         <span class="pcmt-date"> · ${timeAgo(c.created_at)}</span><br>
@@ -382,7 +382,7 @@ function renderFeed(posts) {
     return `
     <div class="post" id="post-${p.id}">
       <div class="post-head">
-        <div class="post-av">${p.avatar_data ? `<img src="${p.avatar_data}">` : avEmoji(p.username)}</div>
+        <div class="post-av">${(p.avatar_url||p.avatar_data) ? `<img src="${p.avatar_url||p.avatar_data}">` : avEmoji(p.username)}</div>
         <div>
           <div class="post-author">${esc(p.display_name || p.username)}</div>
           <div class="post-date">${timeAgo(p.created_at)}</div>
@@ -429,6 +429,14 @@ function avEmoji(name) {
   const emojis = ['🦊','🤖','🌙','🐻','🦋','⚡','🔥','🌊','⭐','🐺','🌸','🎸'];
   let h = 0; for (const c of String(name)) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
   return emojis[h % emojis.length];
+}
+function timeAgo(date) {
+  const s = Math.floor((Date.now() - new Date(date)) / 1000);
+  if (s < 60)     return 'à l\'instant';
+  if (s < 3600)   return Math.floor(s/60) + ' min';
+  if (s < 86400)  return Math.floor(s/3600) + 'h';
+  if (s < 604800) return Math.floor(s/86400) + 'j';
+  return new Date(date).toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
 }
 </script>
 </body>

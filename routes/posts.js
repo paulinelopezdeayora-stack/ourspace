@@ -10,7 +10,7 @@ router.get('/', requireAuth, async (req, res) => {
     const r = await pool.query(`
       SELECT
         p.id, p.title, p.body, p.photo_data, p.comments_disabled, p.created_at,
-        u.username, u.display_name, u.avatar_data,
+        u.username, u.display_name, u.avatar_data, u.avatar_url,
         (SELECT COUNT(*)::int FROM post_likes    WHERE post_id = p.id) AS like_count,
         (SELECT COUNT(*)::int FROM post_comments WHERE post_id = p.id) AS comment_count,
         EXISTS(SELECT 1 FROM post_likes WHERE post_id = p.id AND user_id = $1) AS liked
@@ -84,7 +84,7 @@ router.post('/:id/like', requireAuth, async (req, res) => {
 router.get('/:id/comments', requireAuth, async (req, res) => {
   try {
     const r = await pool.query(`
-      SELECT pc.id, pc.text, pc.created_at, u.username, u.display_name, u.avatar_data
+      SELECT pc.id, pc.text, pc.created_at, u.username, u.display_name, u.avatar_data, u.avatar_url
       FROM post_comments pc
       JOIN users u ON u.id = pc.user_id
       WHERE pc.post_id = $1
