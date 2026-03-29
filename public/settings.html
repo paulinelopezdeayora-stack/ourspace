@@ -97,6 +97,23 @@
 
 <div id="main">
 
+  <!-- Pseudo -->
+  <div class="card">
+    <div class="card-title">✏️ Changer de pseudo <span id="current-username-display"></span></div>
+    <div class="field">
+      <label>Nouveau pseudo</label>
+      <input type="text" id="username-new" placeholder="lettres, chiffres, _" autocomplete="off" maxlength="30">
+    </div>
+    <div class="field">
+      <label>Mot de passe (confirmation)</label>
+      <input type="password" id="username-pwd" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div style="display:flex;align-items:center">
+      <button class="btn" onclick="changeUsername()">💾 Modifier</button>
+      <span class="ok-msg" id="username-ok">✓ Pseudo modifié !</span>
+    </div>
+  </div>
+
   <!-- Mot de passe -->
   <div class="card">
     <div class="card-title">🔑 Changer le mot de passe</div>
@@ -155,11 +172,11 @@ body { background: #000 url('https://…') repeat; }
     </div>
   </div>
 
-  <!-- Danger zone -->
+  <!-- Supprimer le compte -->
   <div class="card danger-zone">
-    <div class="card-title">⚠️ Zone dangereuse</div>
+    <div class="card-title">🚪 Supprimer mon compte</div>
     <div class="danger-label">
-      La suppression de ton compte est <strong>irréversible</strong>. Tous tes posts, commentaires et messages seront effacés définitivement.
+      Cette action est <strong>irréversible</strong>. Tous tes posts, commentaires et messages seront effacés définitivement.
     </div>
     <div class="field">
       <label>Confirme ton mot de passe pour supprimer</label>
@@ -181,7 +198,8 @@ let ME = null;
   document.body.style.visibility = 'visible';
   if (ME.id === 1) document.getElementById('nav-admin').style.display = '';
 
-  // Affiche l'email actuel
+  // Affiche pseudo et email actuels
+  document.getElementById('current-username-display').textContent = '— actuel : @' + ME.username;
   const emailDisplay = document.getElementById('current-email-display');
   if (emailDisplay) emailDisplay.textContent = '— actuel : ' + (ME.email || '');
 
@@ -232,6 +250,28 @@ async function changeEmail() {
   document.getElementById('email-pwd').value = '';
   document.getElementById('current-email-display').textContent = '— actuel : ' + newEmail;
   showOk('email-ok');
+}
+
+// Pseudo
+async function changeUsername() {
+  const newUsername = document.getElementById('username-new').value.trim();
+  const pwd         = document.getElementById('username-pwd').value;
+  if (!newUsername || !pwd) return toast('Remplis tous les champs', 'error');
+
+  const res = await fetch('/api/auth/username', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ username: newUsername, password: pwd }),
+  });
+  const data = await res.json();
+  if (data.error) return toast(data.error, 'error');
+
+  document.getElementById('username-new').value = '';
+  document.getElementById('username-pwd').value = '';
+  document.getElementById('current-username-display').textContent = '— actuel : @' + data.username;
+  ME.username = data.username;
+  showOk('username-ok');
 }
 
 // CSS

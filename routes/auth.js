@@ -182,6 +182,30 @@ router.get('/me', async (req, res) => {
   }
 });
 
+// PUT /api/auth/username — changer le pseudo
+router.put('/username', requireAuth, async (req, res) => {
+  let { username, password } = req.body;
+  if (!username || !password)
+    return res.status(400).json({ error: 'Pseudo et mot de passe requis' });
+
+  username = username.toLowerCase().replace(/[^a-z0-9_]/g, '');
+  if (username.length < 3)
+    return res.status(400).json({ error: 'Pseudo trop court (min 3 caractères, lettres/chiffres/_ uniquement)' });
+
+  try {
+    const r = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.session.userId]);
+    if (!r.rows[0] || !(await bcrypt.compare(password, r.rows[0].password_hash)))
+      return res.status(401).json({ error: 'Mot de passe incorrect' });
+
+    await pool.query('UPDATE users SET username = $1 WHERE id = $2', [username, req.session.userId]);
+    res.json({ ok: true, username });
+  } catch (e) {
+    if (e.code === '23505') return res.status(400).json({ error: 'Ce pseudo est déjà pris' });
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 // PUT /api/auth/password — changer le mot de passe
 router.put('/password', requireAuth, async (req, res) => {
   const { current_password, new_password } = req.body;
