@@ -10,7 +10,7 @@ async function sendWelcomeEmail(to, displayName, username) {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'OURSPACE <onboarding@resend.dev>',
+        from: 'OURSPACE <noreply@ourspace.cool>',
         to,
         subject: '🐻 Bienvenue sur OURSPACE !',
         html: `<!DOCTYPE html>
