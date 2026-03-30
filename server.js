@@ -51,8 +51,9 @@ app.use('/api/discover', require('./routes/discover'));
 app.use('/api/posts',    require('./routes/posts'));
 app.use('/api/media',    require('./routes/media'));
 app.use('/api/visits',   require('./routes/visits'));
-app.use('/api/messages', require('./routes/messages'));
-app.use('/api/admin',   require('./routes/admin'));
+app.use('/api/messages',      require('./routes/messages'));
+app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/admin',         require('./routes/admin'));
 
 // Toutes les autres routes → frontend (SPA-style)
 app.get('*', (req, res) => {
@@ -88,6 +89,16 @@ async function initDB() {
     ALTER TABLE users ADD COLUMN IF NOT EXISTS earned_badges TEXT DEFAULT '["joined"]';
     ALTER TABLE users ADD COLUMN IF NOT EXISTS marquee_text TEXT DEFAULT NULL;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS custom_css   TEXT DEFAULT NULL;
+    CREATE TABLE IF NOT EXISTS notifications (
+      id         SERIAL PRIMARY KEY,
+      user_id    INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      actor_id   INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      type       VARCHAR(30) NOT NULL,
+      ref_id     INT DEFAULT NULL,
+      read_at    TIMESTAMP DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_notif_user ON notifications(user_id, read_at);
     CREATE TABLE IF NOT EXISTS friends (
       id SERIAL PRIMARY KEY,
       user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

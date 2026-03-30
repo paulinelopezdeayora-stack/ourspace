@@ -1,6 +1,7 @@
 const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
+const createNotif = require('../lib/notif');
 
 // GET /api/posts?page=0
 router.get('/', requireAuth, async (req, res) => {
@@ -72,6 +73,9 @@ router.post('/:id/like', requireAuth, async (req, res) => {
       res.json({ liked: false });
     } else {
       await pool.query('INSERT INTO post_likes (post_id, user_id) VALUES ($1, $2)', [postId, userId]);
+      // Notifier le propriétaire du post
+      const owner = await pool.query('SELECT user_id FROM posts WHERE id = $1', [postId]);
+      if (owner.rows[0]) createNotif(owner.rows[0].user_id, 'post_like', userId, parseInt(postId));
       res.json({ liked: true });
     }
   } catch (e) {
@@ -109,6 +113,9 @@ router.post('/:id/comments', requireAuth, async (req, res) => {
       'INSERT INTO post_comments (post_id, user_id, text) VALUES ($1, $2, $3) RETURNING id, created_at',
       [req.params.id, req.session.userId, text.trim()]
     );
+    // Notifier le propriétaire du post
+    const owner = await pool.query('SELECT user_id FROM posts WHERE id = $1', [req.params.id]);
+    if (owner.rows[0]) createNotif(owner.rows[0].user_id, 'post_comment', req.session.userId, parseInt(req.params.id));
     res.json(r.rows[0]);
   } catch (e) {
     console.error(e);

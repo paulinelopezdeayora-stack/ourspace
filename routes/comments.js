@@ -1,6 +1,7 @@
 const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
+const createNotif = require('../lib/notif');
 
 // GET /api/comments/:username
 router.get('/:username', async (req, res) => {
@@ -42,6 +43,7 @@ router.post('/:username', requireAuth, async (req, res) => {
        VALUES ($1, $2, $3) RETURNING id, content, created_at`,
       [profile.rows[0].id, req.session.userId, content.trim()]
     );
+    createNotif(profile.rows[0].id, 'comment', req.session.userId, ins.rows[0].id);
     const author = await pool.query(
       'SELECT username, display_name, avatar_data FROM users WHERE id = $1',
       [req.session.userId]
