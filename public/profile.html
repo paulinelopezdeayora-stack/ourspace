@@ -137,6 +137,12 @@
 
     /* TOP 8 */
     .int-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .prof-post{border-bottom:1px solid var(--border2);padding:10px 0}
+    .prof-post:last-child{border-bottom:none}
+    .prof-post-title{font-size:13px;font-weight:bold;color:var(--text);margin-bottom:4px}
+    .prof-post-excerpt{font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:5px}
+    .prof-post-meta{font-size:10px;color:var(--text-dim);display:flex;gap:10px}
+    .btn-more-posts{display:block;text-align:center;margin-top:10px;font-size:12px;color:var(--accent);cursor:pointer;background:none;border:none;width:100%;padding:6px;border-top:1px solid var(--border2)}
     .int-item{background:color-mix(in srgb,var(--accent2) 10%,transparent);border:1px solid var(--border);border-radius:3px;padding:7px}
     .int-item h4{color:var(--accent);font-size:11px;text-transform:uppercase;margin-bottom:3px;font-family:'Arial Black',sans-serif}
     .int-item p{color:var(--text-muted);font-size:12px;min-height:16px}
@@ -236,6 +242,12 @@
     </div>
   </div>
 
+  <!-- Billets -->
+  <div class="box" id="box-posts" style="display:none">
+    <div class="box-hd">📝 Billets <span id="posts-total" style="font-size:10px;color:var(--text-dim)"></span></div>
+    <div class="box-bd" id="posts-list"></div>
+  </div>
+
   <!-- Top 8 -->
   <div class="box" id="box-top8" style="display:none">
     <div class="box-hd">🐻 Top 8</div>
@@ -313,6 +325,7 @@ let PROFILE = null;
   PROFILE = data;
   renderProfile(data);
   loadProfileFriends(data.username);
+  loadProfilePosts(data.username);
   loadComments(data.username);
 })();
 
@@ -460,6 +473,48 @@ async function renderActions() {
 
 // ===== TOP 8 =====
 const GRADS = ['linear-gradient(135deg,#550020,#cc0044)','linear-gradient(135deg,#001830,#0055aa)','linear-gradient(135deg,#001a00,#005500)','linear-gradient(135deg,#1a0040,#440088)','linear-gradient(135deg,#200030,#660099)','linear-gradient(135deg,#200000,#660022)','linear-gradient(135deg,#001520,#004466)','linear-gradient(135deg,#201500,#664400)'];
+
+async function loadProfilePosts(username, offset = 0) {
+  const res  = await fetch(`/api/posts/user/${username}?limit=3&offset=${offset}`);
+  const data = await res.json();
+  if (!data.posts || !data.posts.length) return;
+
+  const box  = document.getElementById('box-posts');
+  const list = document.getElementById('posts-list');
+  const totalEl = document.getElementById('posts-total');
+  box.style.display = '';
+  totalEl.textContent = data.total > 3 ? `(${data.total} billets)` : '';
+
+  if (offset === 0) list.innerHTML = '';
+  // Retire l'ancien bouton "voir plus"
+  const oldBtn = list.querySelector('.btn-more-posts');
+  if (oldBtn) oldBtn.remove();
+
+  data.posts.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'prof-post';
+    const excerpt = p.body ? p.body.replace(/<[^>]+>/g, '').slice(0, 120) + (p.body.length > 120 ? '…' : '') : '';
+    div.innerHTML = `
+      ${p.title ? `<div class="prof-post-title">${p.title}</div>` : ''}
+      ${excerpt  ? `<div class="prof-post-excerpt">${excerpt}</div>` : ''}
+      <div class="prof-post-meta">
+        <span>📅 ${timeAgo(p.created_at)}</span>
+        <span>♥ ${p.like_count}</span>
+        <span>💬 ${p.comment_count}</span>
+      </div>`;
+    list.appendChild(div);
+  });
+
+  // Bouton "Voir plus" si il y a plus de billets
+  const shown = offset + data.posts.length;
+  if (shown < data.total) {
+    const btn = document.createElement('button');
+    btn.className = 'btn-more-posts';
+    btn.textContent = `Voir les billets plus anciens (${data.total - shown} de plus) »`;
+    btn.onclick = () => loadProfilePosts(username, shown);
+    list.appendChild(btn);
+  }
+}
 
 async function loadProfileFriends(username) {
   const { data } = await api.getProfileFriends(username);

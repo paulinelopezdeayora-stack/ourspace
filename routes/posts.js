@@ -27,6 +27,30 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
+// GET /api/posts/user/:username — posts publics d'un utilisateur
+router.get('/user/:username', async (req, res) => {
+  const limit  = parseInt(req.query.limit) || 3;
+  const offset = parseInt(req.query.offset) || 0;
+  try {
+    const u = await pool.query('SELECT id FROM users WHERE username = $1', [req.params.username.toLowerCase()]);
+    if (!u.rows[0]) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    const r = await pool.query(`
+      SELECT p.id, p.title, p.body, p.photo_data, p.created_at,
+        (SELECT COUNT(*)::int FROM post_likes    WHERE post_id = p.id) AS like_count,
+        (SELECT COUNT(*)::int FROM post_comments WHERE post_id = p.id) AS comment_count
+      FROM posts p
+      WHERE p.user_id = $1
+      ORDER BY p.created_at DESC
+      LIMIT $2 OFFSET $3
+    `, [u.rows[0].id, limit, offset]);
+    const total = await pool.query('SELECT COUNT(*)::int FROM posts WHERE user_id = $1', [u.rows[0].id]);
+    res.json({ posts: r.rows, total: total.rows[0].count });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 // POST /api/posts
 router.post('/', requireAuth, async (req, res) => {
   const { title, body, photo_data, comments_disabled } = req.body;
