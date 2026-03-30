@@ -1,17 +1,12 @@
 // ===== OURSPACE SHARED JS =====
 
-// ---- COMIC SANS sur mobile (Comic Neue via Google Fonts) ----
+// ---- COMIC SANS sur mobile (Comic Neue via Google Fonts, chargé dans le HTML) ----
+// On s'assure que tous les éléments héritent bien de la font
 (function() {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap';
-  document.head.appendChild(link);
-  // Override global : remplace 'Comic Sans MS' par Comic Neue sur tous les éléments
   const style = document.createElement('style');
-  style.textContent = `*, body { font-family: 'Comic Neue', 'Comic Sans MS', cursive !important; }
-    #site-title, .box-hd, h1, h2, h3, .page-hd h2 { font-family: Impact, sans-serif !important; }
-    #navbar a, .btn-post, .btn-gif { font-family: Arial, sans-serif !important; }
-    .dgt { font-family: 'Courier New', monospace !important; }`;
+  style.textContent = `body, input, textarea, button, select {
+    font-family: 'Comic Neue', 'Comic Sans MS', cursive !important;
+  }`;
   document.head.appendChild(style);
 })();
 

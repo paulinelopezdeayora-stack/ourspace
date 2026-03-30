@@ -1,4 +1,4 @@
-const CACHE = 'ourspace-v1';
+const CACHE = 'ourspace-v2';
 const SHELL = [
   '/',
   '/js/api.js',
