@@ -136,6 +136,10 @@
     .audio-bars.paused .audio-bar{animation-play-state:paused;height:6px}
 
     /* TOP 8 */
+    .int-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .int-item{background:color-mix(in srgb,var(--accent2) 10%,transparent);border:1px solid var(--border);border-radius:3px;padding:7px}
+    .int-item h4{color:var(--accent);font-size:11px;text-transform:uppercase;margin-bottom:3px;font-family:'Arial Black',sans-serif}
+    .int-item p{color:var(--text-muted);font-size:12px;min-height:16px}
     .friends-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;text-align:center}
     .friend-av{width:56px;height:56px;margin:0 auto 4px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid var(--border);overflow:hidden;transition:transform .2s;text-decoration:none;display:block}
     .friend-av:hover{transform:scale(1.1);border-color:var(--accent)}
@@ -201,6 +205,14 @@
   <div class="box" id="box-bio" style="display:none">
     <div class="box-hd">🐻 À Propos</div>
     <div class="box-bd" id="bio-content"></div>
+  </div>
+
+  <!-- Intérêts -->
+  <div class="box" id="box-interests" style="display:none">
+    <div class="box-hd">🐻 Centres d'Intérêt</div>
+    <div class="box-bd">
+      <div class="int-grid" id="prof-int-grid"></div>
+    </div>
   </div>
 
   <!-- Signature musicale -->
@@ -351,6 +363,27 @@ function renderProfile(p) {
   if (p.bio) {
     document.getElementById('box-bio').style.display = 'block';
     document.getElementById('bio-content').innerHTML = p.bio;
+  }
+
+  // Intérêts
+  if (p.interests) {
+    try {
+      let items = JSON.parse(p.interests);
+      // Migration ancien titre Tech → Obsessions
+      items = items.map(i => i.title === '💻 Tech' ? { ...i, title: '🌀 Obsessions' } : i);
+      const filled = items.filter(i => i.text && i.text.trim());
+      if (filled.length) {
+        document.getElementById('box-interests').style.display = 'block';
+        const grid = document.getElementById('prof-int-grid');
+        grid.innerHTML = '';
+        filled.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'int-item';
+          div.innerHTML = `<h4>${item.title}</h4><p>${item.text}</p>`;
+          grid.appendChild(div);
+        });
+      }
+    } catch(e) {}
   }
 
   // Skin
