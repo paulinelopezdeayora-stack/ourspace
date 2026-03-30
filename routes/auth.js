@@ -2,6 +2,7 @@ const router      = require('express').Router();
 const bcrypt      = require('bcryptjs');
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
+const createNotif = require('../lib/notif');
 async function sendWelcomeEmail(to, displayName, username) {
   const key = process.env.RESEND_KEY;
   if (!key) return;
@@ -80,6 +81,9 @@ router.post('/register', async (req, res) => {
         );
       }
     } catch (_) { /* non-bloquant */ }
+
+    // Notif pour l'admin (id=1) à chaque nouvelle inscription
+    if (r.rows[0].id !== 1) createNotif(1, 'new_member', r.rows[0].id);
 
     // Email de bienvenue (non-bloquant, jamais fatal)
     setImmediate(() => {
