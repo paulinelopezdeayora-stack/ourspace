@@ -5,10 +5,11 @@
 (function() {
   const style = document.createElement('style');
   style.textContent = `body, input, textarea, button, select {
-    font-family: 'Comic Neue', 'Comic Sans MS', cursive !important;
+    font-family: 'Comic Neue', 'Comic Sans MS', sans-serif !important;
     font-weight: 700 !important;
   }
-  input, textarea { text-transform: none !important; font-weight: 400 !important; }`;
+  input, textarea { text-transform: none !important; font-weight: 400 !important; }
+  label { font-family: Arial, sans-serif !important; }`;
   document.head.appendChild(style);
 })();
 
