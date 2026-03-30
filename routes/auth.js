@@ -4,7 +4,7 @@ const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
 async function sendWelcomeEmail(to, displayName, username) {
   const key = process.env.RESEND_KEY;
-  if (!key) return;
+  if (!key) { console.warn('RESEND_KEY manquant'); return; }
   try {
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -114,8 +114,11 @@ router.post('/register', async (req, res) => {
       }
     } catch (_) { /* non-bloquant */ }
 
-    // Email de bienvenue (non-bloquant)
-    sendWelcomeEmail(email.toLowerCase().trim(), r.rows[0].display_name, r.rows[0].username);
+    // Email de bienvenue (non-bloquant, jamais fatal)
+    setImmediate(() => {
+      sendWelcomeEmail(email.toLowerCase().trim(), r.rows[0].display_name, r.rows[0].username)
+        .catch(e => console.warn('sendWelcomeEmail crash:', e.message));
+    });
 
     res.json({ ok: true, user: r.rows[0] });
   } catch (e) {
