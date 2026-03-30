@@ -411,11 +411,33 @@ async function renderActions() {
     return;
   }
 
-  // Vérifie si déjà ami
-  const myFriends = await fetch('/api/friends/me', { credentials: 'same-origin' }).then(r => r.json()).catch(() => []);
-  const alreadyFriend = Array.isArray(myFriends) && myFriends.some(f => f.username === PROFILE.username);
+  // Vérifie statut ami
+  const [myFriends, pendingReceived] = await Promise.all([
+    fetch('/api/friends/me', { credentials: 'same-origin' }).then(r => r.json()).catch(() => []),
+    fetch('/api/friends/requests', { credentials: 'same-origin' }).then(r => r.json()).catch(() => []),
+  ]);
+  const alreadyFriend  = Array.isArray(myFriends)       && myFriends.some(f => f.username === PROFILE.username);
+  const requestFromThem = Array.isArray(pendingReceived) && pendingReceived.some(f => f.username === PROFILE.username);
 
-  if (!alreadyFriend) {
+  if (alreadyFriend) {
+    const friendLabel = document.createElement('span');
+    friendLabel.className = 'btn-action';
+    friendLabel.style.cssText = 'opacity:0.7;cursor:default';
+    friendLabel.textContent = '🤝 Ami·e';
+    row.appendChild(friendLabel);
+  } else if (requestFromThem) {
+    // Cette personne a envoyé une demande → on peut accepter directement
+    const acceptBtn = document.createElement('button');
+    acceptBtn.className = 'btn-action btn-add';
+    acceptBtn.textContent = '✓ Accepter la demande';
+    acceptBtn.onclick = async () => {
+      acceptBtn.disabled = true; acceptBtn.textContent = '…';
+      const { error } = await api.acceptFriend(PROFILE.username);
+      if (error) { toast(error, 'error'); acceptBtn.disabled=false; acceptBtn.textContent='✓ Accepter la demande'; }
+      else { acceptBtn.textContent = '🤝 Ami·e'; acceptBtn.disabled=true; renderActions(); }
+    };
+    row.appendChild(acceptBtn);
+  } else {
     const addBtn = document.createElement('button');
     addBtn.className = 'btn-action btn-add';
     addBtn.textContent = '➕ Ajouter en ami';
@@ -426,12 +448,6 @@ async function renderActions() {
       else { addBtn.textContent = '✓ Demande envoyée'; addBtn.classList.add('sent'); }
     };
     row.appendChild(addBtn);
-  } else {
-    const friendLabel = document.createElement('span');
-    friendLabel.className = 'btn-action';
-    friendLabel.style.cssText = 'opacity:0.7;cursor:default';
-    friendLabel.textContent = '🤝 Ami·e';
-    row.appendChild(friendLabel);
   }
 
   const msgBtn = document.createElement('a');
