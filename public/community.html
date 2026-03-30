@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="emo-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#cc55bb">
+  <meta property="og:site_name" content="OURSPACE">
+  <meta property="og:title" content="OURSPACE 🐻">
+  <meta property="og:description" content="Le réseau social rétro pour les vrais">
+  <meta property="og:image" content="https://www.ourspace.cool/img/icon.svg">
+  <meta property="og:url" content="https://www.ourspace.cool">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="apple-touch-icon" href="/img/icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="OURSPACE">
+  <title>👥 Communauté — OURSPACE</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    :root{--bg:#000814;--bg2:#0d0020;--bg3:#140030;--accent:#cc55bb;--accent2:#7744aa;--border:#3a1166;--border2:#1a0044;--text:#e0e0ff;--text-muted:#9977cc;--text-dim:#444466;--card:rgba(13,0,32,0.85);--online:#44bb88}
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--online:#66aaff}
+    [data-theme="pastel"]   {--bg:#fff8fc;--bg2:#ffeef8;--bg3:#ffe4f5;--accent:#dd66bb;--accent2:#bb44aa;--border:#f0aadd;--border2:#fad4ef;--text:#442233;--text-muted:#aa6688;--text-dim:#ddaabb;--card:rgba(255,240,250,0.9);--online:#88cc99}
+    [data-theme="batcave"]  {--bg:#050505;--bg2:#0a0a0a;--bg3:#111;--accent:#cccccc;--accent2:#888;--border:#333;--border2:#1a1a1a;--text:#e8e8e8;--text-muted:#777;--text-dim:#333;--card:rgba(10,10,10,0.92);--online:#aaa}
+    [data-theme="dogperson"]{--bg:#1a0e00;--bg2:#261400;--bg3:#321a00;--accent:#ff9933;--accent2:#cc6600;--border:#663300;--border2:#331900;--text:#fff0dd;--text-muted:#cc9955;--text-dim:#664422;--card:rgba(26,14,0,0.88);--online:#88dd44}
+    [data-theme="catperson"]{--bg:#00100c;--bg2:#001a14;--bg3:#00231b;--accent:#33ddaa;--accent2:#229977;--border:#115544;--border2:#082a1f;--text:#ccfff0;--text-muted:#55aa88;--text-dim:#224433;--card:rgba(0,16,12,0.88);--online:#55ffcc}
+
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
+    body{background:var(--bg);font-family:'Comic Neue','Comic Sans MS',sans-serif;color:var(--text);min-height:100vh;visibility:hidden}
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
+
+    #header{background:linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:2px solid var(--border);padding:12px 20px;text-align:center}
+    #site-title{font-family:Impact,sans-serif;font-size:2em;letter-spacing:6px;color:var(--accent);text-shadow:0 0 6px var(--accent2)}
+
+    #navbar{background:var(--bg2);display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border2)}
+    #navbar a{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border2);font-size:11px;font-family:Arial,sans-serif;border-radius:2px;transition:all .2s}
+    #navbar a:hover,#navbar a.active{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+
+    #main{max-width:900px;margin:20px auto;padding:0 14px 40px;display:grid;grid-template-columns:1fr 220px;gap:14px}
+    @media(max-width:680px){#main{grid-template-columns:1fr}}
+
+    /* Chat */
+    #chat-box{background:var(--card);border:1px solid var(--border);border-radius:4px;display:flex;flex-direction:column;height:calc(100vh - 180px);min-height:400px}
+    #chat-hd{background:linear-gradient(180deg,var(--bg3),var(--bg2));padding:8px 12px;font-family:'Arial Black',sans-serif;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border2);border-radius:4px 4px 0 0;display:flex;align-items:center;gap:8px}
+    #chat-hd .dot{width:8px;height:8px;border-radius:50%;background:var(--online);box-shadow:0 0 6px var(--online)}
+    #chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+    #chat-messages::-webkit-scrollbar{width:4px}
+    #chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .msg{display:flex;gap:8px;align-items:flex-start}
+    .msg.mine{flex-direction:row-reverse}
+    .msg-av{width:32px;height:32px;min-width:32px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;flex-shrink:0}
+    .msg-av img{width:100%;height:100%;object-fit:cover}
+    .msg-body{max-width:75%}
+    .msg-meta{font-size:10px;color:var(--text-dim);margin-bottom:2px}
+    .msg-meta a{color:var(--text-muted);text-decoration:none}
+    .msg-meta a:hover{color:var(--accent)}
+    .msg.mine .msg-meta{text-align:right}
+    .msg-bubble{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:7px 10px;font-size:13px;color:var(--text);word-break:break-word;line-height:1.5}
+    .msg.mine .msg-bubble{background:color-mix(in srgb,var(--accent2) 20%,var(--bg3));border-color:var(--accent2)}
+    .msg-time{font-size:10px;color:var(--text-dim);margin-top:2px}
+    .msg.mine .msg-time{text-align:right}
+
+    #chat-input-row{display:flex;gap:8px;padding:10px;border-top:1px solid var(--border2)}
+    #chat-input{flex:1;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 10px;font-family:'Comic Neue','Comic Sans MS',sans-serif;font-size:13px;border-radius:3px}
+    #chat-input:focus{outline:none;border-color:var(--accent)}
+    #chat-send{background:var(--accent2);border:none;color:#fff;padding:8px 14px;border-radius:3px;cursor:pointer;font-size:14px;transition:background .2s}
+    #chat-send:hover{background:var(--accent)}
+
+    /* Online */
+    #online-box{background:var(--card);border:1px solid var(--border);border-radius:4px;height:fit-content}
+    #online-hd{background:linear-gradient(180deg,var(--bg3),var(--bg2));padding:8px 12px;font-family:'Arial Black',sans-serif;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border2);border-radius:4px 4px 0 0;display:flex;align-items:center;gap:8px}
+    #online-hd .dot{width:8px;height:8px;border-radius:50%;background:var(--online);box-shadow:0 0 6px var(--online)}
+    #online-list{padding:10px}
+    .online-user{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)}
+    .online-user:last-child{border-bottom:none}
+    .online-av{width:28px;height:28px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;flex-shrink:0}
+    .online-av img{width:100%;height:100%;object-fit:cover}
+    .online-name{font-size:12px;color:var(--text-muted)}
+    .online-name a{color:var(--text-muted);text-decoration:none}
+    .online-name a:hover{color:var(--accent)}
+
+    .system-msg{text-align:center;font-size:11px;color:var(--text-dim);padding:4px 0}
+
+    #footer{text-align:center;padding:16px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border2)}
+    #footer a{color:var(--border)}
+
+    @media(max-width:600px){
+      #navbar{overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      #navbar::-webkit-scrollbar{display:none}
+      #navbar a{white-space:nowrap;flex-shrink:0}
+      #chat-box{height:60vh}
+    }
+  </style>
+</head>
+<body>
+<div id="cursor">🐻</div>
+
+<div id="header">
+  <div id="site-title">👥 COMMUNAUTÉ</div>
+</div>
+
+<div id="navbar">
+  <a href="/">🏠 Accueil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="/community.html" class="active">👥 Communauté</a>
+  <a href="/messages.html">💌 Messages</a>
+  <a href="/notifications.html">🔔 Notifs</a>
+  <a href="/settings.html">⚙️ Paramètres</a>
+  <a href="/admin.html" id="nav-admin" style="display:none">🔧 Admin</a>
+</div>
+
+<div id="main">
+  <!-- Chat -->
+  <div id="chat-box">
+    <div id="chat-hd">
+      <span class="dot"></span>
+      🐻 Chat de la commu — <span id="chat-online-count">0</span> en ligne
+    </div>
+    <div id="chat-messages">
+      <div class="system-msg">Chargement des messages…</div>
+    </div>
+    <div id="chat-input-row">
+      <input id="chat-input" type="text" placeholder="Écris un message… (Entrée pour envoyer)" maxlength="300">
+      <button id="chat-send" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+
+  <!-- En ligne -->
+  <div id="online-box">
+    <div id="online-hd">
+      <span class="dot"></span>
+      En ligne (<span id="online-count">0</span>)
+    </div>
+    <div id="online-list">
+      <div class="system-msg">Connexion…</div>
+    </div>
+  </div>
+</div>
+
+<div id="footer">
+  <a href="/">OURSPACE</a> · <a href="/legal.html">Mentions légales</a>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/shared.js"></script>
+<script>
+let ME = null;
+let socket = null;
+
+(async () => {
+  ME = await requireLogin();
+  if (!ME) return;
+  document.body.style.visibility = 'visible';
+  if (ME.id === 1) document.getElementById('nav-admin').style.display = '';
+  initMsgBadge();
+  initNotifBadge();
+
+  // Curseur
+  const cur = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => { cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+
+  // Connexion Socket.io
+  socket = io();
+  socket.emit('auth', { userId: ME.id });
+
+  socket.on('chat_history', (msgs) => {
+    const box = document.getElementById('chat-messages');
+    box.innerHTML = '';
+    if (!msgs.length) {
+      box.innerHTML = '<div class="system-msg">Pas encore de messages. Sois le/la premier·e ! 🐻</div>';
+    } else {
+      msgs.forEach(m => appendMsg(m));
+    }
+    box.scrollTop = box.scrollHeight;
+  });
+
+  socket.on('chat_message', (msg) => {
+    appendMsg(msg);
+    const box = document.getElementById('chat-messages');
+    box.scrollTop = box.scrollHeight;
+  });
+
+  socket.on('online_users', (users) => {
+    document.getElementById('chat-online-count').textContent = users.length;
+    document.getElementById('online-count').textContent = users.length;
+    const list = document.getElementById('online-list');
+    list.innerHTML = '';
+    if (!users.length) {
+      list.innerHTML = '<div class="system-msg">Personne en ligne</div>';
+      return;
+    }
+    users.forEach(u => {
+      const av = u.avatar_url
+        ? `<img src="${u.avatar_url}">`
+        : '🐻';
+      const div = document.createElement('div');
+      div.className = 'online-user';
+      div.innerHTML = `<div class="online-av">${av}</div><div class="online-name"><a href="/profile.html?u=${u.username}">${u.display_name || u.username}</a></div>`;
+      list.appendChild(div);
+    });
+  });
+
+  document.getElementById('chat-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); sendMsg(); }
+  });
+})();
+
+function appendMsg(msg) {
+  const box = document.getElementById('chat-messages');
+  // Enlève le message "pas encore de messages"
+  box.querySelectorAll('.system-msg').forEach(el => el.remove());
+
+  const isMine = ME && msg.username === ME.username;
+  const div = document.createElement('div');
+  div.className = 'msg' + (isMine ? ' mine' : '');
+  const av = msg.avatar_url
+    ? `<img src="${msg.avatar_url}">`
+    : '🐻';
+  const time = new Date(msg.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  div.innerHTML = `
+    <div class="msg-av">${av}</div>
+    <div class="msg-body">
+      <div class="msg-meta"><a href="/profile.html?u=${msg.username}">${msg.display_name || msg.username}</a></div>
+      <div class="msg-bubble">${escHtml(msg.text)}</div>
+      <div class="msg-time">${time}</div>
+    </div>`;
+  box.appendChild(div);
+}
+
+function sendMsg() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text || !socket) return;
+  socket.emit('chat_message', { text });
+  input.value = '';
+  input.focus();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

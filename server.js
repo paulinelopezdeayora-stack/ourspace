@@ -3,9 +3,13 @@ const express    = require('express');
 const session    = require('express-session');
 const PgSession  = require('connect-pg-simple')(session);
 const path       = require('path');
+const http       = require('http');
+const { Server } = require('socket.io');
 const { pool }   = require('./db');
 
-const app = express();
+const app    = express();
+const server = http.createServer(app);
+const io     = new Server(server);
 
 app.set('trust proxy', 1); // Railway passe par un proxy HTTPS
 
@@ -99,6 +103,12 @@ async function initDB() {
       created_at TIMESTAMP DEFAULT NOW()
     );
     CREATE INDEX IF NOT EXISTS idx_notif_user ON notifications(user_id, read_at);
+    CREATE TABLE IF NOT EXISTS chat_messages (
+      id         SERIAL PRIMARY KEY,
+      user_id    INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      text       TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
     CREATE TABLE IF NOT EXISTS friends (
       id SERIAL PRIMARY KEY,
       user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -183,7 +193,65 @@ async function initDB() {
   console.log('🐻 Base de données prête');
 }
 
+// ===== SOCKET.IO CHAT =====
+const onlineUsers = new Map(); // socketId → { id, username, display_name, avatar_url }
+
+io.use(async (socket, next) => {
+  // Pas besoin d'auth pour rejoindre, mais on essaie de récupérer l'utilisateur
+  next();
+});
+
+io.on('connection', (socket) => {
+  // Authentification via userId envoyé par le client
+  socket.on('auth', async ({ userId }) => {
+    if (!userId) return;
+    try {
+      const r = await pool.query(
+        'SELECT id, username, display_name, avatar_url FROM users WHERE id = $1',
+        [userId]
+      );
+      if (!r.rows[0]) return;
+      const user = r.rows[0];
+      onlineUsers.set(socket.id, user);
+      io.emit('online_users', Array.from(onlineUsers.values()));
+
+      // Envoie les 30 derniers messages
+      const msgs = await pool.query(
+        `SELECT m.id, m.text, m.created_at, u.username, u.display_name, u.avatar_url
+         FROM chat_messages m JOIN users u ON u.id = m.user_id
+         ORDER BY m.created_at DESC LIMIT 30`
+      );
+      socket.emit('chat_history', msgs.rows.reverse());
+    } catch(e) { console.error('chat auth error:', e.message); }
+  });
+
+  socket.on('chat_message', async ({ text }) => {
+    const user = onlineUsers.get(socket.id);
+    if (!user || !text || !text.trim()) return;
+    const clean = text.trim().slice(0, 300);
+    try {
+      const r = await pool.query(
+        'INSERT INTO chat_messages (user_id, text) VALUES ($1, $2) RETURNING id, created_at',
+        [user.id, clean]
+      );
+      io.emit('chat_message', {
+        id: r.rows[0].id,
+        text: clean,
+        created_at: r.rows[0].created_at,
+        username: user.username,
+        display_name: user.display_name,
+        avatar_url: user.avatar_url,
+      });
+    } catch(e) { console.error('chat_message error:', e.message); }
+  });
+
+  socket.on('disconnect', () => {
+    onlineUsers.delete(socket.id);
+    io.emit('online_users', Array.from(onlineUsers.values()));
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 initDB()
-  .then(() => app.listen(PORT, () => console.log(`🐻 Ourspace tourne sur http://localhost:${PORT}`)))
+  .then(() => server.listen(PORT, () => console.log(`🐻 Ourspace tourne sur http://localhost:${PORT}`)))
   .catch(err => { console.error('Erreur base de données:', err); process.exit(1); });
