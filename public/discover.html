@@ -24,7 +24,7 @@
     [data-theme="catperson"]{--bg:#00100c;--bg2:#001a14;--bg3:#00231b;--accent:#33ddaa;--accent2:#229977;--border:#115544;--border2:#082a1f;--text:#ccfff0;--text-muted:#55aa88;--text-dim:#224433;--card:rgba(0,16,12,0.88);--marquee:#22cc99;--online:#55ffcc}
 
     *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
-    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);min-height:100vh;overflow-x:hidden}
+    body{background:var(--bg);font-family:'Comic Neue','Comic Sans MS',cursive;color:var(--text);min-height:100vh;overflow-x:hidden}
     #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
     #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
     .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
@@ -56,10 +56,10 @@
     /* FILTER BAR */
     .filter-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:11px 14px;margin-bottom:20px;backdrop-filter:blur(4px)}
     .filter-bar span{color:var(--text-dim);font-size:11px;text-transform:uppercase;letter-spacing:1px}
-    .filter-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text-muted);padding:5px 14px;font-family:'Comic Sans MS',cursive;font-size:12px;border-radius:2px;cursor:pointer;transition:all .2s}
+    .filter-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text-muted);padding:5px 14px;font-family:'Comic Neue','Comic Sans MS',cursive;font-size:12px;border-radius:2px;cursor:pointer;transition:all .2s}
     .filter-btn:hover,.filter-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent)}
     .search-wrap{margin-left:auto}
-    .search-wrap input{background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:5px 12px;font-family:'Comic Sans MS',cursive;font-size:12px;border-radius:2px;width:200px;outline:none;transition:border-color .2s}
+    .search-wrap input{background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:5px 12px;font-family:'Comic Neue','Comic Sans MS',cursive;font-size:12px;border-radius:2px;width:200px;outline:none;transition:border-color .2s}
     .search-wrap input:focus{border-color:var(--accent)}
     .search-wrap input::placeholder{color:var(--text-dim)}
 
@@ -82,7 +82,7 @@
     .online-dot{position:absolute;top:10px;right:10px;width:8px;height:8px;background:var(--online);border-radius:50%;box-shadow:0 0 5px var(--online);animation:dotPulse 1.4s step-end infinite}
     @keyframes dotPulse{50%{opacity:0}}
     .new-badge{position:absolute;top:8px;left:8px;background:var(--accent2);color:#fff;font-size:9px;padding:2px 6px;border-radius:10px;font-family:Arial,sans-serif;letter-spacing:.5px}
-    .btn-voir{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);border:1px solid var(--border);padding:4px 14px;font-family:'Comic Sans MS',cursive;font-size:11px;border-radius:2px;text-decoration:none;display:inline-block;transition:all .15s}
+    .btn-voir{background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--text-muted);border:1px solid var(--border);padding:4px 14px;font-family:'Comic Neue','Comic Sans MS',cursive;font-size:11px;border-radius:2px;text-decoration:none;display:inline-block;transition:all .15s}
     .btn-voir:hover{background:var(--accent2);color:#fff;border-color:var(--accent)}
 
     /* SKINZ */
@@ -91,7 +91,7 @@
     #skinz-toggle:hover{border-color:var(--accent);color:var(--accent)}
     #skinz-options{display:none;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px;backdrop-filter:blur(8px)}
     #skinz-panel.open #skinz-options{display:block}
-    .skin-btn{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-muted);font-family:'Comic Sans MS',cursive;font-size:12px;padding:5px 8px;cursor:pointer;border-radius:3px;margin-bottom:2px;transition:all .2s}
+    .skin-btn{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-muted);font-family:'Comic Neue','Comic Sans MS',cursive;font-size:12px;padding:5px 8px;cursor:pointer;border-radius:3px;margin-bottom:2px;transition:all .2s}
     .skin-btn:hover{background:var(--bg3);color:var(--text)}
     .skin-btn.skin-active{color:var(--accent);font-weight:bold}
 

@@ -32,7 +32,7 @@
 
     /* ===== RESET ===== */
     *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
-    body{background:var(--bg);font-family:'Comic Sans MS',cursive;color:var(--text);overflow-x:hidden;min-height:100vh;visibility:hidden}
+    body{background:var(--bg);font-family:'Comic Neue','Comic Sans MS',cursive;color:var(--text);overflow-x:hidden;min-height:100vh;visibility:hidden}
     #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
     #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
     .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
@@ -112,7 +112,7 @@
     /* stats éditables */
     .stats-tbl td.editable{cursor:pointer}
     .stats-tbl td.editable:hover{color:var(--accent)}
-    .stats-tbl td.editable input{background:var(--bg2);border:1px solid var(--accent);color:var(--text);padding:2px 6px;font-family:'Comic Sans MS',cursive;font-size:12px;border-radius:2px;width:100%}
+    .stats-tbl td.editable input{background:var(--bg2);border:1px solid var(--accent);color:var(--text);padding:2px 6px;font-family:'Comic Neue','Comic Sans MS',cursive;font-size:12px;border-radius:2px;width:100%}
     .stats-tbl td.editable input:focus{outline:none}
 
     /* ===== TWO COLUMNS ===== */
@@ -196,7 +196,7 @@
     @keyframes gifBounce{0%{transform:translateY(0)}100%{transform:translateY(-6px)}}
 
     /* ===== COMMENT FORM ===== */
-    .cmt-form textarea{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px;font-family:'Comic Sans MS',cursive;font-size:12px;resize:vertical;min-height:50px;border-radius:3px;margin-top:8px}
+    .cmt-form textarea{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px;font-family:'Comic Neue','Comic Sans MS',cursive;font-size:12px;resize:vertical;min-height:50px;border-radius:3px;margin-top:8px}
     .cmt-form textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 6px var(--accent)22}
     .cmt-form textarea::placeholder{color:var(--text-dim)}
     .cmt-form-row{display:flex;gap:6px;margin-top:5px}
@@ -230,7 +230,7 @@
     #skinz-toggle:hover{border-color:var(--accent);color:var(--accent)}
     #skinz-options{display:none;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px;backdrop-filter:blur(8px)}
     #skinz-panel.open #skinz-options{display:block}
-    .skin-btn{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-muted);font-family:'Comic Sans MS',cursive;font-size:12px;padding:5px 8px;cursor:pointer;border-radius:3px;margin-bottom:2px;transition:all .2s}
+    .skin-btn{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-muted);font-family:'Comic Neue','Comic Sans MS',cursive;font-size:12px;padding:5px 8px;cursor:pointer;border-radius:3px;margin-bottom:2px;transition:all .2s}
     .skin-btn:hover{background:var(--bg3);color:var(--text)}
     .skin-btn.skin-active{color:var(--accent);font-weight:bold}
 
