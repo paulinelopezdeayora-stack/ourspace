@@ -51,7 +51,7 @@ async function sendWelcomeEmail(to, displayName, username) {
       <li>👥 Découvrir d'autres membres</li>
       <li>🎨 Choisir ton skin (Emo Dark, Bubblegum, Matrix…)</li>
     </ul>
-    <a class="btn" href="https://ourspace-production-3dbb.up.railway.app">→ Accéder à mon profil</a>
+    <a class="btn" href="https://www.ourspace.cool">→ Accéder à mon profil</a>
     <p style="color:#9977cc;font-size:12px;text-align:center;margin-top:16px">Fait avec amour et Comic Sans,</p>
     <p style="color:#cc55bb;font-size:13px;font-weight:bold;text-align:center;margin-top:4px">Poppy Fusée</p>
     <p style="color:#444466;font-size:13px;text-align:center;letter-spacing:6px;margin-top:8px">★ ★ ★</p>

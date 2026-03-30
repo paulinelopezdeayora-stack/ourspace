@@ -105,6 +105,8 @@
     <input type="email" id="r-email" placeholder="ton@email.com" required>
     <label>Mot de passe <span style="color:#444">(min 6 caractères)</span></label>
     <input type="password" id="r-pass" placeholder="••••••••" required>
+    <label>Confirmer le mot de passe</label>
+    <input type="password" id="r-pass2" placeholder="••••••••" required>
     <div style="margin-top:14px;display:flex;align-items:flex-start;gap:8px">
       <input type="checkbox" id="r-legal" required style="width:auto;margin-top:2px;accent-color:#ff00ff;flex-shrink:0">
       <label for="r-legal" style="font-size:11px;color:#9966cc;text-transform:none;margin:0;line-height:1.5;cursor:pointer">
@@ -166,9 +168,12 @@ async function doLogin(e) {
 async function doRegister(e) {
   e.preventDefault();
   const btn=e.target.querySelector('button');
+  const pass=document.getElementById('r-pass').value;
+  const pass2=document.getElementById('r-pass2').value;
+  if(pass!==pass2){document.getElementById('r-error').textContent='Les mots de passe ne correspondent pas 😬';return;}
   btn.disabled=true; btn.textContent='Création...';
   document.getElementById('r-error').textContent='';
-  const {data,error}=await api.register({username:document.getElementById('r-user').value,display_name:document.getElementById('r-name').value,email:document.getElementById('r-email').value,password:document.getElementById('r-pass').value});
+  const {data,error}=await api.register({username:document.getElementById('r-user').value,display_name:document.getElementById('r-name').value,email:document.getElementById('r-email').value,password:pass});
   if(error){document.getElementById('r-error').textContent=error;btn.disabled=false;btn.textContent='Rejoindre Ourspace 🐻';}
   else window.location.href='/';
 }

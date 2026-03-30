@@ -416,6 +416,12 @@
 
     <!-- RIGHT -->
     <div>
+      <!-- Demandes d'amis -->
+      <div class="box" id="friend-requests-box" style="display:none">
+        <div class="box-hd">👋 Demandes d'amis</div>
+        <div class="box-bd" id="friend-requests-list"></div>
+      </div>
+
       <!-- Counter -->
       <div class="box">
         <div class="box-hd">🐻 Visiteurs</div>
@@ -539,6 +545,7 @@ let ME = null;
   renderInterests();
   loadFriends();
   loadComments();
+  loadFriendRequests();
   initMsgBadge();
   initNotifBadge();
   if (ME.id === 1) {
@@ -547,6 +554,46 @@ let ME = null;
   }
 })();
 
+
+// ===== DEMANDES D'AMIS =====
+async function loadFriendRequests() {
+  const res = await fetch('/api/friends/requests', { credentials: 'same-origin' });
+  const data = await res.json();
+  if (!data.length) return;
+  const box = document.getElementById('friend-requests-box');
+  const list = document.getElementById('friend-requests-list');
+  box.style.display = '';
+  list.innerHTML = '';
+  data.forEach(u => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border2)';
+    const av = u.avatar_data || u.avatar_url
+      ? `<img src="${u.avatar_data || u.avatar_url}" style="width:36px;height:36px;border-radius:4px;object-fit:cover;border:1px solid var(--border)">`
+      : `<div style="width:36px;height:36px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px">🐻</div>`;
+    div.innerHTML = `
+      ${av}
+      <div style="flex:1;min-width:0">
+        <a href="/profile.html?u=${u.username}" style="color:var(--text);font-size:13px;font-weight:bold;text-decoration:none">${u.display_name || u.username}</a>
+        <div style="font-size:10px;color:var(--text-dim)">@${u.username}</div>
+      </div>
+      <button onclick="acceptFriend('${u.username}',this)" style="background:var(--accent2);color:#fff;border:none;border-radius:3px;padding:4px 10px;font-size:11px;cursor:pointer">✓ Accepter</button>`;
+    list.appendChild(div);
+  });
+}
+
+async function acceptFriend(username, btn) {
+  btn.disabled = true; btn.textContent = '…';
+  const res = await fetch(`/api/friends/accept/${username}`, { method: 'POST', credentials: 'same-origin' });
+  if (res.ok) {
+    btn.closest('div[style]').remove();
+    // Si plus aucune demande, cacher la box
+    if (!document.getElementById('friend-requests-list').children.length) {
+      document.getElementById('friend-requests-box').style.display = 'none';
+    }
+    loadFriends(); // Refresh le top 8
+    toast('🤝 Ami·e ajouté·e !', 'ok');
+  }
+}
 
 // ===== COUNTER (réel) =====
 (async function(){
