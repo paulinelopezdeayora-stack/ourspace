@@ -1,12 +1,13 @@
 const router      = require('express').Router();
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
+const createNotif = require('../lib/notif');
 
 // GET /api/friends/me — mes amis acceptés
 router.get('/me', requireAuth, async (req, res) => {
   try {
     const r = await pool.query(
-      `SELECT u.id, u.username, u.display_name, u.avatar_data, u.mood, u.last_seen,
+      `SELECT u.id, u.username, u.display_name, u.avatar_data, u.avatar_url, u.mood, u.last_seen,
               f.position, f.status
        FROM friends f
        JOIN users u ON u.id = f.friend_id
@@ -56,6 +57,7 @@ router.post('/request/:username', requireAuth, async (req, res) => {
        ON CONFLICT (user_id, friend_id) DO NOTHING`,
       [req.session.userId, target.rows[0].id]
     );
+    createNotif(target.rows[0].id, 'friend_request', req.session.userId);
     res.json({ ok: true });
   } catch (e) {
     console.error(e);
@@ -84,6 +86,7 @@ router.post('/accept/:username', requireAuth, async (req, res) => {
        ON CONFLICT (user_id, friend_id) DO UPDATE SET status = 'accepted'`,
       [req.session.userId, rid]
     );
+    createNotif(rid, 'friend_accept', req.session.userId);
     res.json({ ok: true });
   } catch (e) {
     console.error(e);
