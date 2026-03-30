@@ -1,42 +1,33 @@
-const CACHE = 'ourspace-v2';
-const SHELL = [
-  '/',
-  '/js/api.js',
-  '/js/shared.js',
-  '/manifest.json',
-  '/img/icon.svg',
-  '/img/bear-pixel.svg'
-];
+const CACHE = 'ourspace-v3';
 
-// Installation : on met le shell en cache
+// Installation minimale
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(SHELL))
-  );
   self.skipWaiting();
 });
 
-// Activation : on supprime les vieux caches
+// Activation : on vide TOUT l'ancien cache
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      Promise.all(keys.map(k => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-// Fetch : network-first (les appels API passent toujours en réseau)
+// Fetch : toujours réseau en priorité, pas de mise en cache des HTML/JS
 self.addEventListener('fetch', e => {
-  if (e.request.url.includes('/api/')) return; // API : pas de cache
+  const url = e.request.url;
+  // API et HTML/JS → toujours depuis le réseau
+  if (url.includes('/api/') || url.endsWith('.html') || url.endsWith('.js')) return;
+  // Images → cache
   e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        // Met à jour le cache avec la réponse fraîche
+    caches.match(e.request).then(cached => {
+      return cached || fetch(e.request).then(res => {
         const clone = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, clone));
         return res;
-      })
-      .catch(() => caches.match(e.request))
+      });
+    })
   );
 });
