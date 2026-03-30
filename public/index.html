@@ -559,7 +559,7 @@ let ME = null;
 async function loadFriendRequests() {
   const res = await fetch('/api/friends/requests', { credentials: 'same-origin' });
   const data = await res.json();
-  if (!data.length) return;
+  if (!Array.isArray(data) || !data.length) return;
   const box = document.getElementById('friend-requests-box');
   const list = document.getElementById('friend-requests-list');
   box.style.display = '';
