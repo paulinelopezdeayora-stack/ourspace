@@ -1,4 +1,4 @@
-const CACHE = 'ourspace-v3';
+const CACHE = 'ourspace-v4';
 
 // Installation minimale
 self.addEventListener('install', e => {
@@ -19,7 +19,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = e.request.url;
   // API et HTML/JS → toujours depuis le réseau
-  if (url.includes('/api/') || url.endsWith('.html') || url.endsWith('.js')) return;
+  if (url.includes('/api/') || url.includes('.html') || url.endsWith('.js')) return;
   // Images → cache
   e.respondWith(
     caches.match(e.request).then(cached => {
