@@ -390,9 +390,10 @@ function renderProfile(p) {
   // Skin
   if (p.skin) document.documentElement.dataset.theme = p.skin;
 
-  // Marquee perso
+  // Marquee perso (texte custom ou généré)
   const mq = document.getElementById('marquee-text');
-  mq.textContent = `🐻 Profil de ${p.display_name} ✦ ${p.mood || 'bienvenue'} ✦ ${p.song_title ? '♬ ' + p.song_title : 'ourspace 2026'} ✦ les ours ne font pas la guerre 🐻`;
+  mq.textContent = p.marquee_text ||
+    `🐻 Profil de ${p.display_name} ✦ ${p.mood || 'bienvenue'} ✦ ${p.song_title ? '♬ ' + p.song_title : 'ourspace 2026'} ✦ les ours ne font pas la guerre 🐻`;
 
   // Actions
   renderActions();
