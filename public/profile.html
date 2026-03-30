@@ -359,8 +359,9 @@ function renderProfile(p) {
     document.getElementById('last-seen-label').textContent = 'Vu ' + timeAgo(p.last_seen);
   }
 
-  // Bio
-  if (p.bio) {
+  // Bio (on ignore si vide ou juste des <br>)
+  const bioClean = (p.bio || '').replace(/<br\s*\/?>/gi, '').trim();
+  if (bioClean) {
     document.getElementById('box-bio').style.display = 'block';
     document.getElementById('bio-content').innerHTML = p.bio;
   }
