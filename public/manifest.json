@@ -1,0 +1,19 @@
+{
+  "name": "OURSPACE",
+  "short_name": "OURSPACE",
+  "description": "Le réseau social rétro pour les vrais",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#cc55bb",
+  "background_color": "#f2d4ff",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/img/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -140,6 +140,38 @@ async function initMsgBadge() {
   setInterval(refresh, 15000);
 }
 
+// ---- BADGE NOTIFICATIONS ----
+async function initNotifBadge() {
+  const link = document.querySelector('a[href="/notifications.html"]');
+  if (!link) return;
+  async function refresh() {
+    try {
+      const res = await fetch('/api/notifications/unread-count', { credentials: 'same-origin' });
+      const data = await res.json();
+      const n = data.count || 0;
+      let badge = link.querySelector('.notif-badge');
+      if (n > 0) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'notif-badge';
+          badge.style.cssText = `
+            display:inline-block;background:#cc2200;color:#fff;
+            font-size:9px;font-family:Arial,sans-serif;font-weight:bold;
+            border-radius:8px;padding:1px 5px;margin-left:4px;
+            vertical-align:middle;line-height:14px;min-width:14px;text-align:center;
+          `;
+          link.appendChild(badge);
+        }
+        badge.textContent = n > 99 ? '99+' : n;
+      } else if (badge) {
+        badge.remove();
+      }
+    } catch (e) {}
+  }
+  refresh();
+  setInterval(refresh, 20000);
+}
+
 // ---- AUTO-INIT on DOMContentLoaded ----
 document.addEventListener('DOMContentLoaded', () => {
   loadTheme();
@@ -149,3 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const titleEl = document.querySelector('title');
   if (titleEl) initTabTitle(titleEl.textContent);
 });
+
+
+// ---- SERVICE WORKER (PWA) ----
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
