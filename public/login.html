@@ -99,8 +99,6 @@
   <form class="form" id="form-register" onsubmit="doRegister(event)">
     <label>Pseudo <span style="color:#444">(lettres, chiffres, _)</span></label>
     <input type="text" id="r-user" placeholder="xX_MonPseudo_Xx" required>
-    <label>Nom affiché</label>
-    <input type="text" id="r-name" placeholder="Mon Nom Cool">
     <label>Email</label>
     <input type="email" id="r-email" placeholder="ton@email.com" required>
     <label>Mot de passe <span style="color:#444">(min 6 caractères)</span></label>
@@ -173,7 +171,8 @@ async function doRegister(e) {
   if(pass!==pass2){document.getElementById('r-error').textContent='Les mots de passe ne correspondent pas 😬';return;}
   btn.disabled=true; btn.textContent='Création...';
   document.getElementById('r-error').textContent='';
-  const {data,error}=await api.register({username:document.getElementById('r-user').value,display_name:document.getElementById('r-name').value,email:document.getElementById('r-email').value,password:pass});
+  const username = document.getElementById('r-user').value;
+  const {data,error}=await api.register({username, display_name: username, email:document.getElementById('r-email').value,password:pass});
   if(error){document.getElementById('r-error').textContent=error;btn.disabled=false;btn.textContent='Rejoindre Ourspace 🐻';}
   else window.location.href='/';
 }
