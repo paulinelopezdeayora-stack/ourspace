@@ -398,7 +398,7 @@ function renderProfile(p) {
   renderActions();
 }
 
-function renderActions() {
+async function renderActions() {
   const row = document.getElementById('action-row');
   row.innerHTML = '';
   if (!ME) return;
@@ -410,16 +410,29 @@ function renderActions() {
     row.appendChild(btn);
     return;
   }
-  const addBtn = document.createElement('button');
-  addBtn.className = 'btn-action btn-add';
-  addBtn.textContent = '➕ Ajouter en ami';
-  addBtn.onclick = async () => {
-    addBtn.disabled = true; addBtn.textContent = 'Envoi…';
-    const { error } = await api.sendRequest(PROFILE.username);
-    if (error) { toast(error, 'error'); addBtn.disabled=false; addBtn.textContent='➕ Ajouter en ami'; }
-    else { addBtn.textContent = '✓ Demande envoyée'; addBtn.classList.add('sent'); }
-  };
-  row.appendChild(addBtn);
+
+  // Vérifie si déjà ami
+  const myFriends = await fetch('/api/friends/me', { credentials: 'same-origin' }).then(r => r.json()).catch(() => []);
+  const alreadyFriend = Array.isArray(myFriends) && myFriends.some(f => f.username === PROFILE.username);
+
+  if (!alreadyFriend) {
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-action btn-add';
+    addBtn.textContent = '➕ Ajouter en ami';
+    addBtn.onclick = async () => {
+      addBtn.disabled = true; addBtn.textContent = 'Envoi…';
+      const { error } = await api.sendRequest(PROFILE.username);
+      if (error) { toast(error, 'error'); addBtn.disabled=false; addBtn.textContent='➕ Ajouter en ami'; }
+      else { addBtn.textContent = '✓ Demande envoyée'; addBtn.classList.add('sent'); }
+    };
+    row.appendChild(addBtn);
+  } else {
+    const friendLabel = document.createElement('span');
+    friendLabel.className = 'btn-action';
+    friendLabel.style.cssText = 'opacity:0.7;cursor:default';
+    friendLabel.textContent = '🤝 Ami·e';
+    row.appendChild(friendLabel);
+  }
 
   const msgBtn = document.createElement('a');
   msgBtn.className = 'btn-action btn-add';
