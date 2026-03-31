@@ -176,6 +176,9 @@ async function initDB() {
     WHERE interests LIKE '%Opinions%'
   `);
 
+  // Sync display_name = username pour tous les comptes (on ne garde que le pseudo)
+  await pool.query(`UPDATE users SET display_name = username WHERE display_name != username`);
+
   // Nettoyer les valeurs par défaut song qui polluent les profils vierges
   await pool.query(`UPDATE users SET song_title  = '' WHERE song_title  = 'Welcome to the Black Parade'`);
   await pool.query(`UPDATE users SET song_artist = '' WHERE song_artist = 'My Chemical Romance'`);
