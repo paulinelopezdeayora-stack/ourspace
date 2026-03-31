@@ -22,7 +22,12 @@ router.get('/:username', async (req, res) => {
       [req.params.username.toLowerCase()]
     );
     if (!r.rows[0]) return res.status(404).json({ error: 'Utilisateur introuvable' });
-    res.json(r.rows[0]);
+    const row = r.rows[0];
+    // Si audio_url existe (R2), on ne renvoie pas le base64 (inutile + lourd)
+    if (row.audio_url) row.audio_data = null;
+    // Pareil pour l'avatar
+    if (row.avatar_url) row.avatar_data = null;
+    res.json(row);
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Erreur serveur' });
