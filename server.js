@@ -38,7 +38,7 @@ app.use(session({
 // Les .js/.css/.svg/.png peuvent être cachés 1h
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders(res, filePath) {
-    if (filePath.endsWith('.html')) {
+    if (filePath.endsWith('.html') || filePath.endsWith('.js')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     } else {
       res.setHeader('Cache-Control', 'public, max-age=3600');

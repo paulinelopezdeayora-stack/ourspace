@@ -1,4 +1,4 @@
-const CACHE = 'ourspace-v4';
+const CACHE = 'ourspace-v5';
 
 // Installation minimale
 self.addEventListener('install', e => {
