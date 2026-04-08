@@ -1,5 +1,6 @@
 const router      = require('express').Router();
 const bcrypt      = require('bcryptjs');
+const crypto      = require('crypto');
 const { pool }    = require('../db');
 const requireAuth = require('../middleware/requireAuth');
 const createNotif = require('../lib/notif');
@@ -150,6 +151,70 @@ router.get('/me', async (req, res) => {
       return res.status(401).json({ error: 'Session expirée' });
     }
     res.json(r.rows[0]);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/auth/forgot-password
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email requis' });
+  try {
+    const r = await pool.query('SELECT id, username FROM users WHERE email = $1', [email.toLowerCase().trim()]);
+    // Toujours répondre OK même si l'email n'existe pas (sécurité)
+    if (!r.rows[0]) return res.json({ ok: true });
+    const user = r.rows[0];
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1h
+    await pool.query(
+      'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES ($1,$2,$3)',
+      [user.id, token, expires]
+    );
+    const link = 'https://www.ourspace.cool/reset-password.html?token=' + token;
+    const key = process.env.RESEND_KEY;
+    if (key) {
+      const html = [
+        '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>',
+        '<div style="max-width:520px;margin:30px auto;background:#0d0020;border:2px solid #3a1166;border-radius:6px;font-family:Arial,sans-serif;color:#e0e0ff;padding:28px">',
+        '<div style="font-family:Impact,sans-serif;font-size:2em;letter-spacing:6px;color:#cc55bb;text-align:center">OURSPACE</div>',
+        '<p style="margin-top:20px">Salut <strong style="color:#cc55bb">@' + user.username + '</strong> !</p>',
+        '<p>Tu as demandé à réinitialiser ton mot de passe. Clique sur le lien ci-dessous (valable 1h) :</p>',
+        '<a href="' + link + '" style="display:block;width:fit-content;margin:20px auto;background:#3a1166;color:#cc55bb;text-decoration:none;padding:10px 28px;border:1px solid #cc55bb;border-radius:3px">Réinitialiser mon mot de passe</a>',
+        '<p style="color:#9977cc;font-size:12px;text-align:center">Si tu n\'as pas demandé ça, ignore ce mail.</p>',
+        '</div></body></html>'
+      ].join('');
+      fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: 'OURSPACE <noreply@ourspace.cool>', to: email.toLowerCase().trim(), subject: 'Réinitialisation de ton mot de passe OURSPACE', html }),
+      }).catch(e => console.warn('Reset email error:', e.message));
+    }
+    res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/auth/reset-password
+router.post('/reset-password', async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ error: 'Token et mot de passe requis' });
+  if (password.length < 6) return res.status(400).json({ error: 'Mot de passe trop court (min 6 caractères)' });
+  try {
+    const r = await pool.query(
+      'SELECT * FROM password_reset_tokens WHERE token=$1 AND used_at IS NULL AND expires_at > NOW()',
+      [token]
+    );
+    if (!r.rows[0]) return res.status(400).json({ error: 'Lien invalide ou expiré' });
+    const hash = await bcrypt.hash(password, 12);
+    await Promise.all([
+      pool.query('UPDATE users SET password_hash=$1 WHERE id=$2', [hash, r.rows[0].user_id]),
+      pool.query('UPDATE password_reset_tokens SET used_at=NOW() WHERE id=$1', [r.rows[0].id]),
+    ]);
+    res.json({ ok: true });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Erreur serveur' });

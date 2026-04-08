@@ -176,6 +176,17 @@ async function initDB() {
     WHERE interests LIKE '%Opinions%'
   `);
 
+  // Table tokens de reset de mot de passe
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      id         SERIAL PRIMARY KEY,
+      user_id    INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      token      VARCHAR(64) UNIQUE NOT NULL,
+      expires_at TIMESTAMP NOT NULL,
+      used_at    TIMESTAMP DEFAULT NULL
+    )
+  `);
+
   // Sync display_name = username pour tous les comptes (on ne garde que le pseudo)
   await pool.query(`UPDATE users SET display_name = username WHERE display_name != username`);
 

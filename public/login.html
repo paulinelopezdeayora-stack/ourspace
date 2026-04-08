@@ -93,6 +93,17 @@
     <button class="btn-submit" type="submit">Se connecter 🐻</button>
     <div class="error-msg" id="l-error"></div>
     <div class="form-footer">Pas encore inscrit ? <a onclick="switchTab('register')">Créer un compte</a></div>
+    <div class="form-footer" style="margin-top:6px"><a onclick="switchTab('forgot')">Mot de passe oublié ?</a></div>
+  </form>
+
+  <!-- MOT DE PASSE OUBLIÉ -->
+  <form class="form" id="form-forgot" onsubmit="doForgot(event)">
+    <div style="font-size:12px;color:#9966cc;margin-bottom:12px;text-align:center">Entre ton email, on t'envoie un lien de réinitialisation 🐻</div>
+    <label>Email</label>
+    <input type="email" id="f-email" placeholder="ton@email.com" required>
+    <button class="btn-submit" type="submit">Envoyer le lien</button>
+    <div class="error-msg" id="f-error"></div>
+    <div class="form-footer"><a onclick="switchTab('login')">← Retour connexion</a></div>
   </form>
 
   <!-- REGISTER -->
@@ -152,6 +163,26 @@ function switchTab(tab) {
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='register')));
   document.getElementById('form-login').classList.toggle('active',tab==='login');
   document.getElementById('form-register').classList.toggle('active',tab==='register');
+  document.getElementById('form-forgot').classList.toggle('active',tab==='forgot');
+}
+
+async function doForgot(e) {
+  e.preventDefault();
+  const btn=e.target.querySelector('button');
+  btn.disabled=true; btn.textContent='Envoi...';
+  document.getElementById('f-error').textContent='';
+  const email=document.getElementById('f-email').value;
+  const r=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+  const d=await r.json();
+  if(d.ok){
+    document.getElementById('f-error').style.color='#44cc88';
+    document.getElementById('f-error').textContent='Si cet email existe, un lien a été envoyé 📬';
+    btn.textContent='Envoyé !';
+  } else {
+    document.getElementById('f-error').style.color='#ff4444';
+    document.getElementById('f-error').textContent=d.error||'Erreur';
+    btn.disabled=false; btn.textContent='Envoyer le lien';
+  }
 }
 
 async function doLogin(e) {

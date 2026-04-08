@@ -42,6 +42,22 @@ router.get('/stats', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
+// POST /api/admin/reset-password — reset forcé d'un mot de passe utilisateur
+router.post('/reset-password', requireAuth, requireAdmin, async (req, res) => {
+  const bcrypt = require('bcryptjs');
+  const { username, new_password } = req.body;
+  if (!username || !new_password) return res.status(400).json({ error: 'username et new_password requis' });
+  if (new_password.length < 6) return res.status(400).json({ error: 'Mot de passe trop court (min 6 car.)' });
+  try {
+    const hash = await bcrypt.hash(new_password, 12);
+    const r = await pool.query('UPDATE users SET password_hash=$1 WHERE username=$2 RETURNING id,username', [hash, username.toLowerCase()]);
+    if (!r.rowCount) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    res.json({ ok: true, username: r.rows[0].username });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // POST /api/admin/test-email — envoie un email de test à l'admin (debug)
 router.post('/test-email', requireAuth, requireAdmin, async (req, res) => {
   const key = process.env.RESEND_KEY;
