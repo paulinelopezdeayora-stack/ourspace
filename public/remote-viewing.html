@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="emo-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#cc55bb">
+  <meta property="og:site_name" content="OURSPACE">
+  <meta property="og:title" content="OURSPACE 🐻">
+  <meta property="og:description" content="Le réseau social rétro pour les vrais">
+  <meta property="og:image" content="https://www.ourspace.cool/img/icon.svg">
+  <meta property="og:url" content="https://www.ourspace.cool">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="apple-touch-icon" href="/img/icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="OURSPACE">
+  <title>OURSPACE — Remote Viewing</title>
+  <script>(function(){const t=localStorage.getItem('os-theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+  <style>
+    :root{--bg:#000814;--bg2:#0d0020;--bg3:#140030;--accent:#cc55bb;--accent2:#7744aa;--border:#3a1166;--border2:#1a0044;--text:#e0e0ff;--text-muted:#9977cc;--text-dim:#444466;--card:rgba(13,0,32,0.85);--marquee:#bb7744;--online:#44bb88}
+    [data-theme="bubblegum"]{--bg:#110008;--bg2:#200012;--bg3:#300020;--accent:#ff77bb;--accent2:#cc4488;--border:#661133;--border2:#330018;--text:#ffe8f5;--text-muted:#cc8899;--text-dim:#664455;--card:rgba(28,0,16,0.85);--marquee:#dd8833;--online:#ff99cc}
+    [data-theme="matrix"]   {--bg:#000800;--bg2:#000c00;--bg3:#001200;--accent:#00cc44;--accent2:#008833;--border:#003311;--border2:#001a08;--text:#ccffdd;--text-muted:#55aa66;--text-dim:#224433;--card:rgba(0,10,3,0.85);--marquee:#00aa33;--online:#00ff88}
+    [data-theme="midnight"] {--bg:#000818;--bg2:#000d22;--bg3:#001030;--accent:#5599ff;--accent2:#3366cc;--border:#112255;--border2:#08102a;--text:#cce0ff;--text-muted:#7799cc;--text-dim:#334466;--card:rgba(0,8,28,0.85);--marquee:#4477cc;--online:#66aaff}
+    [data-theme="pastel"]   {--bg:#fff8fc;--bg2:#ffeef8;--bg3:#ffe4f5;--accent:#dd66bb;--accent2:#bb44aa;--border:#f0aadd;--border2:#fad4ef;--text:#442233;--text-muted:#aa6688;--text-dim:#ddaabb;--card:rgba(255,240,250,0.9);--marquee:#cc55aa;--online:#88cc99}
+    [data-theme="batcave"]  {--bg:#050505;--bg2:#0a0a0a;--bg3:#111;--accent:#cccccc;--accent2:#888;--border:#333;--border2:#1a1a1a;--text:#e8e8e8;--text-muted:#777;--text-dim:#333;--card:rgba(10,10,10,0.92);--marquee:#aaa;--online:#aaa}
+    [data-theme="dogperson"]{--bg:#1a0e00;--bg2:#261400;--bg3:#321a00;--accent:#ff9933;--accent2:#cc6600;--border:#663300;--border2:#331900;--text:#fff0dd;--text-muted:#cc9955;--text-dim:#664422;--card:rgba(26,14,0,0.88);--marquee:#ff8800;--online:#88dd44}
+    [data-theme="catperson"]{--bg:#00100c;--bg2:#001a14;--bg3:#00231b;--accent:#33ddaa;--accent2:#229977;--border:#115544;--border2:#082a1f;--text:#ccfff0;--text-muted:#55aa88;--text-dim:#224433;--card:rgba(0,16,12,0.88);--marquee:#22cc99;--online:#55ffcc}
+
+    *{box-sizing:border-box;margin:0;padding:0;cursor:none!important}
+    body{background:var(--bg);font-family:'Comic Neue','Comic Sans MS',cursive;color:var(--text);min-height:100vh;overflow-x:hidden}
+    #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    #cursor{position:fixed;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);font-size:20px;filter:drop-shadow(0 0 4px var(--accent))}
+    .sparkle{position:fixed;pointer-events:none;border-radius:50%;animation:sparkAnim .7s ease-out forwards;z-index:99998}
+    @keyframes sparkAnim{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+    .star{position:fixed;background:var(--text);opacity:.3;border-radius:50%;animation:twinkle ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.5}50%{opacity:.1}}
+
+    /* NAV */
+    #topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:8px 16px;display:flex;align-items:center;gap:12px;position:relative;z-index:10}
+    #topnav a{color:var(--text-muted);text-decoration:none;font-size:12px;font-family:Arial,sans-serif;padding:4px 10px;border:1px solid var(--border2);border-radius:2px;transition:all .2s}
+    #topnav a:hover{color:var(--text);border-color:var(--accent2)}
+    #topnav .brand{color:var(--accent);font-family:Impact,sans-serif;font-size:1.3em;letter-spacing:4px;text-shadow:0 0 6px var(--accent2);margin-right:4px;text-decoration:none;border:none}
+    #topnav .brand:hover{border:none}
+    #nav-user{margin-left:auto;font-size:11px;color:var(--text-dim)}
+
+    @media(max-width:680px){
+      #topnav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      #topnav::-webkit-scrollbar{display:none}
+      #topnav a{white-space:nowrap;flex-shrink:0}
+      #main{padding:8px}
+    }
+
+    /* HEADER */
+    #rv-header{text-align:center;padding:22px 16px 16px;position:relative;z-index:1}
+    #rv-header h1{font-family:Impact,sans-serif;font-size:2em;color:var(--accent);text-shadow:0 0 8px var(--accent2);letter-spacing:4px}
+    #rv-header p{color:var(--text-muted);font-size:12px;margin-top:5px}
+
+    /* MAIN */
+    #main{max-width:720px;margin:0 auto;padding:0 14px 40px;position:relative;z-index:1}
+
+    /* SECTIONS */
+    .section{background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:20px;overflow:hidden;backdrop-filter:blur(4px)}
+    .section-hd{background:linear-gradient(180deg,var(--bg3),var(--bg2));padding:9px 14px;font-family:'Arial Black',sans-serif;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border2)}
+    .section-bd{padding:14px}
+
+    /* STATS BAR */
+    .stats-row{display:flex;gap:10px;flex-wrap:wrap}
+    .stat-box{flex:1;min-width:100px;text-align:center;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;padding:10px 6px}
+    .stat-num{font-size:1.5em;color:var(--accent);font-weight:bold;text-shadow:0 0 6px var(--accent2)}
+    .stat-label{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+    /* IDLE / START */
+    .rv-idle{text-align:center;padding:20px}
+    .rv-idle p{color:var(--text-muted);font-size:12px;margin-bottom:14px;line-height:1.6}
+    .btn-main{background:linear-gradient(180deg,var(--accent2),color-mix(in srgb,var(--accent2) 60%,var(--bg2)));color:var(--text);border:1px solid var(--accent);padding:10px 22px;font-family:'Comic Neue','Comic Sans MS',cursive;font-size:14px;font-weight:bold;border-radius:4px;cursor:pointer;transition:all .2s}
+    .btn-main:hover{background:var(--accent);box-shadow:0 0 10px var(--accent)55}
+    .btn-main:disabled{opacity:.4;cursor:default;box-shadow:none}
+
+    /* DESIGNATOR */
+    .designator-box{text-align:center;padding:14px;background:var(--bg2);border:1px dashed var(--border);border-radius:4px;margin-bottom:14px}
+    .designator-label{font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-bottom:4px}
+    .designator{font-family:'Courier New',monospace;font-size:1.8em;color:var(--accent);letter-spacing:3px;text-shadow:0 0 8px var(--accent2)}
+
+    /* FORM */
+    .rv-field-label{font-size:11px;color:var(--text-muted);margin:12px 0 6px;font-family:Arial,sans-serif;font-weight:bold}
+    textarea.rv-input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:9px 11px;font-family:'Comic Neue','Comic Sans MS',cursive;font-size:13px;border-radius:3px;resize:vertical;min-height:70px;outline:none}
+    textarea.rv-input:focus{border-color:var(--accent)}
+    textarea.rv-input:disabled{opacity:.6}
+
+    .tag-group{margin-bottom:10px}
+    .tag-group-title{font-size:10px;color:var(--text-dim);margin-bottom:5px}
+    .tag-chip{display:inline-block;background:var(--bg2);border:1px solid var(--border2);color:var(--text-muted);font-size:11px;padding:4px 10px;border-radius:12px;margin:0 5px 5px 0;cursor:pointer;transition:all .15s;font-family:'Comic Neue','Comic Sans MS',cursive}
+    .tag-chip:hover{border-color:var(--accent2)}
+    .tag-chip.active{background:var(--accent2);border-color:var(--accent);color:#fff}
+    .tag-chip.matched{background:var(--online);border-color:var(--online);color:#003;font-weight:bold}
+    .tag-chip.target-only{background:transparent;border-style:dashed;border-color:var(--accent2);color:var(--accent2)}
+    .tag-chip.disabled-pick{pointer-events:none}
+
+    canvas#sketch-pad{width:100%;max-width:480px;height:auto;aspect-ratio:16/9;background:#fdfdfd;border:1px solid var(--border);border-radius:4px;display:block;touch-action:none}
+    .sketch-row{display:flex;justify-content:center;margin:14px 0}
+    .btn-edit{background:var(--bg3);border:1px solid var(--border);color:var(--text-muted);font-size:11px;padding:5px 12px;border-radius:3px;cursor:pointer;font-family:'Comic Neue','Comic Sans MS',cursive;transition:all .2s}
+    .btn-edit:hover{border-color:var(--accent);color:var(--accent)}
+
+    .rv-actions{display:flex;justify-content:center;gap:10px;margin-top:16px}
+
+    /* TARGET REVEAL */
+    .target-reveal{text-align:center;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px}
+    .target-emoji{font-size:52px;margin-bottom:6px}
+    .target-label{color:var(--accent);font-size:16px;font-weight:bold}
+    .target-desc{color:var(--text-muted);font-size:12px;margin-top:6px;font-style:italic}
+    .overlap-badge{display:inline-block;margin-top:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:4px 14px;font-size:12px;color:var(--text)}
+
+    /* STAR PICKER */
+    .star-picker{display:flex;justify-content:center;gap:6px;margin:10px 0}
+    .star-btn{background:none;border:none;font-size:26px;cursor:pointer;opacity:.35;transition:all .15s;filter:grayscale(1)}
+    .star-btn.on{opacity:1;filter:none}
+
+    /* HISTORY */
+    .rv-card{background:var(--bg2);border:1px solid var(--border2);border-radius:4px;padding:10px 12px;margin-bottom:8px}
+    .rv-card-top{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .rv-card-emoji{font-size:22px;flex-shrink:0}
+    .rv-card-info{flex:1;min-width:0}
+    .rv-card-title{font-size:13px;color:var(--text);font-weight:bold}
+    .rv-card-meta{font-size:10px;color:var(--text-dim);margin-top:2px}
+    .rv-card-score{font-size:11px;color:var(--accent);white-space:nowrap}
+    .rv-card-body{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);font-size:12px;color:var(--text-muted);line-height:1.6}
+    .rv-card.open .rv-card-body{display:block}
+    .rv-card-body img{max-width:100%;border-radius:4px;border:1px solid var(--border2);margin-top:6px}
+    .btn-del{background:none;border:1px solid var(--border2);color:var(--text-dim);font-size:10px;padding:3px 9px;border-radius:3px;cursor:pointer;margin-top:8px}
+    .btn-del:hover{border-color:#cc2200;color:#cc2200}
+
+    .empty-state{text-align:center;padding:30px 20px;color:var(--text-dim);font-size:12px}
+    .badge-status{font-size:9px;padding:2px 7px;border-radius:8px;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+    .badge-status.in_progress{background:#553300;color:#ffcc66}
+    .badge-status.revealed{background:#003355;color:#66ccff}
+    .badge-status.scored{background:#004422;color:#66ffaa}
+
+    /* SKINZ */
+    #skinz-panel{position:fixed;bottom:20px;right:16px;z-index:9000}
+    #skinz-toggle{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 13px;font-size:12px;color:var(--text-muted);cursor:pointer;backdrop-filter:blur(6px)}
+    #skinz-toggle:hover{border-color:var(--accent);color:var(--accent)}
+    #skinz-options{display:none;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px;backdrop-filter:blur(8px)}
+    #skinz-panel.open #skinz-options{display:block}
+    .skin-btn{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-muted);font-family:'Comic Neue','Comic Sans MS',cursive;font-size:12px;padding:5px 8px;cursor:pointer;border-radius:3px;margin-bottom:2px;transition:all .2s}
+    .skin-btn:hover{background:var(--bg3);color:var(--text)}
+    .skin-btn.skin-active{color:var(--accent);font-weight:bold}
+  </style>
+</head>
+<body>
+<div id="cursor">🐻</div>
+<div id="stars"></div>
+
+<!-- NAV -->
+<div id="topnav">
+  <a href="/" class="brand">OURSPACE</a>
+  <a href="/">🏠 Accueil</a>
+  <a href="/discover.html">🔍 Découvrir</a>
+  <a href="/blog.html">📝 Blog</a>
+  <a href="/music.html">🎵 Musique</a>
+  <a href="/remote-viewing.html">🔮 Remote Viewing</a>
+  <a href="/community.html">👥 Communauté</a>
+  <a href="/messages.html">💌 Messages</a>
+  <a href="/settings.html">⚙️ Paramètres</a>
+  <span id="nav-user" style="margin-left:auto"></span>
+</div>
+
+<!-- HEADER -->
+<div id="rv-header">
+  <h1>🔮 REMOTE VIEWING</h1>
+  <p>entraîne-toi à la vision à distance · protocole en aveugle · old web style</p>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- STATS -->
+  <div class="section">
+    <div class="section-hd">📊 Mes stats</div>
+    <div class="section-bd">
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Sessions</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-self">—</div><div class="stat-label">Ressenti moyen /5</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-overlap">—</div><div class="stat-label">Recoupement moyen</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SESSION -->
+  <div class="section">
+    <div class="section-hd">🎯 Session</div>
+    <div class="section-bd" id="session-zone">
+      <!-- rempli dynamiquement -->
+    </div>
+  </div>
+
+  <!-- HISTORIQUE -->
+  <div class="section">
+    <div class="section-hd">🗂️ Historique</div>
+    <div class="section-bd">
+      <div id="history-list"></div>
+      <div id="history-empty" class="empty-state" style="display:none">Aucune session pour l'instant — lance-toi !</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- FOOTER -->
+<div id="page-footer" style="text-align:center;padding:20px;color:var(--text-dim);font-size:11px;border-top:1px solid var(--border2);margin-top:8px;position:relative;z-index:1;font-family:'Comic Neue','Comic Sans MS',cursive">
+  <div style="color:var(--border);font-size:16px;letter-spacing:8px;margin-bottom:7px">🐻 ✦ 🐻</div>
+  OURSPACE 2026 — <span style="color:var(--accent)">fait avec ♥ et Comic Sans</span><br>
+  <div style="margin-top:5px"><a href="/" style="color:var(--border)">Accueil</a> · <a href="/discover.html" style="color:var(--border)">Découvrir</a> · <a href="/blog.html" style="color:var(--border)">Blog</a></div>
+  <div style="margin-top:5px"><a href="/legal.html" style="color:var(--border)">Mentions légales</a> · <a href="/legal.html#confidentialite" style="color:var(--border)">Confidentialité</a> · <a href="/legal.html#cgu" style="color:var(--border)">CGU</a></div>
+  <div style="margin-top:8px;color:var(--text-dim);font-size:10px">Best viewed in Netscape Navigator 7 · Les ours ne font pas la guerre.</div>
+</div>
+
+<!-- SKINZ -->
+<div id="skinz-panel">
+  <div id="skinz-options">
+    <button class="skin-btn" data-theme="emo-dark">🖤 Emo Dark</button>
+    <button class="skin-btn" data-theme="bubblegum">🌸 Bubblegum</button>
+    <button class="skin-btn" data-theme="matrix">💾 Matrix</button>
+    <button class="skin-btn" data-theme="midnight">🌙 Midnight</button>
+    <button class="skin-btn" data-theme="pastel">🍬 Pastel Dream</button>
+    <button class="skin-btn" data-theme="batcave">🦇 Batcave</button>
+    <button class="skin-btn" data-theme="dogperson">🐶 Dog Person</button>
+    <button class="skin-btn" data-theme="catperson">🐱 Cat Person</button>
+  </div>
+  <div id="skinz-toggle">🎨 Skinz</div>
+</div>
+
+<script src="js/shared.js"></script>
+<script src="js/api.js"></script>
+<script>
+let ME = null;
+let CURRENT = null;       // session courante { id, designator, status, ... }
+let SELECTED_TAGS = [];
+let drawing = false, lastX = 0, lastY = 0;
+
+const DESCRIPTOR_VOCAB = {
+  'Formes':        ['rond','anguleux','vertical','horizontal','courbe','pointu','massif'],
+  'Textures':      ['lisse','rugueux','dur','mou','humide','sec','fluide'],
+  'Couleurs':      ['rouge','bleu','vert','jaune','blanc','noir','marron','doré','multicolore'],
+  'Énergie':       ['chaud','froid','calme','énergique','lourd','léger','bruyant','silencieux'],
+  'Environnement': ['naturel','artificiel','intérieur','extérieur','urbain','aquatique','ancien','moderne'],
+};
+
+// ---- INIT ----
+(async function init() {
+  ME = await requireLogin();
+  if (!ME) return;
+  document.getElementById('nav-user').textContent = '👤 ' + ME.display_name;
+
+  await loadStats();
+  await loadHistory({ resumeActive: true });
+
+  initMsgBadge();
+  initNotifBadge();
+})();
+
+// ---- STATS ----
+async function loadStats() {
+  const { data } = await api.rvGetStats();
+  if (!data) return;
+  document.getElementById('stat-total').textContent   = data.total || 0;
+  document.getElementById('stat-self').textContent     = data.scored_total > 0 ? Number(data.avg_self_score).toFixed(1) : '—';
+  document.getElementById('stat-overlap').textContent  = data.total > 0 ? Number(data.avg_overlap).toFixed(1) : '—';
+}
+
+// ---- HISTORY ----
+async function loadHistory(opts = {}) {
+  const { data, error } = await api.rvGetSessions(0);
+  const list  = document.getElementById('history-list');
+  const empty = document.getElementById('history-empty');
+  if (error || !data || !data.length) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    if (opts.resumeActive) renderIdle();
+    return;
+  }
+  empty.style.display = 'none';
+
+  const active = data.find(s => s.status === 'in_progress' || s.status === 'revealed');
+
+  list.innerHTML = data.filter(s => s.status === 'scored').map(s => {
+    const tags = safeParse(s.descriptor_tags);
+    const target = s.target;
+    const stars = s.self_score != null ? '⭐'.repeat(s.self_score) + '☆'.repeat(5 - s.self_score) : '';
+    return `
+      <div class="rv-card" id="rv-card-${s.id}">
+        <div class="rv-card-top" onclick="toggleCard(${s.id})">
+          <div class="rv-card-emoji">${target ? target.emoji : '❓'}</div>
+          <div class="rv-card-info">
+            <div class="rv-card-title">${esc(s.designator)} ${target ? '— ' + esc(target.label) : ''}</div>
+            <div class="rv-card-meta">${timeAgo(s.created_at)} · <span class="badge-status ${s.status}">${statusLabel(s.status)}</span></div>
+          </div>
+          <div class="rv-card-score">${stars}</div>
+        </div>
+        <div class="rv-card-body">
+          ${s.impressions ? `<div><b>Impressions :</b> ${esc(s.impressions)}</div>` : ''}
+          ${tags.length ? `<div style="margin-top:6px"><b>Descripteurs :</b> ${tags.map(esc).join(', ')}</div>` : ''}
+          ${target ? `<div style="margin-top:6px"><b>Cible :</b> ${target.emoji} ${esc(target.label)} — ${esc(target.description)}</div>` : ''}
+          ${s.overlap_score != null && target ? `<div style="margin-top:6px"><b>Recoupement :</b> ${s.overlap_score}/${target.tags.length} descripteurs</div>` : ''}
+          ${s.reflection ? `<div style="margin-top:6px"><b>Réflexion :</b> ${esc(s.reflection)}</div>` : ''}
+          ${s.sketch_data ? `<img src="${s.sketch_data}" alt="croquis">` : ''}
+          <button class="btn-del" onclick="event.stopPropagation(); deleteSession(${s.id})">🗑️ Supprimer</button>
+        </div>
+      </div>`;
+  }).join('') || '';
+
+  if (!list.innerHTML) empty.style.display = 'block';
+
+  if (opts.resumeActive) {
+    if (active) resumeSession(active);
+    else renderIdle();
+  }
+}
+
+function statusLabel(s) {
+  return s === 'in_progress' ? 'en cours' : s === 'revealed' ? 'révélée' : 'notée';
+}
+
+function toggleCard(id) {
+  document.getElementById(`rv-card-${id}`).classList.toggle('open');
+}
+
+async function deleteSession(id) {
+  await api.rvDeleteSession(id);
+  await loadHistory();
+  await loadStats();
+}
+
+// ---- SESSION: IDLE ----
+function renderIdle() {
+  CURRENT = null;
+  SELECTED_TAGS = [];
+  document.getElementById('session-zone').innerHTML = `
+    <div class="rv-idle">
+      <p>Une cible aléatoire va être tirée au sort côté serveur, cachée derrière un simple numéro.<br>
+      Note tes impressions spontanées <i>avant</i> de révéler la cible — formes, couleurs, sensations, un petit croquis si tu veux.</p>
+      <button class="btn-main" onclick="startSession()">🎯 Démarrer une nouvelle session</button>
+    </div>`;
+}
+
+async function startSession() {
+  const { data, error } = await api.rvStartSession();
+  if (error) { toast(error, 'error'); return; }
+  resumeSession({ ...data, impressions: '', descriptor_tags: '[]', sketch_data: null });
+}
+
+// ---- SESSION: IN PROGRESS ----
+function resumeSession(session) {
+  CURRENT = session;
+  SELECTED_TAGS = safeParse(session.descriptor_tags);
+
+  if (session.status === 'in_progress') {
+    renderInProgress(session);
+  } else if (session.status === 'revealed') {
+    renderRevealed(session, session.target || null, session.overlap_score);
+  }
+}
+
+function renderInProgress(session) {
+  document.getElementById('session-zone').innerHTML = `
+    <div class="designator-box">
+      <div class="designator-label">CIBLE MASQUÉE — DÉSIGNATEUR</div>
+      <div class="designator">${esc(session.designator)}</div>
+    </div>
+
+    <div class="rv-field-label">📝 Premières impressions</div>
+    <textarea class="rv-input" id="inp-impressions" oninput="scheduleAutosave()" placeholder="Formes, sensations, mots, images qui te viennent...">${esc(session.impressions || '')}</textarea>
+
+    <div class="rv-field-label">🏷️ Descripteurs</div>
+    <div id="tag-picker"></div>
+
+    <div class="rv-field-label" style="text-align:center">✏️ Croquis (facultatif)</div>
+    <div class="sketch-row"><canvas id="sketch-pad" width="480" height="270"></canvas></div>
+    <div class="sketch-row"><button class="btn-edit" onclick="clearSketch()">🧹 Effacer le croquis</button></div>
+
+    <div class="rv-actions">
+      <button class="btn-main" onclick="revealTarget()">🔓 Révéler la cible</button>
+    </div>
+  `;
+  renderTagPicker();
+  initSketchPad(session.sketch_data);
+}
+
+function renderTagPicker(targetTags) {
+  const wrap = document.getElementById('tag-picker');
+  if (!wrap) return;
+  const locked = !!targetTags;
+  wrap.innerHTML = Object.entries(DESCRIPTOR_VOCAB).map(([group, tags]) => `
+    <div class="tag-group">
+      <div class="tag-group-title">${esc(group)}</div>
+      ${tags.map(t => {
+        const selected = SELECTED_TAGS.includes(t);
+        const inTarget = locked && targetTags.includes(t);
+        let cls = 'tag-chip';
+        if (selected && inTarget) cls += ' matched';
+        else if (selected) cls += ' active';
+        else if (inTarget) cls += ' target-only';
+        if (locked) cls += ' disabled-pick';
+        return `<span class="${cls}" ${locked ? '' : `onclick="toggleTag('${t}')"`}>${esc(t)}</span>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+function toggleTag(tag) {
+  const i = SELECTED_TAGS.indexOf(tag);
+  if (i === -1) SELECTED_TAGS.push(tag); else SELECTED_TAGS.splice(i, 1);
+  renderTagPicker();
+  scheduleAutosave();
+}
+
+// ---- AUTOSAVE (session en cours uniquement) ----
+let autosaveTimer = null;
+function scheduleAutosave() {
+  if (!CURRENT || CURRENT.status !== 'in_progress') return;
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(runAutosave, 700);
+}
+function runAutosave() {
+  if (!CURRENT || CURRENT.status !== 'in_progress') return;
+  const impressions = document.getElementById('inp-impressions')?.value.trim() || '';
+  const canvas = document.getElementById('sketch-pad');
+  const sketch_data = canvas ? canvas.toDataURL('image/png') : null;
+  api.rvSaveSession(CURRENT.id, { impressions, descriptor_tags: SELECTED_TAGS, sketch_data });
+}
+
+// ---- SKETCH PAD ----
+function initSketchPad(existingDataUrl) {
+  const canvas = document.getElementById('sketch-pad');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fdfdfd';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#221133';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+
+  if (existingDataUrl) {
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    img.src = existingDataUrl;
+  }
+
+  function pos(e) {
+    const r = canvas.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+    return { x: cx * (canvas.width / r.width), y: cy * (canvas.height / r.height) };
+  }
+  function start(e) { drawing = true; const p = pos(e); lastX = p.x; lastY = p.y; e.preventDefault(); }
+  function move(e) {
+    if (!drawing) return;
+    const p = pos(e);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke();
+    lastX = p.x; lastY = p.y;
+    e.preventDefault();
+  }
+  function end() { if (drawing) { drawing = false; scheduleAutosave(); } }
+
+  canvas.onmousedown = start; canvas.onmousemove = move; canvas.onmouseup = end; canvas.onmouseleave = end;
+  canvas.ontouchstart = start; canvas.ontouchmove = move; canvas.ontouchend = end;
+}
+
+function clearSketch() {
+  const canvas = document.getElementById('sketch-pad');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fdfdfd';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  scheduleAutosave();
+}
+
+// ---- REVEAL ----
+async function revealTarget() {
+  if (!CURRENT) return;
+  const impressions = document.getElementById('inp-impressions').value.trim();
+  const canvas = document.getElementById('sketch-pad');
+  const sketch_data = canvas ? canvas.toDataURL('image/png') : null;
+
+  await api.rvSaveSession(CURRENT.id, { impressions, descriptor_tags: SELECTED_TAGS, sketch_data });
+  const { data, error } = await api.rvRevealSession(CURRENT.id);
+  if (error) { toast(error, 'error'); return; }
+
+  CURRENT = { ...CURRENT, impressions, sketch_data, status: 'revealed' };
+  renderRevealed(CURRENT, data.target, data.overlap_score);
+  await loadStats();
+}
+
+function renderRevealed(session, target, overlapScore) {
+  document.getElementById('session-zone').innerHTML = `
+    <div class="designator-box">
+      <div class="designator-label">DÉSIGNATEUR</div>
+      <div class="designator">${esc(session.designator)}</div>
+    </div>
+
+    <div class="target-reveal">
+      <div class="target-emoji">${target.emoji}</div>
+      <div class="target-label">${esc(target.label)}</div>
+      <div class="target-desc">${esc(target.description)}</div>
+      <div class="overlap-badge">🎯 Recoupement : ${overlapScore} / ${target.tags.length} descripteurs</div>
+    </div>
+
+    <div class="rv-field-label">🏷️ Tes descripteurs <span style="font-weight:normal;color:var(--text-dim);font-size:10px">(🟢 trouvé · pointillés = dans la cible, non coché · violet = coché, absent de la cible)</span></div>
+    <div id="tag-picker"></div>
+
+    ${session.impressions ? `<div class="rv-field-label">📝 Tes impressions</div><div style="font-size:12px;color:var(--text-muted);white-space:pre-wrap">${esc(session.impressions)}</div>` : ''}
+
+    <div class="rv-field-label" style="text-align:center;margin-top:18px">✨ Ton ressenti sur le match</div>
+    <div class="star-picker" id="star-picker">
+      ${[1,2,3,4,5].map(n => `<button class="star-btn" data-n="${n}" onclick="setStars(${n})">⭐</button>`).join('')}
+    </div>
+    <textarea class="rv-input" id="inp-reflection" placeholder="Une réflexion sur cette session ? (optionnel)"></textarea>
+
+    <div class="rv-actions">
+      <button class="btn-main" onclick="saveScore()">💾 Enregistrer &amp; terminer</button>
+    </div>
+  `;
+  renderTagPicker(target.tags);
+  window.__rvStars = 0;
+}
+
+function setStars(n) {
+  window.__rvStars = n;
+  document.querySelectorAll('#star-picker .star-btn').forEach(b => {
+    b.classList.toggle('on', Number(b.dataset.n) <= n);
+  });
+}
+
+async function saveScore() {
+  if (!CURRENT) return;
+  const self_score = window.__rvStars || 0;
+  const reflection = document.getElementById('inp-reflection').value.trim();
+  const { error } = await api.rvScoreSession(CURRENT.id, { self_score, reflection });
+  if (error) { toast(error, 'error'); return; }
+  toast('🔮 Session enregistrée !', 'success');
+  await loadStats();
+  await loadHistory();
+  renderIdle();
+}
+
+// ---- UTILS ----
+function safeParse(json) {
+  try { return JSON.parse(json || '[]'); } catch { return []; }
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
