@@ -58,6 +58,7 @@ app.use('/api/visits',   require('./routes/visits'));
 app.use('/api/messages',      require('./routes/messages'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/admin',         require('./routes/admin'));
+app.use('/api/remote-viewing', require('./routes/remote-viewing'));
 
 // Toutes les autres routes → frontend (SPA-style)
 app.get('*', (req, res) => {
@@ -158,6 +159,23 @@ async function initDB() {
       ON messages (LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id), created_at);
     CREATE INDEX IF NOT EXISTS idx_messages_receiver_unread
       ON messages (receiver_id, read_at) WHERE read_at IS NULL;
+    CREATE TABLE IF NOT EXISTS rv_sessions (
+      id              SERIAL PRIMARY KEY,
+      user_id         INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      designator      VARCHAR(20)  NOT NULL,
+      target_key      VARCHAR(50)  NOT NULL,
+      status          VARCHAR(20)  NOT NULL DEFAULT 'in_progress',
+      impressions     TEXT DEFAULT '',
+      descriptor_tags TEXT DEFAULT '[]',
+      sketch_data     TEXT,
+      overlap_score   INT DEFAULT NULL,
+      self_score      INT DEFAULT NULL,
+      reflection      TEXT DEFAULT '',
+      created_at      TIMESTAMP DEFAULT NOW(),
+      revealed_at     TIMESTAMP,
+      scored_at       TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_rv_sessions_user ON rv_sessions(user_id, created_at DESC);
   `);
 
   // Suppression des comptes de démo

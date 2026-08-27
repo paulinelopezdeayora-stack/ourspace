@@ -34,3 +34,22 @@ CREATE TABLE IF NOT EXISTS comments (
   content    TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS rv_sessions (
+  id              SERIAL PRIMARY KEY,
+  user_id         INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  designator      VARCHAR(20)  NOT NULL,
+  target_key      VARCHAR(50)  NOT NULL,
+  status          VARCHAR(20)  NOT NULL DEFAULT 'in_progress', -- in_progress | revealed | scored
+  impressions     TEXT DEFAULT '',
+  descriptor_tags TEXT DEFAULT '[]',   -- JSON array de strings
+  sketch_data     TEXT,                -- data URL du croquis (optionnel)
+  overlap_score   INT DEFAULT NULL,    -- nb de tags en commun avec la cible
+  self_score      INT DEFAULT NULL,    -- ressenti perso 0-5
+  reflection      TEXT DEFAULT '',
+  created_at      TIMESTAMP DEFAULT NOW(),
+  revealed_at     TIMESTAMP,
+  scored_at       TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_rv_sessions_user ON rv_sessions(user_id, created_at DESC);

@@ -61,6 +61,15 @@ const api = (() => {
     sendMessage:      (username, body) => req('POST', `/api/messages/${username}`, { body }),
     markRead:         (username)     => req('PATCH', `/api/messages/${username}/read`),
 
+    // Remote viewing
+    rvStartSession:  ()          => req('POST',   '/api/remote-viewing/sessions'),
+    rvSaveSession:   (id, body)  => req('PATCH',  `/api/remote-viewing/sessions/${id}`, body),
+    rvRevealSession: (id)        => req('POST',   `/api/remote-viewing/sessions/${id}/reveal`),
+    rvScoreSession:  (id, body)  => req('PATCH',  `/api/remote-viewing/sessions/${id}/score`, body),
+    rvGetSessions:   (page)      => req('GET',    `/api/remote-viewing/sessions?page=${page||0}`),
+    rvGetStats:      ()          => req('GET',    '/api/remote-viewing/stats'),
+    rvDeleteSession: (id)        => req('DELETE', `/api/remote-viewing/sessions/${id}`),
+
     // Découvrir
     discover: (q, page) => {
       const params = new URLSearchParams();
